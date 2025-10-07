@@ -20,8 +20,8 @@ export function useDashboardStats(): UseDashboardStatsReturn {
     try {
       // Równoległe wywołania API
       const [flashcardsRes, generationsRes] = await Promise.all([
-        fetch('/api/flashcards?limit=1'),
-        fetch('/api/generations?limit=50'), // zwiększony limit dla dokładniejszych statystyk
+        fetch('/api/flashcards?limit=1&page=1'),
+        fetch('/api/generations?limit=50&page=1'), // zwiększony limit dla dokładniejszych statystyk
       ]);
 
       if (!flashcardsRes.ok || !generationsRes.ok) {
