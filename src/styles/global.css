@@ -117,6 +117,17 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* Smooth transitions dla dark mode */
+  html {
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  * {
+    transition-property: color, background-color, border-color;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
 }
 
 @layer utilities {

@@ -17,7 +17,7 @@ export const prerender = false;
 
 /**
  * Placeholder user ID for MVP (before auth is implemented)
- * TODO: Replace with actual user ID from auth context when auth is ready
+ * Used as fallback when user is not authenticated
  */
 const PLACEHOLDER_USER_ID = '00000000-0000-0000-0000-000000000000';
 
@@ -49,8 +49,8 @@ export async function GET({ params, locals }: APIContext) {
 
     const generationId = validation.data;
 
-    // Get user ID (placeholder for now)
-    const userId = PLACEHOLDER_USER_ID;
+    // Get user ID from auth context (fallback to placeholder for MVP)
+    const userId = locals.user?.id || PLACEHOLDER_USER_ID;
 
     // Fetch generation with flashcards
     const generation = await getGenerationById(

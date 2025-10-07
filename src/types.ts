@@ -297,3 +297,62 @@ export type ErrorState = {
   code?: ApiErrorCode;
 } | null;
 
+// ============================================================================
+// DASHBOARD VIEW MODELS (Frontend specific types)
+// ============================================================================
+
+/**
+ * Agregowane statystyki dla dashboardu użytkownika
+ */
+export type DashboardStats = {
+  /** Całkowita liczba fiszek użytkownika */
+  totalFlashcards: number;
+  
+  /** Liczba wykonanych generacji AI */
+  totalGenerations: number;
+  
+  /** Wskaźnik akceptacji fiszek AI w procentach (0-100) */
+  acceptanceRate: number;
+  
+  /** Liczba fiszek oczekujących na naukę (dla MVP może być 0) */
+  flashcardsDueForStudy: number;
+};
+
+/**
+ * Propsy dla komponentu StatsCard
+ */
+export type StatsCardProps = {
+  icon: React.ReactNode;
+  value: number | string;
+  label: string;
+  variant?: 'default' | 'highlight';
+};
+
+/**
+ * Propsy dla komponentu MenuTile
+ */
+export type MenuTileProps = {
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+  href: string;
+  variant?: 'default' | 'primary';
+};
+
+/**
+ * Profil użytkownika dla wyświetlenia w UI
+ */
+export type UserProfile = {
+  id: string;
+  email: string;
+  username?: string;
+  avatar_url?: string;
+};
+
+/**
+ * Odpowiedź z endpointu statystyk (jeśli zostanie stworzony)
+ */
+export type DashboardStatsResponse = {
+  stats: DashboardStats;
+};
+
