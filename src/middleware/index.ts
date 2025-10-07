@@ -29,14 +29,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const isAuthenticated = !!session && !error;
   
   // Jeśli użytkownik niezalogowany próbuje dostać się do chronionej ścieżki
-  if (!isAuthenticated && !isPublicPath) {
-    return redirect('/login');
-  }
+  // WYŁĄCZONE NA CZAS DEVELOPMENTU
+  // if (!isAuthenticated && !isPublicPath) {
+  //   return redirect('/login');
+  // }
   
   // Jeśli użytkownik zalogowany próbuje wejść na /login
-  if (isAuthenticated && url.pathname === '/login') {
-    return redirect('/dashboard');
-  }
+  // WYŁĄCZONE NA CZAS DEVELOPMENTU
+  // if (isAuthenticated && url.pathname === '/login') {
+  //   return redirect('/dashboard');
+  // }
   
   // Dodaj informacje o użytkowniku do locals (jeśli zalogowany)
   if (isAuthenticated && session?.user) {
@@ -45,6 +47,15 @@ export const onRequest = defineMiddleware(async (context, next) => {
       email: session.user.email!,
       username: session.user.user_metadata?.username,
       avatar_url: session.user.user_metadata?.avatar_url,
+    };
+  } else {
+    // DEVELOPMENT MODE: dodaj fake użytkownika jeśli nie jest zalogowany
+    // Używamy tego samego ID co PLACEHOLDER_USER_ID w API endpoints
+    locals.user = {
+      id: '00000000-0000-0000-0000-000000000000',
+      email: 'dev@example.com',
+      username: 'Dev User',
+      avatar_url: undefined,
     };
   }
   
