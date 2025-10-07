@@ -1,15 +1,16 @@
 /**
  * LLM service for AI-powered flashcard generation
- * Integrates with OpenRouter.ai API to generate flashcards from source text
+ * Integrates with OpenRouter.ai API via OpenRouterService to generate flashcards
  */
 
 import type { ProposedFlashcard } from '../../types';
 import { proposedFlashcardsArraySchema } from '../validation/generation.schemas';
+import { zodToJsonSchema } from 'zod-to-json-schema';
+import { OpenRouterService, OpenRouterError } from '../openrouter.service';
 
 /**
  * OpenRouter.ai API configuration
  */
-const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const DEFAULT_MODEL = 'anthropic/claude-3.5-sonnet';
 const REQUEST_TIMEOUT = 60000; // 60 seconds
 
@@ -64,6 +65,17 @@ export class LLMServiceError extends Error {
 }
 
 /**
+ * Converts OpenRouterError to LLMServiceError
+ */
+function convertError(error: OpenRouterError): LLMServiceError {
+  return new LLMServiceError(
+    error.message,
+    error.code,
+    error.statusCode
+  );
+}
+
+/**
  * Generates flashcards from source text using OpenRouter.ai API
  * 
  * @param sourceText - Source text to analyze (1000-10000 characters)
@@ -88,37 +100,6 @@ export async function generateFlashcards(
   flashcards: ProposedFlashcard[];
   duration: number;
 }> {
-  // ============================================================================
-  // MOCKED IMPLEMENTATION - FOR TESTING PURPOSES
-  // TODO: Replace with real OpenRouter.ai API integration
-  // ============================================================================
-  
-  const startTime = Date.now();
-  
-  // Simulate API call delay (1-3 seconds)
-  await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
-  
-  const duration = Date.now() - startTime;
-
-  // Generate mock flashcards based on source text length
-  const wordCount = sourceText.split(/\s+/).length;
-  const flashcardCount = Math.min(Math.max(Math.floor(wordCount / 50), 3), 10);
-
-  const mockFlashcards: ProposedFlashcard[] = Array.from({ length: flashcardCount }, (_, i) => ({
-    front: `Question ${i + 1}: What is a key concept from the source text?`,
-    back: `Answer ${i + 1}: This is a generated explanation based on the provided source material. The concept relates to important information extracted from the text.`,
-    source: 'ai-full' as const,
-  }));
-
-  return {
-    flashcards: mockFlashcards,
-    duration,
-  };
-
-  /* ============================================================================
-   * REAL IMPLEMENTATION - UNCOMMENT WHEN READY TO USE OPENROUTER.AI
-   * ============================================================================
-   
   const apiKey = import.meta.env.OPENROUTER_API_KEY;
 
   if (!apiKey) {
@@ -131,114 +112,59 @@ export async function generateFlashcards(
 
   const startTime = Date.now();
 
-  try {
-    // Create abort controller for timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+  // Initialize OpenRouter service
+  const service = new OpenRouterService({
+    apiKey,
+    defaultModel: model,
+    requestTimeout: REQUEST_TIMEOUT,
+  });
 
-    const response = await fetch(OPENROUTER_API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-        'HTTP-Referer': 'https://10xproject.app', // Required by OpenRouter
-        'X-Title': '10x Flashcards', // Optional, for OpenRouter analytics
-      },
-      body: JSON.stringify({
-        model,
-        messages: [
-          {
-            role: 'system',
-            content: SYSTEM_PROMPT,
-          },
-          {
-            role: 'user',
-            content: createUserPrompt(sourceText),
-          },
-        ],
+  // Prepare JSON Schema for response_format
+  const jsonSchema = zodToJsonSchema(proposedFlashcardsArraySchema, {
+    name: 'flashcards_array',
+    $refStrategy: 'none',
+  });
+
+  try {
+    const response = await service.generateCompletion({
+      systemMessage: SYSTEM_PROMPT,
+      userMessage: createUserPrompt(sourceText),
+      model,
+      modelParams: {
         temperature: 0.7,
-        max_tokens: 2000,
-      }),
-      signal: controller.signal,
+        maxTokens: 2000,
+      },
+      responseSchema: {
+        name: 'flashcards_array',
+        schema: proposedFlashcardsArraySchema,
+        jsonSchema,
+      },
     });
 
-    clearTimeout(timeoutId);
-
-    // Calculate duration
     const duration = Date.now() - startTime;
 
-    // Handle HTTP errors
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      
-      if (response.status === 429) {
-        throw new LLMServiceError(
-          'Rate limit exceeded on AI service',
-          'RATE_LIMIT',
-          429
-        );
-      }
+    const flashcards: ProposedFlashcard[] = (response.data as Array<{ front: string; back: string }> ).map(
+      (fc) => ({
+        front: fc.front,
+        back: fc.back,
+        source: 'ai-full' as const,
+      })
+    );
 
-      if (response.status >= 500) {
-        throw new LLMServiceError(
-          'AI service temporarily unavailable',
-          'SERVICE_UNAVAILABLE',
-          503
-        );
-      }
-
-      throw new LLMServiceError(
-        errorData.error?.message || 'AI service request failed',
-        'API_ERROR',
-        response.status
-      );
+    if (flashcards.length === 0) {
+      throw new LLMServiceError('No flashcards generated', 'VALIDATION_ERROR', 500);
     }
 
-    // Parse response
-    const data = await response.json();
-    
-    if (!data.choices?.[0]?.message?.content) {
-      throw new LLMServiceError(
-        'Invalid response from AI service',
-        'INVALID_RESPONSE',
-        500
-      );
-    }
-
-    // Extract and parse flashcards from response
-    const flashcards = parseFlashcardsFromResponse(data.choices[0].message.content);
-
-    return {
-      flashcards,
-      duration,
-    };
-
+    return { flashcards, duration };
   } catch (error) {
-    const duration = Date.now() - startTime;
-
-    // Handle timeout
-    if (error instanceof Error && error.name === 'AbortError') {
-      throw new LLMServiceError(
-        'AI service request timed out',
-        'TIMEOUT',
-        503
-      );
+    if (error instanceof OpenRouterError) {
+      throw convertError(error);
     }
-
-    // Re-throw LLMServiceError
     if (error instanceof LLMServiceError) {
       throw error;
     }
-
-    // Handle network errors
-    throw new LLMServiceError(
-      'Failed to connect to AI service',
-      'NETWORK_ERROR',
-      503
-    );
+    throw new LLMServiceError('Unexpected error during flashcard generation', 'INTERNAL_ERROR', 500);
   }
-  
-  ============================================================================ */
 }
 
 /**
