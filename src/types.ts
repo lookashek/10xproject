@@ -356,3 +356,105 @@ export type DashboardStatsResponse = {
   stats: DashboardStats;
 };
 
+// ============================================================================
+// GENERATIONS VIEW MODELS (Frontend specific types)
+// ============================================================================
+
+/**
+ * Props dla głównego widoku listy generacji
+ */
+export type GenerationsViewProps = {
+  /** Początkowa strona z query params */
+  initialPage?: number;
+};
+
+/**
+ * Props dla komponentu GenerationList
+ */
+export type GenerationListProps = {
+  /** Lista generacji do wyświetlenia */
+  generations: GenerationDTO[];
+  /** Callback wywoływany po kliknięciu wiersza */
+  onRowClick: (id: number) => void;
+};
+
+/**
+ * Props dla pojedynczego wiersza w tabeli generacji
+ */
+export type GenerationRowProps = {
+  /** Dane pojedynczej generacji */
+  generation: GenerationDTO;
+  /** Callback wywoływany po kliknięciu wiersza */
+  onRowClick: (id: number) => void;
+};
+
+/**
+ * Props dla wskaźnika akceptacji fiszek
+ */
+export type AcceptanceRateIndicatorProps = {
+  /** Liczba wygenerowanych fiszek */
+  generatedCount: number;
+  /** Liczba zaakceptowanych bez edycji (null jeśli brak) */
+  acceptedUnedited: number | null;
+  /** Liczba zaakceptowanych z edycją (null jeśli brak) */
+  acceptedEdited: number | null;
+};
+
+/**
+ * ViewModel dla wskaźnika akceptacji (wyliczone wartości)
+ */
+export type AcceptanceRateViewModel = {
+  /** Procent akceptacji (0-100) */
+  percentage: number;
+  /** Liczba zaakceptowanych bez edycji */
+  acceptedUnedited: number;
+  /** Liczba zaakceptowanych z edycją */
+  acceptedEdited: number;
+  /** Całkowita liczba zaakceptowanych */
+  totalAccepted: number;
+  /** Wariant kolorystyczny dla UI */
+  variant: 'low' | 'medium' | 'high'; // low: <50%, medium: 50-74%, high: >=75%
+};
+
+/**
+ * Props dla widoku szczegółów generacji
+ */
+export type GenerationDetailViewProps = {
+  /** ID generacji z URL params */
+  generationId: number;
+};
+
+/**
+ * Props dla nagłówka widoku szczegółów
+ */
+export type GenerationDetailHeaderProps = {
+  /** Dane generacji */
+  generation: GenerationDetailDTO;
+};
+
+/**
+ * Props dla gridu statystyk generacji
+ */
+export type GenerationStatsGridProps = {
+  /** Dane generacji */
+  generation: GenerationDetailDTO;
+};
+
+/**
+ * Props dla sekcji z tekstem źródłowym
+ */
+export type SourceTextSectionProps = {
+  /** Hash tekstu źródłowego (SHA-256) */
+  sourceTextHash: string;
+  /** Długość tekstu źródłowego w znakach */
+  sourceTextLength: number;
+};
+
+/**
+ * Props dla sekcji z powiązanymi fiszkami
+ */
+export type AssociatedFlashcardsSectionProps = {
+  /** Lista powiązanych fiszek */
+  flashcards: Pick<FlashcardDTO, 'id' | 'front' | 'back' | 'source'>[];
+};
+

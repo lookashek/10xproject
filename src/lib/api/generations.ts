@@ -10,6 +10,10 @@ import type {
   GenerationCreateResponse,
   FlashcardBatchCreateCommand,
   FlashcardCreateCommand,
+  GenerationListQuery,
+  GenerationListResponse,
+  GenerationDetailDTO,
+  ApiError as ApiErrorType,
 } from '../../types';
 import type { GenerationData } from '../viewModels/generateView.types';
 
@@ -111,6 +115,107 @@ export async function saveAcceptedFlashcards(
 
     // Success - brak zwracanej wartości potrzebnej
     return;
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    
+    // Network error
+    throw new ApiError(
+      0,
+      'NETWORK_ERROR',
+      'Sprawdź połączenie internetowe i spróbuj ponownie'
+    );
+  }
+}
+
+/**
+ * Pobiera listę generacji z paginacją
+ * 
+ * @param query - parametry zapytania (page, limit)
+ * @returns Promise z listą generacji i metadanymi paginacji
+ * @throws ApiError jeśli request się nie powiedzie
+ */
+export async function fetchGenerations(
+  query: GenerationListQuery = {}
+): Promise<GenerationListResponse> {
+  try {
+    const params = new URLSearchParams();
+    
+    if (query.page) params.append('page', query.page.toString());
+    if (query.limit) params.append('limit', query.limit.toString());
+
+    const url = `/api/generations?${params.toString()}`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const error: ApiErrorType = await response.json();
+      throw new ApiError(
+        response.status,
+        error.error.code,
+        error.error.message || 'Nie udało się pobrać listy generacji',
+        error.error.details
+      );
+    }
+
+    return response.json();
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    
+    // Network error
+    throw new ApiError(
+      0,
+      'NETWORK_ERROR',
+      'Sprawdź połączenie internetowe i spróbuj ponownie'
+    );
+  }
+}
+
+/**
+ * Pobiera szczegóły pojedynczej generacji
+ * 
+ * @param id - identyfikator generacji
+ * @returns Promise ze szczegółami generacji i powiązanymi fiszkami
+ * @throws ApiError jeśli request się nie powiedzie lub generacja nie istnieje (404)
+ */
+export async function fetchGenerationById(id: number): Promise<GenerationDetailDTO> {
+  try {
+    const url = `/api/generations/${id}`;
+
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        throw new ApiError(
+          404,
+          'NOT_FOUND',
+          'Generacja nie została znaleziona'
+        );
+      }
+      
+      const error: ApiErrorType = await response.json();
+      throw new ApiError(
+        response.status,
+        error.error.code,
+        error.error.message || 'Nie udało się pobrać szczegółów generacji',
+        error.error.details
+      );
+    }
+
+    return response.json();
   } catch (error) {
     if (error instanceof ApiError) {
       throw error;

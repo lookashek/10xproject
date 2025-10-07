@@ -1,0 +1,26 @@
+---
+/**
+ * Generation Detail Page
+ * Displays detailed information about a specific generation including statistics and associated flashcards
+ */
+
+import Layout from '../../layouts/Layout.astro';
+import { GenerationDetailView } from '../../components/generations';
+
+// Parse and validate path parameter
+const { id } = Astro.params;
+const generationId = parseInt(id || '0', 10);
+
+// Validate ID
+if (isNaN(generationId) || generationId <= 0) {
+  return Astro.redirect('/generations');
+}
+---
+
+<Layout title={`Generacja #${generationId} - 10x Cards`}>
+  <GenerationDetailView
+    client:load
+    generationId={generationId}
+  />
+</Layout>
+
