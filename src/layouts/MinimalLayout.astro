@@ -31,6 +31,20 @@ const { title, description = '10x Cards - Aplikacja do nauki z fiszkami AI' } = 
 		<link rel="icon" type="image/png" href="/favicon.png" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<!-- Inline script dla dark mode - zapobiega FOUC (Flash of Unstyled Content) -->
+		<script is:inline>
+			(function() {
+				const savedTheme = localStorage.getItem('theme');
+				const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+				const theme = savedTheme || systemTheme;
+				
+				if (theme === 'dark') {
+					document.documentElement.classList.add('dark');
+				} else {
+					document.documentElement.classList.remove('dark');
+				}
+			})();
+		</script>
 	</head>
 	<body class="antialiased">
 		<slot />

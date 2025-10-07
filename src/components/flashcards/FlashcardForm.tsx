@@ -83,7 +83,7 @@ export default function FlashcardForm({
             {errors.front.message}
           </p>
         )}
-        <p id="front-counter" className="text-xs text-gray-500 dark:text-gray-400 text-right">
+        <p id="front-counter" className="text-xs text-muted-foreground text-right">
           {watchFront.length}/200
         </p>
       </div>
@@ -107,7 +107,7 @@ export default function FlashcardForm({
             {errors.back.message}
           </p>
         )}
-        <p id="back-counter" className="text-xs text-gray-500 dark:text-gray-400 text-right">
+        <p id="back-counter" className="text-xs text-muted-foreground text-right">
           {watchBack.length}/500
         </p>
       </div>

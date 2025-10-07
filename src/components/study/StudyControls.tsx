@@ -66,11 +66,11 @@ export function StudyControls({ isFlipped, onRate, isProcessing }: StudyControls
             aria-label={`Ocena: ${label} - ${description}`}
             aria-disabled={!isFlipped || isProcessing}
             className={`flex flex-col gap-2 h-auto py-4 transition-all focus-visible:ring-2 focus-visible:ring-offset-2 ${
-              quality === 2 ? 'bg-green-600 hover:bg-green-700 text-white focus-visible:ring-green-600' : ''
+              quality === 2 ? 'bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600 text-white focus-visible:ring-green-600' : ''
             } ${
-              quality === 3 ? 'bg-blue-600 hover:bg-blue-700 text-white focus-visible:ring-blue-600' : ''
+              quality === 3 ? 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600 text-white focus-visible:ring-blue-600' : ''
             } ${
-              quality === 1 ? 'border-orange-500 text-orange-600 hover:bg-orange-50 focus-visible:ring-orange-500' : ''
+              quality === 1 ? 'border-orange-500 text-orange-600 hover:bg-orange-50 dark:text-orange-400 dark:border-orange-400 dark:hover:bg-orange-950/20 focus-visible:ring-orange-500' : ''
             }`}
           >
             <Icon className="h-6 w-6" />

@@ -41,10 +41,10 @@ export function CompletedState({ stats, onRestart, onExit }: CompletedStateProps
   };
 
   const ratingIcons = {
-    again: { icon: X, label: 'Powtórz', color: 'text-red-600' },
-    hard: { icon: AlertCircle, label: 'Trudne', color: 'text-orange-600' },
-    good: { icon: Check, label: 'Dobre', color: 'text-green-600' },
-    easy: { icon: Star, label: 'Łatwe', color: 'text-blue-600' },
+    again: { icon: X, label: 'Powtórz', color: 'text-red-600 dark:text-red-400' },
+    hard: { icon: AlertCircle, label: 'Trudne', color: 'text-orange-600 dark:text-orange-400' },
+    good: { icon: Check, label: 'Dobre', color: 'text-green-600 dark:text-green-400' },
+    easy: { icon: Star, label: 'Łatwe', color: 'text-blue-600 dark:text-blue-400' },
   };
 
   return (

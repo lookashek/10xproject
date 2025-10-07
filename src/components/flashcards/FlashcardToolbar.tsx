@@ -27,7 +27,7 @@ export default function FlashcardToolbar({
   return (
     <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-6 gap-4">
       <div className="flex items-center gap-2">
-        <label htmlFor="source-filter" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label htmlFor="source-filter" className="text-sm font-medium text-foreground">
           Filtr:
         </label>
         <Select

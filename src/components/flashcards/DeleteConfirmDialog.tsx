@@ -40,8 +40,8 @@ export default function DeleteConfirmDialog({
         </AlertDialogHeader>
         
         {flashcardFront && (
-          <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-md border border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-700 dark:text-gray-300 line-clamp-2">
+          <div className="bg-muted p-4 rounded-md border border-border">
+            <p className="text-sm text-muted-foreground line-clamp-2">
               <strong>Przód:</strong> {flashcardFront}
             </p>
           </div>

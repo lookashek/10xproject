@@ -74,7 +74,7 @@ export default function Pagination({
         {pageNumbers.map((pageNum, index) => {
           if (pageNum === '...') {
             return (
-              <span key={`ellipsis-${index}`} className="px-2 text-gray-500">
+              <span key={`ellipsis-${index}`} className="px-2 text-muted-foreground">
                 ...
               </span>
             );
@@ -107,7 +107,7 @@ export default function Pagination({
         </Button>
       </div>
       
-      <p className="text-sm text-gray-600 dark:text-gray-400">
+      <p className="text-sm text-muted-foreground">
         Strona {currentPage} z {totalPages} ({totalItems} {getPluralForm(totalItems, 'fiszka', 'fiszki', 'fiszek')})
       </p>
     </div>
