@@ -458,3 +458,199 @@ export type AssociatedFlashcardsSectionProps = {
   flashcards: Pick<FlashcardDTO, 'id' | 'front' | 'back' | 'source'>[];
 };
 
+// ============================================================================
+// STUDY SESSION VIEW MODELS (Frontend specific types)
+// ============================================================================
+
+/**
+ * Poziom jakości odpowiedzi w algorytmie SM-2
+ * 0 = Again (całkowite zapomnienie)
+ * 1 = Hard (z trudnością)
+ * 2 = Good (poprawnie)
+ * 3 = Easy (łatwo)
+ */
+export type SM2Quality = 0 | 1 | 2 | 3;
+
+/**
+ * Etykiety dla przycisków oceny
+ */
+export type RatingLabel = {
+  quality: SM2Quality;
+  label: string;
+  description: string;
+  color: 'red' | 'orange' | 'green' | 'blue';
+  icon: string; // nazwa ikony z lucide-react
+  keyboardShortcut: '1' | '2' | '3' | '4';
+};
+
+/**
+ * Dane SM-2 przechowywane dla każdej fiszki w localStorage
+ */
+export type SM2ReviewData = {
+  /** ID fiszki */
+  flashcard_id: number;
+  
+  /** Współczynnik łatwości (E-Factor), zakres 1.3 - 2.5 */
+  easiness: number;
+  
+  /** Interwał powtórek w dniach */
+  interval: number;
+  
+  /** Liczba prawidłowych powtórzeń z rzędu */
+  repetitions: number;
+  
+  /** Data następnej zaplanowanej powtórki (ISO string) */
+  next_review: string;
+  
+  /** Data ostatniej powtórki (ISO string) */
+  last_reviewed: string | null;
+};
+
+/**
+ * Fiszka wraz z danymi SM-2 progress
+ */
+export type FlashcardWithProgress = {
+  flashcard: FlashcardDTO;
+  sm2Data: SM2ReviewData;
+  isDue: boolean; // czy fiszka jest gotowa do powtórki
+};
+
+/**
+ * Stan sesji nauki
+ */
+export type StudySessionState = 
+  | { type: 'initializing' }
+  | { type: 'empty' } // brak fiszek
+  | { type: 'active'; currentCard: FlashcardWithProgress; isFlipped: boolean }
+  | { type: 'completed'; stats: SessionStats };
+
+/**
+ * Statystyki sesji nauki
+ */
+export type SessionStats = {
+  /** Całkowita liczba przejrzanych fiszek */
+  totalReviewed: number;
+  
+  /** Czas trwania sesji w sekundach */
+  durationSeconds: number;
+  
+  /** Breakdown ocen */
+  ratings: {
+    again: number; // quality 0
+    hard: number;  // quality 1
+    good: number;  // quality 2
+    easy: number;  // quality 3
+  };
+  
+  /** Data rozpoczęcia sesji (ISO string) */
+  startedAt: string;
+  
+  /** Data zakończenia sesji (ISO string) */
+  completedAt: string;
+};
+
+/**
+ * Props dla głównego widoku sesji nauki
+ */
+export type StudySessionViewProps = {
+  // Brak propsów - wszystkie dane ładowane dynamicznie
+};
+
+/**
+ * Props dla header sesji nauki
+ */
+export type StudySessionHeaderProps = {
+  currentIndex: number;
+  totalCards: number;
+  reviewedCount: number;
+  remainingCount: number;
+  onExit: () => void;
+};
+
+/**
+ * Props dla progress bar
+ */
+export type StudyProgressBarProps = {
+  current: number; // 1-based
+  total: number;
+};
+
+/**
+ * Props dla karty fiszki
+ */
+export type StudyCardProps = {
+  flashcard: FlashcardDTO;
+  isFlipped: boolean;
+  onFlip?: () => void;
+};
+
+/**
+ * Props dla przycisku flip
+ */
+export type FlipButtonProps = {
+  onFlip: () => void;
+};
+
+/**
+ * Props dla kontrolek oceny
+ */
+export type StudyControlsProps = {
+  isFlipped: boolean;
+  onRate: (quality: SM2Quality) => void;
+  isProcessing: boolean;
+};
+
+/**
+ * Props dla ekranu ukończenia
+ */
+export type CompletedStateProps = {
+  stats: SessionStats;
+  onRestart: () => void;
+  onExit: () => void;
+};
+
+/**
+ * Konfiguracja localStorage dla study session
+ */
+export type StudyProgressStorage = {
+  /** Mapa flashcard_id → SM2ReviewData */
+  reviews: Record<number, SM2ReviewData>;
+  
+  /** Timestamp ostatniej aktualizacji */
+  lastUpdated: string;
+  
+  /** Wersja schema (dla migracji w przyszłości) */
+  version: number;
+};
+
+/**
+ * Parametry algorytmu SM-2
+ */
+export type SM2Params = {
+  /** Minimalny E-Factor (default: 1.3) */
+  minEasiness: number;
+  
+  /** Maksymalny E-Factor (default: 2.5) */
+  maxEasiness: number;
+  
+  /** Początkowy E-Factor dla nowych fiszek (default: 2.5) */
+  initialEasiness: number;
+};
+
+/**
+ * Wynik kalkulacji SM-2
+ */
+export type SM2Result = {
+  /** Nowy E-Factor */
+  easiness: number;
+  
+  /** Nowy interwał w dniach */
+  interval: number;
+  
+  /** Nowa liczba repetitions */
+  repetitions: number;
+  
+  /** Data następnej powtórki (ISO string) */
+  nextReview: string;
+};
+

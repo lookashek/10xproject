@@ -1,0 +1,40 @@
+---
+/**
+ * MinimalLayout - Layout dla pełnoekranowych widoków
+ * 
+ * Używany dla:
+ * - Widok sesji nauki (distraction-free mode)
+ * 
+ * Różnice od Layout.astro:
+ * - Brak głównej nawigacji/sidebar
+ * - Brak header
+ * - Czysty fullscreen experience
+ */
+
+import '../styles/global.css';
+import { ToasterProvider } from '../components/ToasterProvider';
+
+interface Props {
+	title: string;
+	description?: string;
+}
+
+const { title, description = '10x Cards - Aplikacja do nauki z fiszkami AI' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="pl">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content={description} />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/png" href="/favicon.png" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body class="antialiased">
+		<slot />
+		<ToasterProvider client:load />
+	</body>
+</html>
+
