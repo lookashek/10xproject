@@ -242,3 +242,58 @@ export type GenerationUpdate = TablesUpdate<'generations'>;
  */
 export type GenerationErrorLogInsert = TablesInsert<'generation_error_logs'>;
 
+// ============================================================================
+// FLASHCARDS VIEW MODELS (Frontend specific types)
+// ============================================================================
+
+/**
+ * Stan dialogu w FlashcardsView
+ * Określa, który dialog jest otwarty i z jakimi danymi
+ */
+export type DialogState = 
+  | { type: 'closed' }
+  | { type: 'create' }
+  | { type: 'edit'; flashcard: FlashcardDTO }
+  | { type: 'delete'; flashcard: FlashcardDTO };
+
+/**
+ * Dane formularza fiszki
+ * Używane przez FlashcardForm do walidacji i submitu
+ */
+export type FlashcardFormData = {
+  front: string;
+  back: string;
+};
+
+/**
+ * Rozszerzony filtr źródła z opcją "all"
+ * Używany w FlashcardToolbar
+ */
+export type SourceFilterValue = FlashcardSource | 'all';
+
+/**
+ * Props dla komponentów toast notifications
+ */
+export type ToastMessage = {
+  type: 'success' | 'error' | 'info';
+  title: string;
+  description?: string;
+};
+
+/**
+ * Stan ładowania dla różnych operacji
+ */
+export type LoadingState = {
+  isLoading: boolean; // ładowanie listy
+  isSaving: boolean;  // zapisywanie create/edit
+  isDeleting: boolean; // usuwanie fiszki
+};
+
+/**
+ * Stan błędu
+ */
+export type ErrorState = {
+  message: string;
+  code?: ApiErrorCode;
+} | null;
+

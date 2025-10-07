@@ -1,0 +1,43 @@
+---
+/**
+ * Flashcards List Page
+ * Displays user's flashcards with filtering, pagination, and CRUD operations
+ */
+
+import Layout from '../layouts/Layout.astro';
+import { FlashcardsView } from '../components/flashcards';
+import type { FlashcardSource, FlashcardListResponse } from '../types';
+
+// TODO: After auth implementation, get userId from session
+const userId = 'test-user-id'; // placeholder
+
+// Parse query params
+const url = new URL(Astro.request.url);
+const page = Number(url.searchParams.get('page')) || 1;
+const source = url.searchParams.get('source') as FlashcardSource | undefined;
+
+// Mock initial data - will be replaced with actual API call
+const initialData: FlashcardListResponse = {
+  data: [],
+  pagination: {
+    page: 1,
+    limit: 50,
+    total: 0,
+    total_pages: 0,
+  },
+};
+
+// TODO: Fetch initial data using flashcardService
+// const supabase = getSupabaseClient();
+// const initialData = await listFlashcards(supabase, userId, { page, limit: 50, source });
+---
+
+<Layout title="Moje fiszki - 10x Cards">
+  <FlashcardsView
+    client:load
+    initialData={initialData}
+    initialPage={page}
+    initialSource={source}
+  />
+</Layout>
+

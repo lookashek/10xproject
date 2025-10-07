@@ -58,3 +58,20 @@ export const flashcardUpdateSchema = z
  */
 export const flashcardIdParamSchema = z.coerce.number().int().positive();
 
+/**
+ * Schema for flashcard form (frontend)
+ * Used by FlashcardForm component with React Hook Form
+ */
+export const flashcardFormSchema = z.object({
+  front: z
+    .string()
+    .trim()
+    .min(1, { message: 'Przód fiszki jest wymagany' })
+    .max(200, { message: 'Przód fiszki może mieć maksymalnie 200 znaków' }),
+  back: z
+    .string()
+    .trim()
+    .min(1, { message: 'Tył fiszki jest wymagany' })
+    .max(500, { message: 'Tył fiszki może mieć maksymalnie 500 znaków' }),
+});
+
