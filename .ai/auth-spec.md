@@ -1,5 +1,6 @@
-# Specyfikacja Techniczna: Moduł Autentykacji i Autoryzacji
+# Specyfikacja Techniczna: Moduł Autentykacji i Autoryzacji (MVP)
 ## Dokument architektoniczny dla systemu logowania użytkowników w aplikacji 10x-cards
+### 🎯 Wersja MVP - Minimalna implementacja zgodna z PRD
 
 ---
 
@@ -11,52 +12,28 @@
 
 **`/login` - Strona Logowania**
 - **Plik:** `src/pages/login.astro`
-- **Layout:** `MinimalLayout.astro` (bez nagłówka dashboardu)
+- **Layout:** `Layout.astro` (używamy tego samego co reszta app)
 - **Główny komponent:** `LoginForm` (React, client:load)
 - **Funkcjonalność:**
   - Formularz logowania z email i hasłem
   - Link do strony rejestracji
-  - Link do odzyskiwania hasła
   - Wyświetlanie błędów walidacji i autoryzacji
-  - Przekierowanie do `/dashboard` po udanym logowaniu
-- **Middleware:** Jeśli użytkownik już zalogowany → redirect do `/dashboard`
+  - Przekierowanie do `/generate` po udanym logowaniu (PRD US-002)
+- **Middleware:** Jeśli użytkownik już zalogowany → redirect do `/generate`
 
 **`/register` - Strona Rejestracji**
 - **Plik:** `src/pages/register.astro`
-- **Layout:** `MinimalLayout.astro`
+- **Layout:** `Layout.astro` (używamy tego samego co reszta app)
 - **Główny komponent:** `RegisterForm` (React, client:load)
 - **Funkcjonalność:**
   - Formularz rejestracji (email, hasło, potwierdzenie hasła)
   - Link do strony logowania
-  - Walidacja siły hasła (min. 8 znaków, min. 1 wielka litera, min. 1 cyfra)
-  - Potwierdzenie emaila przez Supabase
-  - Komunikat o konieczności weryfikacji emaila
-- **Middleware:** Jeśli użytkownik już zalogowany → redirect do `/dashboard`
+  - Walidacja hasła (min. 8 znaków, min. 1 wielka litera, min. 1 cyfra)
+  - **MVP: Bez email verification** - user od razu zalogowany po rejestracji (PRD US-001)
+  - Redirect do `/generate` po sukcesie
+- **Middleware:** Jeśli użytkownik już zalogowany → redirect do `/generate`
 
-**`/forgot-password` - Strona Odzyskiwania Hasła**
-- **Plik:** `src/pages/forgot-password.astro`
-- **Layout:** `MinimalLayout.astro`
-- **Główny komponent:** `ForgotPasswordForm` (React, client:load)
-- **Funkcjonalność:**
-  - Formularz z polem email
-  - Wysyłanie linku resetującego przez Supabase Auth
-  - Komunikat potwierdzający wysłanie emaila
-  - Link powrotny do logowania
-- **Middleware:** Dostępne dla niezalogowanych użytkowników
-
-**`/reset-password` - Strona Resetowania Hasła**
-- **Plik:** `src/pages/reset-password.astro`
-- **Layout:** `MinimalLayout.astro`
-- **Główny komponent:** `ResetPasswordForm` (React, client:load)
-- **Funkcjonalność:**
-  - Formularz z nowym hasłem i potwierdzeniem
-  - Walidacja tokenu z URL (query params)
-  - Walidacja siły hasła
-  - Ustawienie nowego hasła przez Supabase Auth
-  - Przekierowanie do `/login` po sukcesie
-- **Middleware:** Token musi być validny (sprawdzane po stronie Supabase)
-
-**`/settings` - Strona Ustawień Konta**
+**`/settings` - Strona Ustawień Konta (MVP - minimalna wersja)**
 - **Plik:** `src/pages/settings.astro`
 - **Layout:** `Layout.astro` (z pełnym headerem)
 - **Główny komponent:** `SettingsView` (React, client:load)
@@ -73,7 +50,7 @@
 - **Nowe elementy:**
   - Przycisk "Zaloguj się" → `/login`
   - Przycisk "Zarejestruj się" → `/register`
-  - Jeśli użytkownik zalogowany → automatyczne przekierowanie do `/dashboard`
+  - Jeśli użytkownik zalogowany → automatyczne przekierowanie do `/generate`
 
 **`/dashboard` - Panel Główny**
 - **Zmiana:** Brak zmian strukturalnych
@@ -123,50 +100,14 @@
   - Email: format emaila
   - Password: min. 8 znaków, min. 1 wielka litera, min. 1 cyfra
   - Confirm Password: zgodność z password
-- **Wskaźnik Siły Hasła:**
-  - Komponent `PasswordStrengthIndicator` (weak/medium/strong)
-  - Kolor: czerwony/żółty/zielony
 - **Akcje:**
   - `handleSubmit()` - wywołuje `/api/auth/register` (POST)
-  - Sukces: komunikat o wysłaniu emaila weryfikacyjnego
+  - **MVP: Sukces = auto-login** i redirect do `/generate` (bez email verification)
   - Błąd: wyświetlenie komunikatu
 - **UI/UX:**
-  - Real-time walidacja podczas wpisywania
+  - Walidacja w czasie rzeczywistym (komunikaty błędów)
   - Toast notifications
   - Ikona "show/hide password"
-
-**`ForgotPasswordForm.tsx`**
-- **Lokalizacja:** `src/components/auth/ForgotPasswordForm.tsx`
-- **State Management:**
-  - `email: string`
-  - `isLoading: boolean`
-  - `isSubmitted: boolean` - czy email został wysłany
-  - `error: string | null`
-- **Walidacja:**
-  - Email: format emaila
-- **Akcje:**
-  - `handleSubmit()` - wywołuje `/api/auth/forgot-password` (POST)
-  - Po sukcesie: zmiana widoku na komunikat potwierdzający
-- **UI/UX:**
-  - Dwustanowy widok: formularz → komunikat sukcesu
-  - Możliwość ponownego wysłania po 60 sekundach
-
-**`ResetPasswordForm.tsx`**
-- **Lokalizacja:** `src/components/auth/ResetPasswordForm.tsx`
-- **State Management:**
-  - `password: string`
-  - `confirmPassword: string`
-  - `isLoading: boolean`
-  - `error: string | null`
-- **Walidacja:**
-  - Password: min. 8 znaków, min. 1 wielka litera, min. 1 cyfra
-  - Confirm Password: zgodność
-- **Token:**
-  - Pobierany z URL query params (Supabase przekazuje w linku)
-- **Akcje:**
-  - `handleSubmit()` - wywołuje `/api/auth/reset-password` (POST)
-  - Sukces: redirect do `/login` z komunikatem
-  - Błąd (np. wygasły token): komunikat z możliwością ponownej prośby
 
 **`ChangePasswordForm.tsx`**
 - **Lokalizacja:** `src/components/settings/ChangePasswordForm.tsx`
@@ -277,8 +218,7 @@ if (password !== confirmPassword) {
 
 **Login Errors:**
 - `INVALID_CREDENTIALS` → "Nieprawidłowy email lub hasło"
-- `EMAIL_NOT_CONFIRMED` → "Potwierdź swój adres email przed zalogowaniem"
-- `ACCOUNT_LOCKED` → "Konto zostało zablokowane. Skontaktuj się z pomocą techniczną"
+- `RATE_LIMIT` → "Zbyt wiele prób logowania. Spróbuj ponownie za chwilę"
 
 **Register Errors:**
 - `EMAIL_ALREADY_EXISTS` → "Użytkownik z tym adresem email już istnieje"
@@ -314,15 +254,13 @@ toast.info('Link resetujący został wysłany na Twój email');
 
 ### 1.4 Obsługa Najważniejszych Scenariuszy
 
-#### Scenariusz 1: Nowy Użytkownik Rejestruje Się
+#### Scenariusz 1: Nowy Użytkownik Rejestruje Się (MVP - bez email verification)
 1. Użytkownik wchodzi na `/register`
 2. Wypełnia formularz (email, hasło, potwierdzenie)
 3. Walidacja client-side w czasie rzeczywistym
 4. Submit → POST `/api/auth/register`
-5. Supabase wysyła email weryfikacyjny
-6. Komunikat: "Sprawdź swoją skrzynkę email i potwierdź adres"
-7. Użytkownik klika link w emailu → Supabase potwierdza
-8. Przekierowanie do `/login` z komunikatem sukcesu
+5. Supabase tworzy konto i automatycznie loguje użytkownika
+6. Redirect do `/generate` (użytkownik od razu zalogowany - zgodnie z PRD US-001)
 
 #### Scenariusz 2: Użytkownik Loguje Się
 1. Użytkownik wchodzi na `/login`
@@ -331,22 +269,11 @@ toast.info('Link resetujący został wysłany na Twój email');
 4. Supabase Auth weryfikuje credentials
 5. W przypadku sukcesu:
    - Sesja JWT zapisana w cookies
-   - Redirect do `/dashboard` (lub query param `redirect`)
+   - Redirect do `/generate` (widok generowania fiszek zgodnie z PRD US-002)
 6. W przypadku błędu:
    - Toast z komunikatem błędu
 
-#### Scenariusz 3: Użytkownik Zapomniał Hasła
-1. Użytkownik wchodzi na `/forgot-password`
-2. Wpisuje email
-3. Submit → POST `/api/auth/forgot-password`
-4. Supabase wysyła email z linkiem
-5. Komunikat: "Link resetujący został wysłany"
-6. Użytkownik klika link → przekierowanie do `/reset-password?token=...`
-7. Wpisuje nowe hasło
-8. Submit → POST `/api/auth/reset-password`
-9. Przekierowanie do `/login` z komunikatem sukcesu
-
-#### Scenariusz 4: Użytkownik Chce Zmienić Hasło
+#### Scenariusz 3: Użytkownik Chce Zmienić Hasło (zalogowany)
 1. Zalogowany użytkownik wchodzi na `/settings`
 2. Sekcja "Zmiana hasła"
 3. Wpisuje obecne hasło, nowe hasło, potwierdzenie
@@ -354,7 +281,7 @@ toast.info('Link resetujący został wysłany na Twój email');
 5. Supabase weryfikuje obecne hasło i ustawia nowe
 6. Toast sukcesu
 
-#### Scenariusz 5: Użytkownik Chce Usunąć Konto
+#### Scenariusz 4: Użytkownik Chce Usunąć Konto
 1. Zalogowany użytkownik wchodzi na `/settings`
 2. Sekcja "Usuwanie konta"
 3. Kliknięcie "Usuń konto" → Alert Dialog
@@ -363,7 +290,7 @@ toast.info('Link resetujący został wysłany na Twój email');
 6. Supabase usuwa użytkownika (cascade: fiszki, generacje)
 7. Wylogowanie i redirect do `/`
 
-#### Scenariusz 6: Niezalogowany Użytkownik Próbuje Dostać Się do Chronionej Strony
+#### Scenariusz 5: Niezalogowany Użytkownik Próbuje Dostać Się do Chronionej Strony
 1. Użytkownik wpisuje `/dashboard` w przeglądarce
 2. Middleware sprawdza sesję → brak sesji
 3. Redirect do `/login?redirect=/dashboard`
@@ -397,11 +324,11 @@ toast.info('Link resetujący został wysłany na Twój email');
       .regex(/[0-9]/, 'Hasło musi zawierać cyfrę'),
   });
   ```
-- **Logika:**
+- **Logika (MVP - bez email verification):**
   1. Walidacja danych wejściowych
-  2. Wywołanie `supabase.auth.signUp({ email, password })`
-  3. Supabase automatycznie wysyła email weryfikacyjny
-  4. Zwrócenie sukcesu (201) z komunikatem o weryfikacji
+  2. Wywołanie `supabase.auth.signUp({ email, password, options: { emailRedirectTo: null } })`
+  3. **Supabase tworzy konto i automatycznie tworzy sesję** (auto-login)
+  4. Zwrócenie sukcesu (201) z danymi użytkownika i sesją
 - **Obsługa Błędów:**
   - Email już istnieje → 409 CONFLICT
   - Słabe hasło → 422 UNPROCESSABLE_ENTITY
@@ -409,8 +336,11 @@ toast.info('Link resetujący został wysłany na Twój email');
 - **Response (Success):**
   ```typescript
   {
-    message: "Rejestracja pomyślna. Sprawdź email w celu weryfikacji konta.",
-    requiresEmailConfirmation: true
+    user: {
+      id: string;
+      email: string;
+    },
+    message: "Rejestracja pomyślna. Jesteś zalogowany."
   }
   ```
 
@@ -437,7 +367,6 @@ toast.info('Link resetujący został wysłany na Twój email');
   4. Zwrócenie danych użytkownika
 - **Obsługa Błędów:**
   - Nieprawidłowe credentials → 401 UNAUTHORIZED
-  - Email niepotwierdzony → 403 FORBIDDEN
   - Rate limit → 429 TOO_MANY_REQUESTS
 - **Response (Success):**
   ```typescript
@@ -445,9 +374,8 @@ toast.info('Link resetujący został wysłany na Twój email');
     user: {
       id: string;
       email: string;
-      emailConfirmed: boolean;
     },
-    redirectTo: string; // z query params lub default '/dashboard'
+    redirectTo: string; // z query params lub default '/generate'
   }
   ```
 
@@ -464,54 +392,6 @@ toast.info('Link resetujący został wysłany na Twój email');
     message: "Wylogowano pomyślnie"
   }
   ```
-
-**POST `/api/auth/forgot-password`**
-- **Plik:** `src/pages/api/auth/forgot-password.ts`
-- **Request Body:**
-  ```typescript
-  {
-    email: string;
-  }
-  ```
-- **Logika:**
-  1. Walidacja emaila
-  2. Wywołanie `supabase.auth.resetPasswordForEmail(email, { redirectTo: 'https://app.com/reset-password' })`
-  3. Supabase wysyła email z tokenem resetującym
-  4. Zwrócenie sukcesu (nawet jeśli email nie istnieje - security best practice)
-- **Response:**
-  ```typescript
-  {
-    message: "Jeśli konto z tym emailem istnieje, został wysłany link resetujący"
-  }
-  ```
-
-**POST `/api/auth/reset-password`**
-- **Plik:** `src/pages/api/auth/reset-password.ts`
-- **Request Body:**
-  ```typescript
-  {
-    token: string;      // z URL query params
-    password: string;   // nowe hasło
-  }
-  ```
-- **Walidacja:**
-  ```typescript
-  const resetPasswordSchema = z.object({
-    token: z.string().min(1),
-    password: z.string()
-      .min(8)
-      .regex(/[A-Z]/)
-      .regex(/[0-9]/),
-  });
-  ```
-- **Logika:**
-  1. Walidacja tokenu i hasła
-  2. Wywołanie `supabase.auth.updateUser({ password })`
-     - Supabase automatycznie weryfikuje token z sesji
-  3. Zwrócenie sukcesu
-- **Obsługa Błędów:**
-  - Wygasły token → 401 UNAUTHORIZED
-  - Słabe hasło → 422 UNPROCESSABLE_ENTITY
 
 **POST `/api/auth/change-password`**
 - **Plik:** `src/pages/api/auth/change-password.ts`
@@ -618,21 +498,6 @@ export const loginSchema = z.object({
 });
 
 /**
- * Schema dla forgot password
- */
-export const forgotPasswordSchema = z.object({
-  email: z.string().email('Nieprawidłowy format adresu email'),
-});
-
-/**
- * Schema dla reset password
- */
-export const resetPasswordSchema = z.object({
-  token: z.string().min(1, 'Token jest wymagany'),
-  password: passwordValidation,
-});
-
-/**
  * Schema dla change password
  */
 export const changePasswordSchema = z.object({
@@ -645,8 +510,6 @@ export const changePasswordSchema = z.object({
  */
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
-export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
-export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 ```
 
@@ -719,14 +582,6 @@ export function mapSupabaseAuthError(error: AuthError): {
     return {
       code: 'UNAUTHORIZED',
       message: 'Nieprawidłowy email lub hasło',
-    };
-  }
-
-  // Email not confirmed
-  if (error.message.includes('Email not confirmed')) {
-    return {
-      code: 'FORBIDDEN',
-      message: 'Potwierdź swój adres email przed zalogowaniem',
     };
   }
 
@@ -810,7 +665,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const url = new URL(request.url);
   
   // Publiczne ścieżki (dostępne bez logowania)
-  const publicPaths = ['/', '/login', '/register', '/forgot-password', '/reset-password'];
+  const publicPaths = ['/', '/login', '/register'];
   const isPublicPath = publicPaths.includes(url.pathname);
   
   // Auth API endpoints są zawsze publiczne
@@ -833,7 +688,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     
     // Jeśli zalogowany próbuje wejść na /login lub /register
     if (url.pathname === '/login' || url.pathname === '/register') {
-      return redirect('/dashboard');
+      return redirect('/generate');
     }
   } else {
     // Użytkownik NIE zalogowany
@@ -1028,32 +883,14 @@ PUBLIC_SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ```
 
-### 3.2 Konfiguracja Email Templates (Supabase Dashboard)
+### 3.2 Konfiguracja Supabase Auth (MVP - minimalna)
 
-**Email Weryfikacyjny (Confirm Signup):**
-- Template w Supabase Dashboard → Authentication → Email Templates
-- URL Redirect: `https://app.com/login?confirmed=true`
-- Treść:
-  ```html
-  <h2>Potwierdź swój adres email</h2>
-  <p>Kliknij poniższy link, aby aktywować konto w 10x cards:</p>
-  <a href="{{ .ConfirmationURL }}">Potwierdź email</a>
-  ```
+**Ustawienia w Supabase Dashboard → Authentication → Settings:**
+- **Email Confirmation:** WYŁĄCZONE (dla MVP)
+- **Minimum password length:** 8
+- **Auto confirm users:** WŁĄCZONE (dla MVP - użytkownicy od razu potwierdzeni)
 
-**Email Resetowania Hasła (Reset Password):**
-- URL Redirect: `https://app.com/reset-password`
-- Token przekazywany w query params (automatycznie przez Supabase)
-- Treść:
-  ```html
-  <h2>Zresetuj hasło</h2>
-  <p>Kliknij poniższy link, aby ustawić nowe hasło:</p>
-  <a href="{{ .ConfirmationURL }}">Resetuj hasło</a>
-  <p>Link wygasa po 1 godzinie.</p>
-  ```
-
-**Email Change Email (opcjonalnie):**
-- Gdy użytkownik zmienia adres email
-- Wymaga potwierdzenia zarówno starego jak i nowego emaila
+**MVP: Email templates NIE SĄ POTRZEBNE** (bez email verification i forgot password)
 
 ### 3.3 Row Level Security (RLS) - Włączenie
 
@@ -1278,17 +1115,14 @@ export async function DELETE({ locals }: APIContext) {
 
 ### 3.6 Testing Strategy
 
-#### 3.6.1 Manual Testing Checklist
-- [ ] Rejestracja nowego użytkownika → email weryfikacyjny
-- [ ] Potwierdzenie emaila → możliwość logowania
-- [ ] Logowanie z poprawnymi credentials → redirect do dashboard
+#### 3.6.1 Manual Testing Checklist (MVP)
+- [ ] Rejestracja nowego użytkownika → auto-login i redirect do /generate
+- [ ] Logowanie z poprawnymi credentials → redirect do /generate
 - [ ] Logowanie z błędnymi credentials → error message
 - [ ] Próba dostępu do chronionej strony bez logowania → redirect /login
 - [ ] Wylogowanie → redirect /login, brak dostępu do chronionych stron
-- [ ] Forgot password → email z linkiem
-- [ ] Reset password → nowe hasło działa
-- [ ] Change password w settings → stare hasło nie działa
-- [ ] Delete account → dane usunięte, wylogowanie
+- [ ] Change password w settings → stare hasło przestaje działać, nowe działa
+- [ ] Delete account → dane usunięte, wylogowanie, redirect do /
 
 #### 3.6.2 E2E Tests (opcjonalnie - Playwright)
 ```typescript
@@ -1320,70 +1154,52 @@ test('user can register and login', async ({ page }) => {
 
 ### Faza 1: Backend i Database (Priority: Critical)
 1. ✅ Utworzenie migracji SQL: `20251014000000_enable_rls_with_auth.sql`
-2. ✅ Utworzenie auth schemas: `src/lib/validation/auth.schemas.ts`
+2. ✅ Utworzenie auth schemas: `src/lib/validation/auth.schemas.ts` (tylko register, login, change-password)
 3. ✅ Utworzenie auth error mapper: `src/lib/utils/auth-errors.ts`
-4. ✅ Implementacja API endpoints:
-   - `src/pages/api/auth/register.ts`
+4. ✅ Implementacja API endpoints (MVP):
+   - `src/pages/api/auth/register.ts` (auto-login bez email verification)
    - `src/pages/api/auth/login.ts`
    - `src/pages/api/auth/logout.ts`
-   - `src/pages/api/auth/forgot-password.ts`
-   - `src/pages/api/auth/reset-password.ts`
    - `src/pages/api/auth/change-password.ts`
    - `src/pages/api/auth/delete-account.ts`
 5. ✅ Aktualizacja middleware: włączenie auth protection
 6. ✅ Usunięcie PLACEHOLDER_USER_ID z istniejących API endpoints
 
 ### Faza 2: Frontend - Strony i Formularze (Priority: Critical)
-7. ✅ Utworzenie MinimalLayout (jeśli nie istnieje) lub użycie istniejącego
-8. ✅ Utworzenie stron Astro:
+7. ✅ Utworzenie stron Astro (MVP - używamy Layout.astro):
    - `src/pages/login.astro`
    - `src/pages/register.astro`
-   - `src/pages/forgot-password.astro`
-   - `src/pages/reset-password.astro`
    - `src/pages/settings.astro`
-9. ✅ Utworzenie komponentów React:
+8. ✅ Utworzenie komponentów React (MVP):
    - `src/components/auth/LoginForm.tsx`
-   - `src/components/auth/RegisterForm.tsx`
-   - `src/components/auth/ForgotPasswordForm.tsx`
-   - `src/components/auth/ResetPasswordForm.tsx`
-   - `src/components/auth/PasswordStrengthIndicator.tsx`
-10. ✅ Utworzenie komponentów Settings:
-    - `src/components/settings/SettingsView.tsx`
+   - `src/components/auth/RegisterForm.tsx` (bez password strength indicator)
+9. ✅ Utworzenie komponentów Settings (MVP):
+    - `src/components/settings/SettingsView.tsx` (prosty panel)
     - `src/components/settings/ChangePasswordForm.tsx`
     - `src/components/settings/DeleteAccountSection.tsx`
 
 ### Faza 3: UX i Integracja (Priority: High)
-11. ✅ Aktualizacja `index.astro`: dodanie CTA buttons
-12. ✅ Aktualizacja `DashboardHeader.tsx`: implementacja logout
-13. ✅ Dodanie linku "Ustawienia" do menu użytkownika
-14. ✅ Testowanie flow: register → confirm → login → logout
-15. ✅ Testowanie flow: forgot password → reset → login
-16. ✅ Testowanie flow: change password w settings
-17. ✅ Testowanie flow: delete account
+10. ✅ Aktualizacja `index.astro`: dodanie CTA buttons (login/register)
+11. ✅ Aktualizacja `DashboardHeader.tsx`: implementacja logout
+12. ✅ Dodanie linku "Ustawienia" do menu użytkownika
+13. ✅ Testowanie flow: register → auto-login → redirect /generate
+14. ✅ Testowanie flow: login → redirect /generate
+15. ✅ Testowanie flow: change password w settings
+16. ✅ Testowanie flow: delete account
 
 ### Faza 4: Supabase Configuration (Priority: High)
-18. ✅ Konfiguracja Email Templates w Supabase Dashboard:
-    - Confirm Signup template
-    - Reset Password template
-19. ✅ Konfiguracja Redirect URLs w Supabase:
-    - Allowed redirect URLs: `https://app.com/*`
-20. ✅ Konfiguracja Auth settings:
-    - Email confirmation required: ON
+17. ✅ Konfiguracja Auth settings w Supabase Dashboard:
+    - Email confirmation: OFF (auto-confirm users)
     - Minimum password length: 8
-21. ✅ Uruchomienie migracji RLS: `supabase db push`
+18. ✅ Uruchomienie migracji RLS: `supabase db push`
 
-### Faza 5: Security i Compliance (Priority: Medium)
-22. ✅ Weryfikacja RLS policies: test jako anon i authenticated
-23. ✅ Dodanie RODO checkbox w RegisterForm
-24. ✅ Utworzenie strony `/privacy-policy` (statyczna)
-25. ✅ Utworzenie strony `/terms-of-service` (statyczna)
-26. ✅ Security audit: sprawdzenie OWASP top 10
+### Faza 5: Security (Priority: Medium)
+19. ✅ Weryfikacja RLS policies: test jako anon i authenticated
+20. ✅ Security audit: sprawdzenie podstawowych podatności
 
-### Faza 6: Testing i Documentation (Priority: Low)
-27. ✅ Manual testing wszystkich flows
-28. ✅ E2E tests (opcjonalnie)
-29. ✅ Aktualizacja dokumentacji PRD
-30. ✅ Utworzenie User Guide (jak korzystać z auth)
+### Faza 6: Testing (Priority: Low)
+21. ✅ Manual testing wszystkich flows (checklist)
+22. ✅ E2E tests (opcjonalnie - dla przyszłości)
 
 ---
 
@@ -1391,40 +1207,37 @@ test('user can register and login', async ({ page }) => {
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                         FRONTEND                            │
+│                    FRONTEND (MVP)                           │
 │                                                             │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │ /login       │  │ /register    │  │ /forgot-pwd  │     │
-│  │ LoginForm    │  │ RegisterForm │  │ ForgotPwdForm│     │
+│  │ /login       │  │ /register    │  │ /settings    │     │
+│  │ LoginForm    │  │ RegisterForm │  │ ChangePassword│    │
+│  │              │  │ (auto-login) │  │ DeleteAccount │    │
 │  └──────────────┘  └──────────────┘  └──────────────┘     │
 │                                                             │
-│  ┌──────────────┐  ┌──────────────────────────────────┐   │
-│  │ /reset-pwd   │  │ /settings                        │   │
-│  │ ResetPwdForm │  │ ChangePasswordForm               │   │
-│  └──────────────┘  │ DeleteAccountSection             │   │
-│                    └──────────────────────────────────┘   │
-│                                                             │
 │  ┌─────────────────────────────────────────────────────┐  │
-│  │ /dashboard (+ inne protected routes)                │  │
-│  │ DashboardHeader → Logout Button                     │  │
+│  │ /generate, /dashboard, /flashcards, /study          │  │
+│  │ (protected routes)                                  │  │
+│  │ DashboardHeader → Logout Button, Settings Link     │  │
 │  └─────────────────────────────────────────────────────┘  │
 └─────────────────────────────────────────────────────────────┘
                               ↓ HTTP Requests
 ┌─────────────────────────────────────────────────────────────┐
-│                    ASTRO MIDDLEWARE                         │
+│                    ASTRO MIDDLEWARE (MVP)                   │
 │                                                             │
 │  1. Pobierz session z Supabase (JWT z cookies)             │
 │  2. Jeśli authenticated → locals.user = user               │
 │  3. Jeśli not authenticated + protected route → /login     │
-│  4. Jeśli authenticated + /login → /dashboard              │
+│  4. Jeśli authenticated + /login|/register → /generate     │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
-│                       API ENDPOINTS                         │
+│                   API ENDPOINTS (MVP)                       │
 │                                                             │
-│  POST /api/auth/register        POST /api/auth/login       │
-│  POST /api/auth/logout          POST /api/auth/forgot-pwd  │
-│  POST /api/auth/reset-pwd       POST /api/auth/change-pwd  │
+│  POST /api/auth/register (auto-login)                      │
+│  POST /api/auth/login                                      │
+│  POST /api/auth/logout                                     │
+│  POST /api/auth/change-password                            │
 │  DELETE /api/auth/delete-account                           │
 │                                                             │
 │  GET/POST /api/flashcards/*     (authenticated)            │
@@ -1432,17 +1245,16 @@ test('user can register and login', async ({ page }) => {
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
-│                      SUPABASE AUTH                          │
+│                  SUPABASE AUTH (MVP)                        │
 │                                                             │
-│  • signUp({ email, password })                             │
+│  • signUp({ email, password }) - auto-confirm              │
 │  • signInWithPassword({ email, password })                 │
 │  • signOut()                                               │
-│  • resetPasswordForEmail(email)                            │
-│  • updateUser({ password })                                │
+│  • updateUser({ password }) - change password              │
 │  • admin.deleteUser(userId)                                │
 │                                                             │
 │  → JWT Session Management (auto refresh)                   │
-│  → Email Templates (confirm, reset)                        │
+│  → Auto-confirm users (bez email verification)             │
 │  → Rate Limiting (10 req/min)                              │
 └─────────────────────────────────────────────────────────────┘
                               ↓
@@ -1474,30 +1286,23 @@ test('user can register and login', async ({ page }) => {
 
 ## 6. KLUCZOWE PLIKI DO UTWORZENIA/MODYFIKACJI
 
-### Nowe Pliki (do utworzenia):
+### Nowe Pliki (do utworzenia) - MVP:
 ```
 src/pages/
   ├─ login.astro                           ✅ NEW
   ├─ register.astro                        ✅ NEW
-  ├─ forgot-password.astro                 ✅ NEW
-  ├─ reset-password.astro                  ✅ NEW
   └─ settings.astro                        ✅ NEW
 
 src/pages/api/auth/
-  ├─ register.ts                           ✅ NEW
+  ├─ register.ts                           ✅ NEW (auto-login)
   ├─ login.ts                              ✅ NEW
   ├─ logout.ts                             ✅ NEW
-  ├─ forgot-password.ts                    ✅ NEW
-  ├─ reset-password.ts                     ✅ NEW
   ├─ change-password.ts                    ✅ NEW
   └─ delete-account.ts                     ✅ NEW
 
 src/components/auth/
   ├─ LoginForm.tsx                         ✅ NEW
   ├─ RegisterForm.tsx                      ✅ NEW
-  ├─ ForgotPasswordForm.tsx                ✅ NEW
-  ├─ ResetPasswordForm.tsx                 ✅ NEW
-  ├─ PasswordStrengthIndicator.tsx         ✅ NEW
   └─ index.ts                              ✅ NEW
 
 src/components/settings/
@@ -1507,7 +1312,7 @@ src/components/settings/
   └─ index.ts                              ✅ NEW
 
 src/lib/validation/
-  └─ auth.schemas.ts                       ✅ NEW
+  └─ auth.schemas.ts                       ✅ NEW (3 schemas: register, login, change-password)
 
 src/lib/utils/
   └─ auth-errors.ts                        ✅ NEW
@@ -1561,30 +1366,29 @@ OPENROUTER_API_KEY=sk-xxx
 
 ## 8. PODSUMOWANIE
 
-### Główne Punkty Architektoniczne:
+### Główne Punkty Architektoniczne (MVP):
 
 1. **Routing i Nawigacja:**
-   - 5 nowych stron publicznych: login, register, forgot-password, reset-password, settings
+   - **3 nowe strony:** login, register, settings
    - Middleware wymusza autoryzację dla wszystkich protected routes
-   - Redirect flow z query params dla lepszego UX
+   - Redirect do `/generate` po logowaniu/rejestracji (zgodnie z PRD US-002)
 
 2. **Komponenty Frontend:**
-   - Wszystkie formularze w React (interaktywność)
+   - Minimalne formularze w React: LoginForm, RegisterForm
    - Wykorzystanie shadcn/ui dla spójności
-   - Real-time walidacja i feedback
+   - Podstawowa walidacja (bez wizualnych wskaźników siły hasła)
    - Toast notifications dla komunikatów
 
 3. **API Backend:**
-   - 7 nowych endpointów w `/api/auth/*`
-   - Walidacja z Zod schemas
+   - **5 endpointów** w `/api/auth/*`: register, login, logout, change-password, delete-account
+   - Walidacja z Zod schemas (3 schemas)
    - Mapowanie błędów Supabase na przyjazne komunikaty
    - Usunięcie mock user - pełna autoryzacja
 
-4. **Supabase Auth:**
-   - Pełna integracja z Supabase Auth
+4. **Supabase Auth (MVP):**
+   - Rejestracja z **auto-login** (bez email verification - zgodnie z PRD US-001)
    - JWT sessions w HTTP-only cookies
-   - Email confirmation flow
-   - Password reset flow
+   - **Bez forgot/reset password** (można dodać później)
    - Admin operations (delete user)
 
 5. **Security:**
@@ -1592,7 +1396,7 @@ OPENROUTER_API_KEY=sk-xxx
    - CASCADE delete dla user data
    - Rate limiting (Supabase)
    - CSRF/XSS protection
-   - RODO compliance
+   - **Bez RODO checkboxów** w MVP (można dodać później)
 
 6. **Database:**
    - Migracja włączająca RLS
@@ -1600,24 +1404,35 @@ OPENROUTER_API_KEY=sk-xxx
    - Constraints NOT NULL dla user_id
    - Indeksy dla wydajności
 
-### Status Gotowości:
-- ✅ Architektura w pełni zaprojektowana
-- ✅ Wszystkie komponenty zidentyfikowane
+### Status Gotowości (MVP):
+- ✅ Architektura MVP w pełni zaprojektowana
+- ✅ Wszystkie komponenty zidentyfikowane (minimalna implementacja)
 - ✅ Security considerations uwzględnione
-- ✅ RODO compliance zapewnione
-- ✅ Plan implementacji określony
+- ✅ Plan implementacji określony (uproszczony dla MVP)
 - ✅ Testing strategy zdefiniowana
+- ✅ **Zgodność z PRD US-001 do US-009**
 
 ### Następne Kroki dla Developera:
 1. Przeczytać tę specyfikację w całości
-2. Skonfigurować Supabase Dashboard (email templates, redirect URLs)
+2. Skonfigurować Supabase Dashboard:
+   - **Email confirmation: OFF**
+   - **Auto-confirm users: ON**
+   - Minimum password length: 8
 3. Implementować według kolejności w "Plan Implementacji"
-4. Testować każdy flow po implementacji
+4. Testować każdy flow po implementacji (checklist)
 5. Deploy na production z odpowiednimi zmiennymi środowiskowymi
+
+### Różnice MVP vs Full (do dodania później):
+- ❌ Email verification (można włączyć później)
+- ❌ Forgot/reset password flow (można dodać później)
+- ❌ Password strength indicator (nice-to-have)
+- ❌ RODO checkboxy i privacy pages (można dodać przed production)
+- ❌ Advanced security features (2FA, etc.)
 
 ---
 
 **Koniec Specyfikacji Technicznej**
 
-*Dokument wersja 1.0 - 2025-01-14*
+*Dokument wersja 2.0 (MVP) - 2025-10-13*
+*Zaktualizowany zgodnie z PRD - minimalna implementacja dla MVP*
 
