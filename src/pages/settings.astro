@@ -1,0 +1,36 @@
+---
+/**
+ * Strona Ustawień Konta
+ * 
+ * Chroniony widok umożliwiający użytkownikom zarządzanie kontem:
+ * - Zmiana hasła
+ * - Usuwanie konta
+ * - Wyświetlanie informacji o koncie
+ * 
+ * Middleware: Wymaga autoryzacji - przekierowanie do /login jeśli niezalogowany
+ */
+
+import Layout from '../layouts/Layout.astro';
+import { SettingsView } from '../components/settings/SettingsView';
+
+// TODO: Po wdrożeniu auth middleware
+// const user = Astro.locals.user;
+// if (!user) {
+//   const redirectTo = `/login?redirect=${encodeURIComponent(Astro.url.pathname)}`;
+//   return Astro.redirect(redirectTo);
+// }
+
+// Tymczasowy mock user dla development
+const mockUser = {
+  id: '00000000-0000-0000-0000-000000000000',
+  email: 'user@example.com',
+  username: 'Test User',
+};
+
+const user = Astro.locals.user || mockUser;
+---
+
+<Layout title="Ustawienia - 10x cards">
+  <SettingsView client:load user={user} />
+</Layout>
+

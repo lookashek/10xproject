@@ -2,90 +2,133 @@
   class="relative w-full mx-auto min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 p-4 sm:p-8"
 >
   <div
-    class="relative max-w-4xl mx-auto backdrop-blur-xl bg-gradient-to-b from-white/10 to-white/5 rounded-2xl shadow-2xl p-8 text-white border border-white/10"
+    class="relative max-w-6xl mx-auto pt-12 pb-20 text-white"
   >
-    <div class="space-y-8">
-      <div class="text-center">
+    <!-- Hero Section -->
+    <div class="text-center space-y-6 mb-16">
+      <div class="inline-block">
         <h1
-          class="text-6xl font-bold mb-4 bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 text-transparent bg-clip-text drop-shadow-lg"
+          class="text-6xl sm:text-7xl font-bold mb-4 bg-gradient-to-r from-blue-200 via-purple-200 to-pink-200 text-transparent bg-clip-text drop-shadow-lg"
         >
-          Witaj w 10xDevs Astro Starter!
+          10x cards
         </h1>
-        <p class="text-xl text-blue-100/90 drop-shadow-md">
-          Ten projekt został zbudowany w oparciu o nowoczesny stack technologiczny:
+        <div class="h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full"></div>
+      </div>
+      <p class="text-2xl sm:text-3xl text-blue-100/90 font-light max-w-3xl mx-auto drop-shadow-md">
+        Ucz się szybciej dzięki fiszkom generowanym przez AI
+      </p>
+      <p class="text-lg text-blue-100/70 max-w-2xl mx-auto">
+        Wklej tekst, a sztuczna inteligencja stworzy dla Ciebie gotowe fiszki edukacyjne. 
+        Nauka nigdy nie była prostsza.
+      </p>
+    </div>
+
+    <!-- Features Grid -->
+    <div class="grid md:grid-cols-3 gap-6 mb-16 max-w-5xl mx-auto">
+      <!-- Feature 1: AI Generation -->
+      <div class="group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105">
+        <div class="bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl p-3 w-fit mb-4">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200">
+          Generowanie AI
+        </h3>
+        <p class="text-blue-100/70">
+          Wklej fragment podręcznika, artykuł lub notatki - AI automatycznie wygeneruje gotowe fiszki do nauki
         </p>
       </div>
 
-      <div class="flex flex-col gap-6 max-w-2xl mx-auto">
-        <div class="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
-          <h2
-            class="text-2xl font-semibold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200"
-          >
-            Core
-          </h2>
-          <ul class="space-y-3">
-            <li class="flex items-center space-x-3">
-              <span class="font-mono bg-blue-900/50 px-3 py-1.5 rounded-lg text-blue-200 shadow-sm">Astro v5.5.5</span>
-              <span class="text-blue-100/90">- Metaframework do aplikacji webowych</span>
-            </li>
-            <li class="flex items-center space-x-3">
-              <span class="font-mono bg-blue-900/50 px-3 py-1.5 rounded-lg text-blue-200 shadow-sm">React v19</span>
-              <span class="text-blue-100/90">- Biblioteka UI do komponentów interaktywnych</span>
-            </li>
-            <li class="flex items-center space-x-3">
-              <span class="font-mono bg-blue-900/50 px-3 py-1.5 rounded-lg text-blue-200 shadow-sm">TypeScript</span>
-              <span class="text-blue-100/90">- Typowanie statyczne</span>
-            </li>
-          </ul>
+      <!-- Feature 2: Smart Learning -->
+      <div class="group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105">
+        <div class="bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl p-3 w-fit mb-4">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+          </svg>
         </div>
-
-        <div class="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
-          <h2
-            class="text-2xl font-semibold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200"
-          >
-            Stylowanie
-          </h2>
-          <ul class="space-y-3">
-            <li class="flex items-center space-x-3">
-              <span class="font-mono bg-blue-900/50 px-3 py-1.5 rounded-lg text-blue-200 shadow-sm"
-                >Tailwind CSS v4</span
-              >
-              <span class="text-blue-100/90">- Utility-first CSS framework</span>
-            </li>
-          </ul>
-        </div>
-
-        <div class="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
-          <h2
-            class="text-2xl font-semibold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200"
-          >
-            Statyczna analiza kodu
-          </h2>
-          <ul class="space-y-3">
-            <li class="flex items-center space-x-3">
-              <span class="font-mono bg-blue-900/50 px-3 py-1.5 rounded-lg text-blue-200 shadow-sm">ESLint v9</span>
-              <span class="text-blue-100/90">- Lintowanie kodu</span>
-            </li>
-            <li class="flex items-center space-x-3">
-              <span class="font-mono bg-blue-900/50 px-3 py-1.5 rounded-lg text-blue-200 shadow-sm">Prettier</span>
-              <span class="text-blue-100/90">- Formatowanie kodu</span>
-            </li>
-            <li class="flex items-center space-x-3">
-              <span class="font-mono bg-blue-900/50 px-3 py-1.5 rounded-lg text-blue-200 shadow-sm"
-                >Husky i Lint-staged</span
-              >
-              <span class="text-blue-100/90">- Automatyczna analiza kodu przed commitowaniem</span>
-            </li>
-          </ul>
-        </div>
+        <h3 class="text-xl font-semibold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-purple-200 to-pink-200">
+          Inteligentna nauka
+        </h3>
+        <p class="text-blue-100/70">
+          Algorytm powtórek dobiera fiszki w optymalnych momentach, maksymalizując Twoją efektywność nauki
+        </p>
       </div>
 
-      <p class="text-lg text-center text-blue-100/90 mt-8 leading-relaxed">
-        Starter zawiera wszystko, czego potrzebujesz do rozpoczęcia tworzenia <br class="hidden sm:block" />
-        <span class="font-semibold bg-gradient-to-r from-blue-200 to-purple-200 text-transparent bg-clip-text"
-          >nowoczesnych aplikacji webowych!</span
-        >
+      <!-- Feature 3: Progress Tracking -->
+      <div class="group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105">
+        <div class="bg-gradient-to-br from-pink-500 to-red-500 rounded-xl p-3 w-fit mb-4">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-pink-200 to-red-200">
+          Śledzenie postępów
+        </h3>
+        <p class="text-blue-100/70">
+          Monitoruj swoje postępy w nauce i zobacz, jak szybko przyswajas nowy materiał
+        </p>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <div class="max-w-4xl mx-auto mb-16">
+      <h2 class="text-3xl font-bold text-center mb-10 text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200">
+        Jak to działa?
+      </h2>
+      <div class="space-y-6">
+        <div class="flex gap-4 items-start">
+          <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center font-bold text-lg">
+            1
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold mb-1">Wklej tekst</h3>
+            <p class="text-blue-100/70">Skopiuj fragment podręcznika, artykuł lub swoje notatki</p>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center font-bold text-lg">
+            2
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold mb-1">AI generuje fiszki</h3>
+            <p class="text-blue-100/70">Sztuczna inteligencja analizuje tekst i tworzy pytania z odpowiedziami</p>
+          </div>
+        </div>
+        <div class="flex gap-4 items-start">
+          <div class="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-red-500 flex items-center justify-center font-bold text-lg">
+            3
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold mb-1">Rozpocznij naukę</h3>
+            <p class="text-blue-100/70">Przeglądaj, edytuj i zapisz fiszki, a następnie ucz się w optymalnym tempie</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="text-center backdrop-blur-xl bg-gradient-to-b from-white/10 to-white/5 rounded-2xl shadow-2xl p-12 border border-white/10 max-w-3xl mx-auto">
+      <h2 class="text-3xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-purple-200">
+        Zacznij naukę już dziś
+      </h2>
+      <p class="text-blue-100/80 mb-8">
+        Dołącz do tysięcy użytkowników, którzy uczą się efektywniej dzięki 10x cards
       </p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a
+          href="/register"
+          class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-2xl transition-all duration-200 text-center text-lg"
+        >
+          Zarejestruj się za darmo
+        </a>
+        <a
+          href="/login"
+          class="w-full sm:w-auto px-10 py-4 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold rounded-xl border-2 border-white/20 hover:border-white/30 shadow-lg hover:shadow-2xl transition-all duration-200 text-center text-lg"
+        >
+          Mam już konto
+        </a>
+      </div>
     </div>
   </div>
 </div>

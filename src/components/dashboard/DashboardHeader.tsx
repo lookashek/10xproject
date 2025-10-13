@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Moon, Sun, LogOut } from 'lucide-react';
+import { Moon, Sun, LogOut, Settings } from 'lucide-react';
 import { useTheme } from '@/lib/context/ThemeContext';
 import type { UserProfile } from '@/types';
 
@@ -86,6 +86,12 @@ export function DashboardHeader({ user, onLogout }: DashboardHeaderProps) {
               </div>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <a href="/settings">
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Ustawienia konta</span>
+              </a>
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={onLogout} className="cursor-pointer">
               <LogOut className="mr-2 h-4 w-4" />
               <span>Wyloguj się</span>
