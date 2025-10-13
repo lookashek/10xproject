@@ -21,17 +21,12 @@ import {
   notFound,
   conflict,
   unprocessableEntity,
+  unauthorized,
   internalServerError,
   successResponse,
 } from '../../../lib/utils/errors';
 
 export const prerender = false;
-
-/**
- * Placeholder user ID for MVP (before auth is implemented)
- * Used as fallback when user is not authenticated
- */
-const PLACEHOLDER_USER_ID = '00000000-0000-0000-0000-000000000000';
 
 /**
  * GET /api/flashcards/{id}
@@ -61,8 +56,11 @@ export async function GET({ params, locals }: APIContext) {
 
     const flashcardId = validation.data;
 
-    // Get user ID from auth context (fallback to placeholder for MVP)
-    const userId = locals.user?.id || PLACEHOLDER_USER_ID;
+    // Get user ID from auth context (middleware ensures user is authenticated)
+    const userId = locals.user?.id;
+    if (!userId) {
+      return unauthorized('Wymagane zalogowanie');
+    }
 
     // Fetch flashcard
     const flashcard = await getFlashcardById(
@@ -139,8 +137,11 @@ export async function PUT({ params, request, locals }: APIContext) {
 
     const command = bodyValidation.data;
 
-    // Get user ID from auth context (fallback to placeholder for MVP)
-    const userId = locals.user?.id || PLACEHOLDER_USER_ID;
+    // Get user ID from auth context (middleware ensures user is authenticated)
+    const userId = locals.user?.id;
+    if (!userId) {
+      return unauthorized('Wymagane zalogowanie');
+    }
 
     // Update flashcard
     try {
@@ -204,8 +205,11 @@ export async function DELETE({ params, locals }: APIContext) {
 
     const flashcardId = validation.data;
 
-    // Get user ID from auth context (fallback to placeholder for MVP)
-    const userId = locals.user?.id || PLACEHOLDER_USER_ID;
+    // Get user ID from auth context (middleware ensures user is authenticated)
+    const userId = locals.user?.id;
+    if (!userId) {
+      return unauthorized('Wymagane zalogowanie');
+    }
 
     // Delete flashcard
     try {

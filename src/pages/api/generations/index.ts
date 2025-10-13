@@ -19,18 +19,13 @@ import {
   badRequest,
   conflict,
   unprocessableEntity,
+  unauthorized,
   internalServerError,
   serviceUnavailable,
   successResponse,
 } from '../../../lib/utils/errors';
 
 export const prerender = false;
-
-/**
- * Placeholder user ID for MVP (before auth is implemented)
- * Used as fallback when user is not authenticated
- */
-const PLACEHOLDER_USER_ID = '00000000-0000-0000-0000-000000000000';
 
 /**
  * Default model for flashcard generation
@@ -61,8 +56,11 @@ export async function GET({ request, locals }: APIContext) {
 
     const query = validation.data;
 
-    // Get user ID from auth context (fallback to placeholder for MVP)
-    const userId = locals.user?.id || PLACEHOLDER_USER_ID;
+    // Get user ID from auth context (middleware ensures user is authenticated)
+    const userId = locals.user?.id;
+    if (!userId) {
+      return unauthorized('Wymagane zalogowanie');
+    }
 
     // Fetch generations from database
     const result = await listGenerations(locals.supabase, userId, query);
@@ -118,8 +116,11 @@ export async function POST({ request, locals }: APIContext) {
 
     const { source_text } = validation.data;
 
-    // Get user ID from auth context (fallback to placeholder for MVP)
-    const userId = locals.user?.id || PLACEHOLDER_USER_ID;
+    // Get user ID from auth context (middleware ensures user is authenticated)
+    const userId = locals.user?.id;
+    if (!userId) {
+      return unauthorized('Wymagane zalogowanie');
+    }
 
     // Calculate hash of source text
     const sourceTextHash = await calculateSHA256(source_text);

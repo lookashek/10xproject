@@ -11,9 +11,31 @@ const supabaseAnonKey = import.meta.env.SUPABASE_KEY || import.meta.env.PUBLIC_S
 const supabaseUrlClient = import.meta.env.PUBLIC_SUPABASE_URL;
 const supabaseAnonKeyClient = import.meta.env.PUBLIC_SUPABASE_KEY;
 
-// Klient uniwersalny - działa po stronie serwera i klienta
+/**
+ * Supabase client z konfiguracją auth
+ * Używany zarówno po stronie serwera (middleware, API) jak i klienta (React)
+ */
 export const supabaseClient = createClient<Database>(
   supabaseUrl || supabaseUrlClient, 
-  supabaseAnonKey || supabaseAnonKeyClient
+  supabaseAnonKey || supabaseAnonKeyClient,
+  {
+    auth: {
+      // Automatyczne zarządzanie sesjami
+      autoRefreshToken: true,
+      
+      // Persist sesji w localStorage (dla klienta) i cookies (dla serwera)
+      persistSession: true,
+      
+      // Wykrywanie zmian sesji w URL (dla email verification - przyszłość)
+      detectSessionInUrl: true,
+      
+      // Storage dla tokenów - localStorage w browser, undefined w SSR
+      storage: typeof window !== 'undefined' 
+        ? window.localStorage 
+        : undefined,
+    }
+  }
 );
+
+export type SupabaseClient = typeof supabaseClient;
 

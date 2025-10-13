@@ -36,29 +36,28 @@ export function LoginForm() {
     setIsLoading(true);
 
     try {
-      // TODO: Implementacja wywołania API
-      // const response = await fetch('/api/auth/login', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email, password }),
-      // });
+      // Wywołanie API logowania
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-      // const data = await response.json();
+      const data = await response.json();
 
-      // if (!response.ok) {
-      //   throw new Error(data.error?.message || 'Błąd logowania');
-      // }
+      if (!response.ok) {
+        // Obsługa błędów API
+        const errorMessage = data.error?.message || 'Błąd logowania';
+        throw new Error(errorMessage);
+      }
 
-      // toast.success('Zalogowano pomyślnie!');
+      // Sukces - wyświetl toast i przekieruj
+      toast.success('Zalogowano pomyślnie!');
       
-      // // Redirect
-      // const urlParams = new URLSearchParams(window.location.search);
-      // const redirectTo = urlParams.get('redirect') || '/generate';
-      // window.location.href = redirectTo;
-
-      // Tymczasowo - symulacja
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      toast.success('Logowanie - funkcja do zaimplementowania');
+      // Redirect do dashboardu lub zapisanego URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectTo = urlParams.get('redirect') || data.redirectTo || '/dashboard';
+      window.location.href = redirectTo;
       
     } catch (err: any) {
       const message = err.message || 'Wystąpił nieoczekiwany błąd';

@@ -59,29 +59,28 @@ export function RegisterForm() {
     setIsLoading(true);
 
     try {
-      // TODO: Implementacja wywołania API
-      // const response = await fetch('/api/auth/register', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ email, password }),
-      // });
+      // Wywołanie API rejestracji
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
-      // const data = await response.json();
+      const data = await response.json();
 
-      // if (!response.ok) {
-      //   throw new Error(data.error?.message || 'Błąd rejestracji');
-      // }
+      if (!response.ok) {
+        // Obsługa błędów API
+        const errorMessage = data.error?.message || 'Błąd rejestracji';
+        throw new Error(errorMessage);
+      }
 
-      // toast.success('Konto utworzone pomyślnie!', {
-      //   description: 'Zostałeś automatycznie zalogowany'
-      // });
+      // Sukces - wyświetl toast i przekieruj
+      toast.success('Konto utworzone pomyślnie!', {
+        description: 'Zostałeś automatycznie zalogowany'
+      });
       
-      // // Redirect do /generate (auto-login w MVP)
-      // window.location.href = '/generate';
-
-      // Tymczasowo - symulacja
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      toast.success('Rejestracja - funkcja do zaimplementowania');
+      // Redirect do dashboardu (auto-login w MVP)
+      window.location.href = '/dashboard';
       
     } catch (err: any) {
       const message = err.message || 'Wystąpił nieoczekiwany błąd';

@@ -3,19 +3,13 @@
  * Strona Logowania
  * 
  * Publiczny widok umożliwiający użytkownikom zalogowanie się do aplikacji.
- * Po udanym logowaniu przekierowanie do /generate (zgodnie z PRD US-002).
+ * Po udanym logowaniu przekierowanie do /dashboard (zgodnie z PRD US-002).
  * 
- * Middleware: Jeśli użytkownik już zalogowany → redirect do /generate
+ * Middleware: Jeśli użytkownik już zalogowany → redirect do /dashboard
  */
 
 import Layout from '../layouts/Layout.astro';
 import { LoginForm } from '../components/auth/LoginForm';
-
-// TODO: Po wdrożeniu auth middleware
-// const user = Astro.locals.user;
-// if (user) {
-//   return Astro.redirect('/generate');
-// }
 ---
 
 <Layout title="Logowanie - 10x cards">

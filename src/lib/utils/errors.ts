@@ -79,6 +79,22 @@ export function conflict(message: string, details?: ApiErrorDetail): Response {
 }
 
 /**
+ * Creates a 401 Unauthorized error response
+ * Used when authentication is required but missing or invalid
+ */
+export function unauthorized(message: string = 'Authentication required', details?: ApiErrorDetail): Response {
+  return createApiError('UNAUTHORIZED', message, 401, details);
+}
+
+/**
+ * Creates a 403 Forbidden error response
+ * Used when user is authenticated but lacks permissions
+ */
+export function forbidden(message: string = 'Access forbidden', details?: ApiErrorDetail): Response {
+  return createApiError('FORBIDDEN', message, 403, details);
+}
+
+/**
  * Creates a 422 Unprocessable Entity error response
  * Used for validation errors on well-formed requests
  */
