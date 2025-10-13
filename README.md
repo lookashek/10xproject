@@ -87,6 +87,63 @@ OPENROUTER_API_KEY=your-openrouter-key
 | `npm run lint` | Run ESLint over the codebase |
 | `npm run lint:fix` | Run ESLint and automatically fix problems |
 | `npm run format` | Format files using Prettier |
+| `npm run test` | Run unit tests with Vitest |
+| `npm run test:unit` | Run unit tests (alias for `test`) |
+| `npm run test:watch` | Run unit tests in watch mode |
+| `npm run test:ui` | Run unit tests with Vitest UI |
+| `npm run test:coverage` | Run unit tests with coverage report |
+| `npm run e2e` | Run E2E tests with Playwright |
+| `npm run e2e:ui` | Run E2E tests with Playwright UI |
+| `npm run e2e:install` | Install Playwright browsers |
+| `npm run e2e:codegen` | Generate E2E tests with Playwright codegen |
+| `npm run e2e:report` | Show Playwright HTML report |
+
+## Testing
+
+### Unit Tests (Vitest + Testing Library)
+
+```bash
+# Run all unit tests
+npm run test
+
+# Run tests in watch mode (recommended during development)
+npm run test:watch
+
+# Run tests with UI
+npm run test:ui
+
+# Run tests with coverage report
+npm run test:coverage
+```
+
+Unit tests are located in `__tests__` directories next to the tested files:
+- `src/components/ui/__tests__/` - UI component tests
+- `src/lib/__tests__/` - Utility function tests
+- `src/lib/algorithms/__tests__/` - Algorithm tests (e.g., SM2)
+- `src/lib/validation/__tests__/` - Zod schema validation tests
+
+### E2E Tests (Playwright)
+
+```bash
+# Install Playwright browsers (first time only)
+npm run e2e:install
+
+# Run E2E tests
+npm run e2e
+
+# Run E2E tests with UI
+npm run e2e:ui
+
+# Generate new E2E tests interactively
+npm run e2e:codegen
+
+# View HTML report after test run
+npm run e2e:report
+```
+
+E2E tests are located in the `e2e/` directory:
+- `e2e/pages/` - Page Object Models
+- `e2e/*.spec.ts` - Test specifications
 
 ## Project Scope
 
