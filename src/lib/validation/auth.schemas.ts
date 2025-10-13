@@ -46,9 +46,25 @@ export const changePasswordSchema = z.object({
 });
 
 /**
+ * Schema dla żądania resetu hasła (forgot password)
+ */
+export const forgotPasswordSchema = z.object({
+  email: z.string().email('Nieprawidłowy format adresu email'),
+});
+
+/**
+ * Schema dla resetu hasła (nowe hasło)
+ */
+export const resetPasswordSchema = z.object({
+  password: passwordValidation,
+});
+
+/**
  * Type exports dla TypeScript
  */
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 

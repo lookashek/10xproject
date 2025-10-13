@@ -152,6 +152,16 @@ export function LoginForm() {
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Zaloguj się
         </Button>
+
+        {/* Forgot Password Link */}
+        <div className="text-center">
+          <a 
+            href="/forgot-password" 
+            className="text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
+            Zapomniałeś hasła?
+          </a>
+        </div>
       </form>
 
       {/* Register Link */}

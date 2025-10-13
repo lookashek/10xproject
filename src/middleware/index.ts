@@ -21,7 +21,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const url = new URL(request.url);
   
   // Publiczne ścieżki (dostępne bez logowania)
-  const publicPaths = ['/', '/login', '/register'];
+  const publicPaths = ['/', '/login', '/register', '/forgot-password', '/reset-password'];
   const isPublicPath = publicPaths.includes(url.pathname);
   
   // Auth API endpoints są zawsze publiczne
