@@ -26,3 +26,20 @@ GitHub Actions – automatyzacja CI/CD
 
 DigitalOcean App Platform – hosting aplikacji
 - Skalowalny serwer statyczny, TLS i łatwe zmienne środowiskowe
+
+## Testy i jakość (na podstawie `.ai/test-plan.md`)
+
+- Testy jednostkowe/integracyjne:
+  - Vitest – runner i asercje
+  - @testing-library/react – testy komponentów UI
+  - MSW – mockowanie `fetch`/OpenRouter oraz zewnętrznych usług
+  - supertest/undici – testy integracyjne API (`src/pages/api/**`)
+  - Pokrycie: `vitest --coverage`
+
+- Testy E2E i dostępność:
+  - Playwright – scenariusze E2E (auth, generate→accept, CRUD, study, redirecty)
+  - axe-core/@axe-core/playwright – skany dostępności na głównych widokach
+
+- Raportowanie/CI:
+  - JUnit/HTML reporters dla Vitest/Playwright
+  - GitHub Actions – uruchamianie lint/build/test przy każdym pushu

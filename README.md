@@ -36,6 +36,9 @@ Key features:
 | AI Gateway | OpenRouter.ai |
 | Tooling | ESLint, Prettier, Husky, GitHub Actions |
 | Runtime | Node.js 22.14 ([`.nvmrc`](./.nvmrc)) |
+| Testing (Unit/Integration) | Vitest, @testing-library/react, MSW, supertest/undici |
+| Testing (E2E & Accessibility) | Playwright, axe-core/@axe-core/playwright |
+| Reporting & Coverage | JUnit/HTML reporters; `vitest --coverage` |
 
 > For more details see [`./.ai/tech-stack.md`](./.ai/tech-stack.md).
 
