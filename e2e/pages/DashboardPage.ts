@@ -33,15 +33,26 @@ export class DashboardPage {
 
   async openUserMenu() {
     await this.userMenuTrigger.click({ force: true });
+    // Poczekaj aż menu będzie widoczne
+    await this.logoutItem.waitFor({ state: "visible", timeout: 5000 });
   }
 
   async logout() {
-    await this.openUserMenu();
+    // Sprawdź czy menu jest już otwarte
+    const isMenuOpen = await this.logoutItem.isVisible().catch(() => false);
+    if (!isMenuOpen) {
+      await this.openUserMenu();
+    }
+    // Kliknij i poczekaj na nawigację
     await this.logoutItem.click({ force: true });
   }
 
   async openSettings() {
-    await this.openUserMenu();
+    // Sprawdź czy menu jest już otwarte
+    const isMenuOpen = await this.settingsItem.isVisible().catch(() => false);
+    if (!isMenuOpen) {
+      await this.openUserMenu();
+    }
     await this.settingsItem.click();
   }
 }
