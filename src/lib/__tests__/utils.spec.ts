@@ -46,4 +46,3 @@ describe("cn utility", () => {
     expect(result).toBe("");
   });
 });
-

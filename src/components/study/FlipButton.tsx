@@ -1,13 +1,13 @@
 /**
  * FlipButton - Przycisk do pokazania odpowiedzi
- * 
+ *
  * Wyświetlany gdy pokazany jest tylko przód fiszki.
  * Zachęca użytkownika do sprawdzenia odpowiedzi.
  */
 
-import { Eye } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import type { FlipButtonProps } from '@/types';
+import { Eye } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import type { FlipButtonProps } from "@/types";
 
 export function FlipButton({ onFlip }: FlipButtonProps) {
   return (
@@ -27,4 +27,3 @@ export function FlipButton({ onFlip }: FlipButtonProps) {
     </div>
   );
 }
-

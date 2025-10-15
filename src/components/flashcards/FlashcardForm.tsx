@@ -2,17 +2,17 @@
  * FlashcardForm - Form for creating/editing flashcard content
  */
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertCircle, Loader2 } from 'lucide-react';
-import { flashcardFormSchema } from '@/lib/validation/flashcard.schemas';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import type { FlashcardDTO, FlashcardFormData } from '@/types';
-import { useState } from 'react';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle, Loader2 } from "lucide-react";
+import { flashcardFormSchema } from "@/lib/validation/flashcard.schemas";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import type { FlashcardDTO, FlashcardFormData } from "@/types";
+import { useState } from "react";
 
 interface FlashcardFormProps {
   initialData: FlashcardDTO | null;
@@ -21,12 +21,7 @@ interface FlashcardFormProps {
   isSaving: boolean;
 }
 
-export default function FlashcardForm({
-  initialData,
-  onSubmit,
-  onCancel,
-  isSaving,
-}: FlashcardFormProps) {
+export default function FlashcardForm({ initialData, onSubmit, onCancel, isSaving }: FlashcardFormProps) {
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -36,22 +31,22 @@ export default function FlashcardForm({
     watch,
   } = useForm<FlashcardFormData>({
     resolver: zodResolver(flashcardFormSchema),
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: {
-      front: initialData?.front ?? '',
-      back: initialData?.back ?? '',
+      front: initialData?.front ?? "",
+      back: initialData?.back ?? "",
     },
   });
 
-  const watchFront = watch('front', '');
-  const watchBack = watch('back', '');
+  const watchFront = watch("front", "");
+  const watchBack = watch("back", "");
 
   const onSubmitInternal = async (data: FlashcardFormData) => {
     setError(null);
     try {
       await onSubmit(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Wystąpił błąd podczas zapisywania');
+      setError(err instanceof Error ? err.message : "Wystąpił błąd podczas zapisywania");
     }
   };
 
@@ -64,7 +59,7 @@ export default function FlashcardForm({
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-      
+
       <div className="space-y-2">
         <Label htmlFor="front">
           Przód fiszki
@@ -72,7 +67,7 @@ export default function FlashcardForm({
         </Label>
         <Input
           id="front"
-          {...register('front')}
+          {...register("front")}
           placeholder="Co chcesz zapamiętać?"
           maxLength={200}
           aria-invalid={!!errors.front}
@@ -87,7 +82,7 @@ export default function FlashcardForm({
           {watchFront.length}/200
         </p>
       </div>
-      
+
       <div className="space-y-2">
         <Label htmlFor="back">
           Tył fiszki
@@ -95,7 +90,7 @@ export default function FlashcardForm({
         </Label>
         <Textarea
           id="back"
-          {...register('back')}
+          {...register("back")}
           placeholder="Jaka jest odpowiedź?"
           maxLength={500}
           rows={5}
@@ -111,32 +106,22 @@ export default function FlashcardForm({
           {watchBack.length}/500
         </p>
       </div>
-      
+
       <div className="flex justify-end gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onCancel}
-          disabled={isSaving}
-        >
+        <Button type="button" variant="outline" onClick={onCancel} disabled={isSaving}>
           Anuluj
         </Button>
-        <Button
-          type="submit"
-          variant="default"
-          disabled={isSaving || !isValid}
-        >
+        <Button type="submit" variant="default" disabled={isSaving || !isValid}>
           {isSaving ? (
             <>
               <Loader2 className="size-4 animate-spin" />
               Zapisywanie...
             </>
           ) : (
-            'Zapisz'
+            "Zapisz"
           )}
         </Button>
       </div>
     </form>
   );
 }
-

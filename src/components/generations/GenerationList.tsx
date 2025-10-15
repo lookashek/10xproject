@@ -1,18 +1,12 @@
 /**
  * Komponent listy generacji
- * 
+ *
  * Renderuje responsywną tabelę z listą generacji wykorzystując komponenty Table z shadcn/ui.
  */
 
-import {
-  Table,
-  TableBody,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { GenerationRow } from './GenerationRow';
-import type { GenerationListProps } from '@/types';
+import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { GenerationRow } from "./GenerationRow";
+import type { GenerationListProps } from "@/types";
 
 export function GenerationList({ generations, onRowClick }: GenerationListProps) {
   return (
@@ -30,15 +24,10 @@ export function GenerationList({ generations, onRowClick }: GenerationListProps)
         </TableHeader>
         <TableBody>
           {generations.map((generation) => (
-            <GenerationRow
-              key={generation.id}
-              generation={generation}
-              onRowClick={onRowClick}
-            />
+            <GenerationRow key={generation.id} generation={generation} onRowClick={onRowClick} />
           ))}
         </TableBody>
       </Table>
     </div>
   );
 }
-

@@ -1,7 +1,7 @@
 ---
 /**
  * Widok Sesji Nauki - Pełnoekranowy widok do nauki fiszek
- * 
+ *
  * Funkcjonalności:
  * - Algorytm SM-2 (Supermemo 2) dla spaced repetition
  * - Keyboard shortcuts (Spacja, 1-4, Escape)
@@ -9,16 +9,16 @@
  * - Progress tracking
  * - localStorage persistence (MVP)
  * - Distraction-free fullscreen mode
- * 
+ *
  * Routing:
  * - GET /study - główny widok sesji
- * 
+ *
  * Middleware:
  * - W przyszłości: wymaga uwierzytelnienia
  */
 
-import MinimalLayout from '@/layouts/MinimalLayout.astro';
-import { StudySessionView } from '@/components/study';
+import MinimalLayout from "@/layouts/MinimalLayout.astro";
+import { StudySessionView } from "@/components/study";
 
 // W przyszłości: sprawdzenie auth z middleware
 // const user = Astro.locals.user;
@@ -29,10 +29,9 @@ import { StudySessionView } from '@/components/study';
 export const prerender = false;
 ---
 
-<MinimalLayout 
+<MinimalLayout
   title="Sesja nauki - 10x Cards"
   description="Ucz się swoich fiszek z wykorzystaniem algorytmu spaced repetition SM-2"
 >
   <StudySessionView client:only="react" />
 </MinimalLayout>
-

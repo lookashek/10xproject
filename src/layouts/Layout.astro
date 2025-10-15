@@ -1,15 +1,15 @@
 ---
 /**
  * Layout główny aplikacji
- * 
+ *
  * Zawiera podstawową strukturę HTML, meta tagi, style globalne Tailwind + shadcn/ui
  */
 
-import '../styles/global.css';
-import { ToasterProvider } from '../components/ToasterProvider';
+import "../styles/global.css";
+import { ToasterProvider } from "../components/ToasterProvider";
 
 interface Props {
-	title: string;
+  title: string;
 }
 
 const { title } = Astro.props;
@@ -17,30 +17,30 @@ const { title } = Astro.props;
 
 <!doctype html>
 <html lang="pl">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="10x Cards - Aplikacja do nauki z fiszkami AI" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/png" href="/favicon.png" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-		<!-- Inline script dla dark mode - zapobiega FOUC (Flash of Unstyled Content) -->
-		<script is:inline>
-			(function() {
-				const savedTheme = localStorage.getItem('theme');
-				const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-				const theme = savedTheme || systemTheme;
-				
-				if (theme === 'dark') {
-					document.documentElement.classList.add('dark');
-				} else {
-					document.documentElement.classList.remove('dark');
-				}
-			})();
-		</script>
-	</head>
-	<body class="antialiased">
-		<slot />
-		<ToasterProvider client:load />
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="10x Cards - Aplikacja do nauki z fiszkami AI" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <!-- Inline script dla dark mode - zapobiega FOUC (Flash of Unstyled Content) -->
+    <script is:inline>
+      (function () {
+        const savedTheme = localStorage.getItem("theme");
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        const theme = savedTheme || systemTheme;
+
+        if (theme === "dark") {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+      })();
+    </script>
+  </head>
+  <body class="antialiased">
+    <slot />
+    <ToasterProvider client:load />
+  </body>
 </html>

@@ -3,8 +3,8 @@
  * Handles listing, creation, updates, deletion with proper validation and duplicate checking
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../db/database.types';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "../../db/database.types";
 import type {
   FlashcardDTO,
   FlashcardEntity,
@@ -14,17 +14,17 @@ import type {
   FlashcardListQuery,
   FlashcardListResponse,
   FlashcardSource,
-} from '../../types';
+} from "../../types";
 
 /**
  * Lists all flashcards for a user with pagination, filtering, and search
  * Ordered by created_at DESC (newest first)
- * 
+ *
  * @param supabase - Supabase client instance
  * @param userId - User ID (UUID)
  * @param query - Pagination and filtering parameters
  * @returns Paginated list of flashcards with metadata
- * 
+ *
  * @example
  * ```typescript
  * const result = await listFlashcards(supabase, userId, {
@@ -45,20 +45,14 @@ export async function listFlashcards(
   const offset = (page - 1) * limit;
 
   // Build base query
-  let countQuery = supabase
-    .from('flashcards')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', userId);
+  let countQuery = supabase.from("flashcards").select("*", { count: "exact", head: true }).eq("user_id", userId);
 
-  let dataQuery = supabase
-    .from('flashcards')
-    .select('*')
-    .eq('user_id', userId);
+  let dataQuery = supabase.from("flashcards").select("*").eq("user_id", userId);
 
   // Apply source filter
   if (query.source) {
-    countQuery = countQuery.eq('source', query.source);
-    dataQuery = dataQuery.eq('source', query.source);
+    countQuery = countQuery.eq("source", query.source);
+    dataQuery = dataQuery.eq("source", query.source);
   }
 
   // Apply search filter (ILIKE on front OR back)
@@ -78,9 +72,7 @@ export async function listFlashcards(
   const total = count ?? 0;
 
   // Get paginated data
-  const { data, error } = await dataQuery
-    .order('created_at', { ascending: false })
-    .range(offset, offset + limit - 1);
+  const { data, error } = await dataQuery.order("created_at", { ascending: false }).range(offset, offset + limit - 1);
 
   if (error) {
     throw new Error(`Database error while listing flashcards: ${error.message}`);
@@ -102,12 +94,12 @@ export async function listFlashcards(
 
 /**
  * Gets a single flashcard by ID
- * 
+ *
  * @param supabase - Supabase client instance
  * @param userId - User ID (UUID)
  * @param id - Flashcard ID
  * @returns Flashcard DTO, or null if not found
- * 
+ *
  * @example
  * ```typescript
  * const flashcard = await getFlashcardById(supabase, userId, 123);
@@ -122,10 +114,10 @@ export async function getFlashcardById(
   id: number
 ): Promise<FlashcardDTO | null> {
   const { data, error } = await supabase
-    .from('flashcards')
-    .select('*')
-    .eq('id', id)
-    .eq('user_id', userId)
+    .from("flashcards")
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", userId)
     .maybeSingle();
 
   if (error) {
@@ -143,14 +135,14 @@ export async function getFlashcardById(
 
 /**
  * Checks if a duplicate flashcard exists (same front and back)
- * 
+ *
  * @param supabase - Supabase client instance
  * @param userId - User ID (UUID)
  * @param front - Front text of flashcard
  * @param back - Back text of flashcard
  * @param excludeId - Optional ID to exclude from check (for updates)
  * @returns Existing flashcard ID if duplicate found, null otherwise
- * 
+ *
  * @example
  * ```typescript
  * const duplicateId = await checkDuplicate(supabase, userId, front, back);
@@ -166,15 +158,10 @@ export async function checkDuplicate(
   back: string,
   excludeId?: number
 ): Promise<number | null> {
-  let query = supabase
-    .from('flashcards')
-    .select('id')
-    .eq('user_id', userId)
-    .eq('front', front)
-    .eq('back', back);
+  let query = supabase.from("flashcards").select("id").eq("user_id", userId).eq("front", front).eq("back", back);
 
   if (excludeId !== undefined) {
-    query = query.neq('id', excludeId);
+    query = query.neq("id", excludeId);
   }
 
   const { data, error } = await query.maybeSingle();
@@ -188,12 +175,12 @@ export async function checkDuplicate(
 
 /**
  * Creates a single flashcard
- * 
+ *
  * @param supabase - Supabase client instance
  * @param userId - User ID (UUID)
  * @param command - Flashcard creation data
  * @returns Created flashcard DTO
- * 
+ *
  * @example
  * ```typescript
  * const flashcard = await createFlashcard(supabase, userId, {
@@ -223,18 +210,14 @@ export async function createFlashcard(
     generation_id: command.generation_id ?? null,
   };
 
-  const { data, error } = await supabase
-    .from('flashcards')
-    .insert(insertData)
-    .select()
-    .single();
+  const { data, error } = await supabase.from("flashcards").insert(insertData).select().single();
 
   if (error) {
     throw new Error(`Database error while creating flashcard: ${error.message}`);
   }
 
   if (!data) {
-    throw new Error('Failed to create flashcard: No data returned');
+    throw new Error("Failed to create flashcard: No data returned");
   }
 
   // Map to DTO (remove user_id)
@@ -245,13 +228,13 @@ export async function createFlashcard(
 /**
  * Creates multiple flashcards in a batch
  * If generation_id is provided, also updates generation statistics
- * 
+ *
  * @param supabase - Supabase client instance
  * @param userId - User ID (UUID)
  * @param commands - Array of flashcard creation commands
  * @param generationId - Optional generation ID to link flashcards to
  * @returns Array of created flashcard DTOs
- * 
+ *
  * @example
  * ```typescript
  * const flashcards = await createFlashcardsBatch(supabase, userId, [
@@ -284,32 +267,29 @@ export async function createFlashcardsBatch(
   }));
 
   // Insert flashcards
-  const { data, error } = await supabase
-    .from('flashcards')
-    .insert(insertData)
-    .select();
+  const { data, error } = await supabase.from("flashcards").insert(insertData).select();
 
   if (error) {
     throw new Error(`Database error while creating flashcards: ${error.message}`);
   }
 
   if (!data || data.length === 0) {
-    throw new Error('Failed to create flashcards: No data returned');
+    throw new Error("Failed to create flashcards: No data returned");
   }
 
   // If generation_id is provided, update generation statistics
   if (generationId) {
-    const uneditedCount = commands.filter((c) => c.source === 'ai-full').length;
-    const editedCount = commands.filter((c) => c.source === 'ai-edited').length;
+    const uneditedCount = commands.filter((c) => c.source === "ai-full").length;
+    const editedCount = commands.filter((c) => c.source === "ai-edited").length;
 
     const { error: updateError } = await supabase
-      .from('generations')
+      .from("generations")
       .update({
         accepted_unedited_count: uneditedCount,
         accepted_edited_count: editedCount,
       })
-      .eq('id', generationId)
-      .eq('user_id', userId);
+      .eq("id", generationId)
+      .eq("user_id", userId);
 
     if (updateError) {
       // Log error but don't fail the operation since flashcards were created
@@ -325,13 +305,13 @@ export async function createFlashcardsBatch(
 /**
  * Updates an existing flashcard
  * Automatically changes source from 'ai-full' to 'ai-edited' if content is modified
- * 
+ *
  * @param supabase - Supabase client instance
  * @param userId - User ID (UUID)
  * @param id - Flashcard ID
  * @param command - Update data (front and/or back)
  * @returns Updated flashcard DTO
- * 
+ *
  * @example
  * ```typescript
  * const updated = await updateFlashcard(supabase, userId, 123, {
@@ -349,7 +329,7 @@ export async function updateFlashcard(
   // Get existing flashcard
   const existing = await getFlashcardById(supabase, userId, id);
   if (!existing) {
-    throw new Error('Flashcard not found');
+    throw new Error("Flashcard not found");
   }
 
   // Prepare new values
@@ -364,20 +344,20 @@ export async function updateFlashcard(
 
   // Determine if source should change to 'ai-edited'
   const contentChanged = command.front !== undefined || command.back !== undefined;
-  const shouldChangeToEdited = existing.source === 'ai-full' && contentChanged;
+  const shouldChangeToEdited = existing.source === "ai-full" && contentChanged;
 
   // Prepare update data
   const updateData: Partial<FlashcardEntity> = {
     ...(command.front !== undefined && { front: command.front }),
     ...(command.back !== undefined && { back: command.back }),
-    ...(shouldChangeToEdited && { source: 'ai-edited' as FlashcardSource }),
+    ...(shouldChangeToEdited && { source: "ai-edited" as FlashcardSource }),
   };
 
   const { data, error } = await supabase
-    .from('flashcards')
+    .from("flashcards")
     .update(updateData)
-    .eq('id', id)
-    .eq('user_id', userId)
+    .eq("id", id)
+    .eq("user_id", userId)
     .select()
     .single();
 
@@ -386,7 +366,7 @@ export async function updateFlashcard(
   }
 
   if (!data) {
-    throw new Error('Failed to update flashcard: No data returned');
+    throw new Error("Failed to update flashcard: No data returned");
   }
 
   // Map to DTO (remove user_id)
@@ -396,36 +376,27 @@ export async function updateFlashcard(
 
 /**
  * Deletes a flashcard
- * 
+ *
  * @param supabase - Supabase client instance
  * @param userId - User ID (UUID)
  * @param id - Flashcard ID
  * @returns void
- * 
+ *
  * @example
  * ```typescript
  * await deleteFlashcard(supabase, userId, 123);
  * ```
  */
-export async function deleteFlashcard(
-  supabase: SupabaseClient<Database>,
-  userId: string,
-  id: number
-): Promise<void> {
+export async function deleteFlashcard(supabase: SupabaseClient<Database>, userId: string, id: number): Promise<void> {
   // Check if flashcard exists
   const existing = await getFlashcardById(supabase, userId, id);
   if (!existing) {
-    throw new Error('Flashcard not found');
+    throw new Error("Flashcard not found");
   }
 
-  const { error } = await supabase
-    .from('flashcards')
-    .delete()
-    .eq('id', id)
-    .eq('user_id', userId);
+  const { error } = await supabase.from("flashcards").delete().eq("id", id).eq("user_id", userId);
 
   if (error) {
     throw new Error(`Database error while deleting flashcard: ${error.message}`);
   }
 }
-

@@ -125,15 +125,11 @@ describe("generation.schemas", () => {
     });
 
     it("odrzuca pusty front", () => {
-      expect(() =>
-        proposedFlashcardSchema.parse({ front: "", back: "Odpowiedź" })
-      ).toThrow();
+      expect(() => proposedFlashcardSchema.parse({ front: "", back: "Odpowiedź" })).toThrow();
     });
 
     it("odrzuca pusty back", () => {
-      expect(() =>
-        proposedFlashcardSchema.parse({ front: "Pytanie", back: "" })
-      ).toThrow();
+      expect(() => proposedFlashcardSchema.parse({ front: "Pytanie", back: "" })).toThrow();
     });
 
     it("odrzuca front > 200 znaków", () => {
@@ -179,4 +175,3 @@ describe("generation.schemas", () => {
     });
   });
 });
-

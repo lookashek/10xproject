@@ -1,13 +1,13 @@
 /**
  * ErrorBoundary - Obsługa błędów React dla widoku sesji nauki
- * 
+ *
  * Catches unexpected errors i pokazuje fallback UI
  */
 
-import React from 'react';
-import { AlertTriangle, Home, RotateCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import React from "react";
+import { AlertTriangle, Home, RotateCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -29,7 +29,7 @@ export class StudyErrorBoundary extends React.Component<ErrorBoundaryProps, Erro
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Study session error:', error, errorInfo);
+    console.error("Study session error:", error, errorInfo);
   }
 
   render() {
@@ -46,12 +46,8 @@ export class StudyErrorBoundary extends React.Component<ErrorBoundaryProps, Erro
                 </div>
 
                 <div className="space-y-2">
-                  <h2 className="text-2xl font-bold">
-                    Coś poszło nie tak
-                  </h2>
-                  <p className="text-muted-foreground">
-                    Wystąpił nieoczekiwany błąd podczas sesji nauki.
-                  </p>
+                  <h2 className="text-2xl font-bold">Coś poszło nie tak</h2>
+                  <p className="text-muted-foreground">Wystąpił nieoczekiwany błąd podczas sesji nauki.</p>
                   {this.state.error && (
                     <details className="mt-4 text-left">
                       <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
@@ -68,17 +64,13 @@ export class StudyErrorBoundary extends React.Component<ErrorBoundaryProps, Erro
                   <Button
                     variant="outline"
                     size="lg"
-                    onClick={() => window.location.href = '/dashboard'}
+                    onClick={() => (window.location.href = "/dashboard")}
                     className="gap-2"
                   >
                     <Home className="h-5 w-5" />
                     Powrót do panelu
                   </Button>
-                  <Button
-                    size="lg"
-                    onClick={() => window.location.reload()}
-                    className="gap-2"
-                  >
+                  <Button size="lg" onClick={() => window.location.reload()} className="gap-2">
                     <RotateCw className="h-5 w-5" />
                     Odśwież stronę
                   </Button>
@@ -93,4 +85,3 @@ export class StudyErrorBoundary extends React.Component<ErrorBoundaryProps, Erro
     return this.props.children;
   }
 }
-

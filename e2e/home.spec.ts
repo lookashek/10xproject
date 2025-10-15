@@ -12,5 +12,3 @@ test.describe("Strona główna", () => {
     await expect(page).toHaveScreenshot({ fullPage: true });
   });
 });
-
-

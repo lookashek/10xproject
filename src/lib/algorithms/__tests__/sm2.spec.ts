@@ -21,7 +21,7 @@ describe("SM2Algorithm", () => {
       const result = sm2Algorithm.initializeCard(1);
       const nextReview = new Date(result.next_review);
       const now = new Date();
-      
+
       // Różnica powinna być mniejsza niż 1 sekunda
       expect(Math.abs(nextReview.getTime() - now.getTime())).toBeLessThan(1000);
     });
@@ -98,7 +98,7 @@ describe("SM2Algorithm", () => {
 
     it("easiness nie spada poniżej minEasiness (1.3)", () => {
       let data = { ...initialData, easiness: 1.4 };
-      
+
       // Wielokrotne złe odpowiedzi
       for (let i = 0; i < 10; i++) {
         data = sm2Algorithm.review(data, 0);
@@ -109,7 +109,7 @@ describe("SM2Algorithm", () => {
 
     it("easiness nie rośnie powyżej maxEasiness (2.5)", () => {
       let data = { ...initialData, easiness: 2.4, repetitions: 3, interval: 10 };
-      
+
       // Wielokrotne doskonałe odpowiedzi
       for (let i = 0; i < 10; i++) {
         data = sm2Algorithm.review(data, 3);
@@ -226,8 +226,14 @@ describe("SM2Algorithm", () => {
       futureDate.setDate(futureDate.getDate() + 1);
 
       const cards = [
-        { id: 1, sm2Data: { ...sm2Algorithm.initializeCard(1), repetitions: 5, next_review: futureDate.toISOString() } },
-        { id: 2, sm2Data: { ...sm2Algorithm.initializeCard(2), repetitions: 0, next_review: futureDate.toISOString() } },
+        {
+          id: 1,
+          sm2Data: { ...sm2Algorithm.initializeCard(1), repetitions: 5, next_review: futureDate.toISOString() },
+        },
+        {
+          id: 2,
+          sm2Data: { ...sm2Algorithm.initializeCard(2), repetitions: 0, next_review: futureDate.toISOString() },
+        },
       ];
 
       const sorted = sm2Algorithm.sortByPriority(cards);
@@ -248,4 +254,3 @@ describe("SM2Algorithm", () => {
     });
   });
 });
-

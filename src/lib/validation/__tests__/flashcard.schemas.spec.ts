@@ -154,9 +154,7 @@ describe("flashcard.schemas", () => {
     });
 
     it("odrzuca pustą tablicę", () => {
-      expect(() =>
-        flashcardBatchCreateSchema.parse({ flashcards: [] })
-      ).toThrow();
+      expect(() => flashcardBatchCreateSchema.parse({ flashcards: [] })).toThrow();
     });
 
     it("odrzuca tablicę > 50 elementów", () => {
@@ -166,9 +164,7 @@ describe("flashcard.schemas", () => {
         source: "ai-full",
       });
 
-      expect(() =>
-        flashcardBatchCreateSchema.parse({ flashcards })
-      ).toThrow();
+      expect(() => flashcardBatchCreateSchema.parse({ flashcards })).toThrow();
     });
   });
 
@@ -257,4 +253,3 @@ describe("flashcard.schemas", () => {
     });
   });
 });
-

@@ -2,28 +2,18 @@
  * FlashcardToolbar - Toolbar with add button and source filter
  */
 
-import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import type { FlashcardSource } from '@/types';
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import type { FlashcardSource } from "@/types";
 
 interface FlashcardToolbarProps {
   onAddClick: () => void;
-  sourceFilter: FlashcardSource | 'all';
-  onSourceFilterChange: (source: FlashcardSource | 'all') => void;
+  sourceFilter: FlashcardSource | "all";
+  onSourceFilterChange: (source: FlashcardSource | "all") => void;
 }
 
-export default function FlashcardToolbar({
-  onAddClick,
-  sourceFilter,
-  onSourceFilterChange,
-}: FlashcardToolbarProps) {
+export default function FlashcardToolbar({ onAddClick, sourceFilter, onSourceFilterChange }: FlashcardToolbarProps) {
   return (
     <div
       className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-6 gap-4"
@@ -35,7 +25,7 @@ export default function FlashcardToolbar({
         </label>
         <Select
           value={sourceFilter}
-          onValueChange={(value) => onSourceFilterChange(value as FlashcardSource | 'all')}
+          onValueChange={(value) => onSourceFilterChange(value as FlashcardSource | "all")}
           data-testid="flashcard-source-filter"
         >
           <SelectTrigger id="source-filter" className="w-[180px]">
@@ -57,4 +47,3 @@ export default function FlashcardToolbar({
     </div>
   );
 }
-

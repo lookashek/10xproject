@@ -1,17 +1,17 @@
 /**
  * Hook do zarządzania szczegółami generacji
- * 
+ *
  * Pobiera i zarządza stanem szczegółów pojedynczej generacji.
  * Obsługuje ładowanie, błędy 404 i refresh danych.
  */
 
-import { useState, useEffect } from 'react';
-import type { GenerationDetailDTO, ErrorState } from '@/types';
-import { fetchGenerationById, ApiError } from '@/lib/api/generations';
+import { useState, useEffect } from "react";
+import type { GenerationDetailDTO, ErrorState } from "@/types";
+import { fetchGenerationById, ApiError } from "@/lib/api/generations";
 
 /**
  * Hook do pobierania szczegółów pojedynczej generacji
- * 
+ *
  * @param generationId - ID generacji do pobrania
  * @returns Obiekt ze stanem szczegółów generacji
  */
@@ -28,7 +28,7 @@ export function useGenerationDetail(generationId: number) {
       const data = await fetchGenerationById(generationId);
       setGeneration(data);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Wystąpił błąd podczas ładowania szczegółów generacji';
+      const errorMessage = err instanceof Error ? err.message : "Wystąpił błąd podczas ładowania szczegółów generacji";
       const errorCode = err instanceof ApiError ? err.code : undefined;
       setError({ message: errorMessage, code: errorCode as any });
       setGeneration(null);
@@ -41,7 +41,7 @@ export function useGenerationDetail(generationId: number) {
     if (generationId > 0) {
       loadGeneration();
     } else {
-      setError({ message: 'Nieprawidłowe ID generacji' });
+      setError({ message: "Nieprawidłowe ID generacji" });
       setIsLoading(false);
     }
   }, [generationId]);
@@ -53,4 +53,3 @@ export function useGenerationDetail(generationId: number) {
     refetch: loadGeneration,
   };
 }
-

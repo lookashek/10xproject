@@ -2,7 +2,7 @@
  * useFlashcardList - Custom hook for managing flashcard list state and CRUD operations
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";
 import type {
   FlashcardDTO,
   FlashcardListResponse,
@@ -11,13 +11,9 @@ import type {
   FlashcardUpdateCommand,
   PaginationMeta,
   ApiError,
-} from '@/types';
+} from "@/types";
 
-export function useFlashcardList(
-  initialData: FlashcardListResponse,
-  page: number,
-  source?: FlashcardSource
-) {
+export function useFlashcardList(initialData: FlashcardListResponse, page: number, source?: FlashcardSource) {
   const [flashcards, setFlashcards] = useState<FlashcardDTO[]>(initialData.data);
   const [pagination, setPagination] = useState<PaginationMeta>(initialData.pagination);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,11 +27,11 @@ export function useFlashcardList(
     try {
       const query = new URLSearchParams({
         page: String(page),
-        limit: '50',
+        limit: "50",
       });
 
-      if (source && source !== 'all') {
-        query.append('source', source);
+      if (source && source !== "all") {
+        query.append("source", source);
       }
 
       const response = await fetch(`/api/flashcards?${query.toString()}`);
@@ -50,7 +46,7 @@ export function useFlashcardList(
       setPagination(data.pagination);
     } catch (err) {
       setError({
-        message: err instanceof Error ? err.message : 'Nie udało się pobrać fiszek',
+        message: err instanceof Error ? err.message : "Nie udało się pobrać fiszek",
       });
     } finally {
       setIsLoading(false);
@@ -58,31 +54,34 @@ export function useFlashcardList(
   }, []);
 
   // Create flashcard
-  const createFlashcard = useCallback(async (data: { front: string; back: string }): Promise<void> => {
-    const response = await fetch('/api/flashcards', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        front: data.front,
-        back: data.back,
-        source: 'manual',
-      } as FlashcardCreateCommand),
-    });
+  const createFlashcard = useCallback(
+    async (data: { front: string; back: string }): Promise<void> => {
+      const response = await fetch("/api/flashcards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          front: data.front,
+          back: data.back,
+          source: "manual",
+        } as FlashcardCreateCommand),
+      });
 
-    if (!response.ok) {
-      const errorData: ApiError = await response.json();
-      throw new Error(errorData.error.message);
-    }
+      if (!response.ok) {
+        const errorData: ApiError = await response.json();
+        throw new Error(errorData.error.message);
+      }
 
-    // Refresh list after creation
-    await fetchFlashcards(page, source);
-  }, [fetchFlashcards, page, source]);
+      // Refresh list after creation
+      await fetchFlashcards(page, source);
+    },
+    [fetchFlashcards, page, source]
+  );
 
   // Update flashcard
   const updateFlashcard = useCallback(async (id: number, data: { front: string; back: string }): Promise<void> => {
     const response = await fetch(`/api/flashcards/${id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data as FlashcardUpdateCommand),
     });
 
@@ -93,15 +92,13 @@ export function useFlashcardList(
 
     // Update local state optimistically
     const updatedFlashcard: FlashcardDTO = await response.json();
-    setFlashcards((prev) =>
-      prev.map((fc) => (fc.id === id ? updatedFlashcard : fc))
-    );
+    setFlashcards((prev) => prev.map((fc) => (fc.id === id ? updatedFlashcard : fc)));
   }, []);
 
   // Delete flashcard
   const deleteFlashcard = useCallback(async (id: number): Promise<void> => {
     const response = await fetch(`/api/flashcards/${id}`, {
-      method: 'DELETE',
+      method: "DELETE",
     });
 
     if (!response.ok) {
@@ -131,4 +128,3 @@ export function useFlashcardList(
     deleteFlashcard,
   };
 }
-

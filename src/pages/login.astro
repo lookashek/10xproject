@@ -1,15 +1,15 @@
 ---
 /**
  * Strona Logowania
- * 
+ *
  * Publiczny widok umożliwiający użytkownikom zalogowanie się do aplikacji.
  * Po udanym logowaniu przekierowanie do /dashboard (zgodnie z PRD US-002).
- * 
+ *
  * Middleware: Jeśli użytkownik już zalogowany → redirect do /dashboard
  */
 
-import Layout from '../layouts/Layout.astro';
-import { LoginForm } from '../components/auth/LoginForm';
+import Layout from "../layouts/Layout.astro";
+import { LoginForm } from "../components/auth/LoginForm";
 ---
 
 <Layout title="Logowanie - 10x cards">
@@ -17,4 +17,3 @@ import { LoginForm } from '../components/auth/LoginForm';
     <LoginForm client:load />
   </main>
 </Layout>
-

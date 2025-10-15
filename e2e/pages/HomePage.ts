@@ -17,5 +17,3 @@ export class HomePage {
 }
 
 export default HomePage;
-
-

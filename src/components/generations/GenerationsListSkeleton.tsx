@@ -1,19 +1,12 @@
 /**
  * Komponent skeleton UI dla listy generacji
- * 
+ *
  * Wyświetlany podczas ładowania listy generacji.
  * Symuluje strukturę tabeli z 5 wierszami.
  */
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function GenerationsListSkeleton() {
   return (
@@ -60,4 +53,3 @@ export function GenerationsListSkeleton() {
     </div>
   );
 }
-

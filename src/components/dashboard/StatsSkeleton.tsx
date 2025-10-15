@@ -1,4 +1,4 @@
-import { StatsCardSkeleton } from './StatsCardSkeleton';
+import { StatsCardSkeleton } from "./StatsCardSkeleton";
 
 export function StatsSkeleton() {
   return (
@@ -10,4 +10,3 @@ export function StatsSkeleton() {
     </div>
   );
 }
-

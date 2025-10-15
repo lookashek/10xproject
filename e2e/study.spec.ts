@@ -19,11 +19,22 @@ test.describe("Sesja nauki", () => {
     await dashboardPage.menuTileStudy.click();
     await expect(page).toHaveURL(/\/study$/);
 
-    if (await studyPage.emptyState.isVisible()) {
+    // Poczekaj na załadowanie strony i sprawdź czy są fiszki
+    await page.waitForLoadState("networkidle");
+
+    // Sprawdź czy jest empty state (brak fiszek)
+    const hasFlashcards = await studyPage.emptyState
+      .isVisible()
+      .then((visible) => !visible)
+      .catch(() => true);
+
+    if (!hasFlashcards) {
       test.skip(`Brak fiszek do nauki dla użytkownika ${E2E_USERNAME}`);
     }
 
-    await expect(studyPage.loadingState).toBeHidden({ timeout: 10_000 }).catch(() => {});
+    await expect(studyPage.loadingState)
+      .toBeHidden({ timeout: 10_000 })
+      .catch(() => {});
     await expect(studyPage.activeState).toBeVisible({ timeout: 10_000 });
 
     await studyPage.flipCard();

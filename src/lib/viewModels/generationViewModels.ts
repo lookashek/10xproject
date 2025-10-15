@@ -1,11 +1,11 @@
 /**
  * ViewModels i funkcje pomocnicze dla widoku generacji
- * 
+ *
  * Zawiera funkcje do przetwarzania i formatowania danych z API
  * dla komponentów widoku historii generacji.
  */
 
-import type { GenerationDTO, AcceptanceRateViewModel } from '@/types';
+import type { GenerationDTO, AcceptanceRateViewModel } from "@/types";
 
 /**
  * Oblicza wskaźnik akceptacji fiszek i zwraca ViewModel
@@ -14,17 +14,16 @@ export function calculateAcceptanceRate(generation: GenerationDTO): AcceptanceRa
   const acceptedUnedited = generation.accepted_unedited_count ?? 0;
   const acceptedEdited = generation.accepted_edited_count ?? 0;
   const totalAccepted = acceptedUnedited + acceptedEdited;
-  const percentage = generation.generated_count > 0
-    ? Math.round((totalAccepted / generation.generated_count) * 100)
-    : 0;
+  const percentage =
+    generation.generated_count > 0 ? Math.round((totalAccepted / generation.generated_count) * 100) : 0;
 
-  let variant: 'low' | 'medium' | 'high';
+  let variant: "low" | "medium" | "high";
   if (percentage < 50) {
-    variant = 'low';
+    variant = "low";
   } else if (percentage < 75) {
-    variant = 'medium';
+    variant = "medium";
   } else {
-    variant = 'high';
+    variant = "high";
   }
 
   return {
@@ -40,7 +39,7 @@ export function calculateAcceptanceRate(generation: GenerationDTO): AcceptanceRa
  * Formatuje długość tekstu (dodaje jednostkę)
  */
 export function formatTextLength(length: number): string {
-  return `${length.toLocaleString('pl-PL')} znaków`;
+  return `${length.toLocaleString("pl-PL")} znaków`;
 }
 
 /**
@@ -57,12 +56,8 @@ export function formatGenerationDuration(durationMs: number): string {
 /**
  * Formatuje liczbę zaakceptowanych fiszek
  */
-export function formatAcceptedCounts(
-  unedited: number | null,
-  edited: number | null
-): string {
+export function formatAcceptedCounts(unedited: number | null, edited: number | null): string {
   const uneditedCount = unedited ?? 0;
   const editedCount = edited ?? 0;
   return `${uneditedCount} bez edycji / ${editedCount} z edycją`;
 }
-

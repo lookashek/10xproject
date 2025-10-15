@@ -3,12 +3,12 @@
  * Validates request bodies, query params, and URL params
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * Enum for flashcard source values
  */
-export const flashcardSourceEnum = z.enum(['ai-full', 'ai-edited', 'manual']);
+export const flashcardSourceEnum = z.enum(["ai-full", "ai-edited", "manual"]);
 
 /**
  * Schema for GET /api/flashcards query parameters
@@ -26,8 +26,8 @@ export const flashcardListQuerySchema = z.object({
  * Used for both manual creation and AI generation acceptance
  */
 export const flashcardCreateSchema = z.object({
-  front: z.string().trim().min(1, 'Front text is required').max(200, 'Front text must not exceed 200 characters'),
-  back: z.string().trim().min(1, 'Back text is required').max(500, 'Back text must not exceed 500 characters'),
+  front: z.string().trim().min(1, "Front text is required").max(200, "Front text must not exceed 200 characters"),
+  back: z.string().trim().min(1, "Back text is required").max(500, "Back text must not exceed 500 characters"),
   source: flashcardSourceEnum,
   generation_id: z.number().int().positive().nullable().optional(),
 });
@@ -37,7 +37,10 @@ export const flashcardCreateSchema = z.object({
  * Used when accepting multiple flashcards from AI generation
  */
 export const flashcardBatchCreateSchema = z.object({
-  flashcards: z.array(flashcardCreateSchema).min(1, 'At least one flashcard is required').max(50, 'Maximum 50 flashcards per batch'),
+  flashcards: z
+    .array(flashcardCreateSchema)
+    .min(1, "At least one flashcard is required")
+    .max(50, "Maximum 50 flashcards per batch"),
 });
 
 /**
@@ -46,11 +49,11 @@ export const flashcardBatchCreateSchema = z.object({
  */
 export const flashcardUpdateSchema = z
   .object({
-    front: z.string().trim().min(1).max(200, 'Front text must not exceed 200 characters').optional(),
-    back: z.string().trim().min(1).max(500, 'Back text must not exceed 500 characters').optional(),
+    front: z.string().trim().min(1).max(200, "Front text must not exceed 200 characters").optional(),
+    back: z.string().trim().min(1).max(500, "Back text must not exceed 500 characters").optional(),
   })
   .refine((data) => data.front !== undefined || data.back !== undefined, {
-    message: 'At least one field (front or back) must be provided',
+    message: "At least one field (front or back) must be provided",
   });
 
 /**
@@ -66,12 +69,11 @@ export const flashcardFormSchema = z.object({
   front: z
     .string()
     .trim()
-    .min(1, { message: 'Przód fiszki jest wymagany' })
-    .max(200, { message: 'Przód fiszki może mieć maksymalnie 200 znaków' }),
+    .min(1, { message: "Przód fiszki jest wymagany" })
+    .max(200, { message: "Przód fiszki może mieć maksymalnie 200 znaków" }),
   back: z
     .string()
     .trim()
-    .min(1, { message: 'Tył fiszki jest wymagany' })
-    .max(500, { message: 'Tył fiszki może mieć maksymalnie 500 znaków' }),
+    .min(1, { message: "Tył fiszki jest wymagany" })
+    .max(500, { message: "Tył fiszki może mieć maksymalnie 500 znaków" }),
 });
-

@@ -1,45 +1,35 @@
 /**
  * ProposalCard - Karta pojedynczej propozycji fiszki
- * 
+ *
  * Pojedyncza karta propozycji fiszki z możliwością zaznaczenia,
  * inline edycji i wizualnym wskaźnikiem źródła (badge "AI").
  */
 
-import { Sparkles } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Card } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import type { ProposalCardProps } from '@/lib/viewModels/generateView.types';
+import { Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import type { ProposalCardProps } from "@/lib/viewModels/generateView.types";
 
-export function ProposalCard({
-  proposal,
-  index,
-  isSelected,
-  editedValues,
-  onToggleSelect,
-  onEdit,
-}: ProposalCardProps) {
+export function ProposalCard({ proposal, index, isSelected, editedValues, onToggleSelect, onEdit }: ProposalCardProps) {
   const currentFront = editedValues?.front ?? proposal.front;
   const currentBack = editedValues?.back ?? proposal.back;
 
   const handleFrontChange = (value: string) => {
-    onEdit(index, 'front', value);
+    onEdit(index, "front", value);
   };
 
   const handleBackChange = (value: string) => {
-    onEdit(index, 'back', value);
+    onEdit(index, "back", value);
   };
 
   return (
     <Card
-      className={cn(
-        "p-4 transition-all",
-        isSelected ? "border-primary bg-primary/5" : "border-border"
-      )}
+      className={cn("p-4 transition-all", isSelected ? "border-primary bg-primary/5" : "border-border")}
       data-testid={`proposal-card-${index}`}
     >
       <div className="flex gap-3">
@@ -80,10 +70,7 @@ export function ProposalCard({
               className={cn(!isSelected && "opacity-50")}
               aria-describedby={`front-counter-${index}`}
             />
-            <div 
-              id={`front-counter-${index}`}
-              className="text-xs text-muted-foreground text-right"
-            >
+            <div id={`front-counter-${index}`} className="text-xs text-muted-foreground text-right">
               {currentFront.length} / 200
             </div>
           </div>
@@ -103,10 +90,7 @@ export function ProposalCard({
               className={cn(!isSelected && "opacity-50")}
               aria-describedby={`back-counter-${index}`}
             />
-            <div 
-              id={`back-counter-${index}`}
-              className="text-xs text-muted-foreground text-right"
-            >
+            <div id={`back-counter-${index}`} className="text-xs text-muted-foreground text-right">
               {currentBack.length} / 500
             </div>
           </div>
@@ -115,4 +99,3 @@ export function ProposalCard({
     </Card>
   );
 }
-

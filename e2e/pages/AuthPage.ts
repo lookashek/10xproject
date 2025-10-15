@@ -55,9 +55,18 @@ export class AuthPage {
   }
 
   async login(email: string = process.env.E2E_USERNAME!, password: string = process.env.E2E_PASSWORD!) {
+    // Poczekaj na pełne załadowanie strony (hydratacja React)
+    await this.page.waitForLoadState("networkidle");
+
     await this.loginEmailInput.fill(email);
     await this.loginPasswordInput.fill(password);
-    await this.loginSubmitButton.click();
+
+    // Poczekaj aż przycisk submit będzie enabled (walidacja React)
+    await this.loginSubmitButton.waitFor({ state: "visible" });
+    await this.loginSubmitButton.isEnabled();
+
+    // Kliknij przycisk submit i poczekaj na nawigację
+    await Promise.all([this.page.waitForURL("**/dashboard", { timeout: 10000 }), this.loginSubmitButton.click()]);
   }
 
   async register(email: string, password: string) {

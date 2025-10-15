@@ -1,14 +1,14 @@
 /**
  * LoadingState - Skeleton UI podczas ładowania fiszek
- * 
+ *
  * Wyświetlany podczas:
  * - Pobierania fiszek z API
  * - Inicjalizacji algorytmu SM-2
  */
 
-import { Loader2 } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Loader2 } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function LoadingState() {
   return (
@@ -24,9 +24,7 @@ export function LoadingState() {
         <Card className="min-h-[400px] flex items-center justify-center">
           <CardContent className="p-12 text-center space-y-4">
             <Loader2 className="h-12 w-12 animate-spin mx-auto text-muted-foreground" />
-            <p className="text-lg text-muted-foreground">
-              Przygotowuję sesję nauki...
-            </p>
+            <p className="text-lg text-muted-foreground">Przygotowuję sesję nauki...</p>
           </CardContent>
         </Card>
 
@@ -40,4 +38,3 @@ export function LoadingState() {
     </div>
   );
 }
-

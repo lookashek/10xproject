@@ -1,26 +1,23 @@
 /**
  * GenerateView - Główny kontener widoku generowania fiszek
- * 
+ *
  * Główny komponent React zarządzający całym przepływem widoku generowania fiszek.
  * Odpowiada za orkiestrację stanu aplikacji, wywołania API oraz koordynację podkomponentów.
  */
 
-import { useState, useCallback } from 'react';
-import { toast } from 'sonner';
-import { GenerateForm } from './GenerateForm';
-import { LoadingIndicator } from './LoadingIndicator';
-import { ProposalSection } from './ProposalSection';
-import { generateFlashcardsFromText, saveAcceptedFlashcards } from '@/lib/api/generations';
-import { handleGenerateError, handleSaveError } from '@/lib/utils/errorHandlers';
-import type { 
-  GenerateViewState, 
-  GenerateViewProps 
-} from '@/lib/viewModels/generateView.types';
-import type { FlashcardCreateCommand } from '@/types';
+import { useState, useCallback } from "react";
+import { toast } from "sonner";
+import { GenerateForm } from "./GenerateForm";
+import { LoadingIndicator } from "./LoadingIndicator";
+import { ProposalSection } from "./ProposalSection";
+import { generateFlashcardsFromText, saveAcceptedFlashcards } from "@/lib/api/generations";
+import { handleGenerateError, handleSaveError } from "@/lib/utils/errorHandlers";
+import type { GenerateViewState, GenerateViewProps } from "@/lib/viewModels/generateView.types";
+import type { FlashcardCreateCommand } from "@/types";
 
 export function GenerateView({ initialText }: GenerateViewProps) {
   const [viewState, setViewState] = useState<GenerateViewState>({
-    phase: 'input',
+    phase: "input",
     generationData: null,
     isLoading: false,
     error: null,
@@ -32,7 +29,7 @@ export function GenerateView({ initialText }: GenerateViewProps) {
   const handleGenerate = useCallback(async (sourceText: string) => {
     // Rozpoczęcie generowania
     setViewState({
-      phase: 'loading',
+      phase: "loading",
       generationData: null,
       isLoading: true,
       error: null,
@@ -40,26 +37,26 @@ export function GenerateView({ initialText }: GenerateViewProps) {
 
     try {
       const data = await generateFlashcardsFromText(sourceText);
-      
+
       // Sukces - przejście do fazy przeglądania
       setViewState({
-        phase: 'reviewing',
+        phase: "reviewing",
         generationData: data,
         isLoading: false,
         error: null,
       });
 
-      toast.success('Fiszki zostały wygenerowane!', {
+      toast.success("Fiszki zostały wygenerowane!", {
         description: `Wygenerowano ${data.proposals.length} propozycji fiszek`,
       });
     } catch (error: any) {
       // Błąd - powrót do fazy input
       setViewState({
-        phase: 'input',
+        phase: "input",
         generationData: null,
         isLoading: false,
         error: {
-          type: error.code === 'NETWORK_ERROR' ? 'network' : 'llm_error',
+          type: error.code === "NETWORK_ERROR" ? "network" : "llm_error",
           message: error.message,
           details: error.details,
         },
@@ -73,30 +70,30 @@ export function GenerateView({ initialText }: GenerateViewProps) {
    * Obsługa zapisywania zaakceptowanych fiszek
    */
   const handleSave = useCallback(async (flashcards: FlashcardCreateCommand[]) => {
-    setViewState(prev => ({
+    setViewState((prev) => ({
       ...prev,
-      phase: 'saving',
+      phase: "saving",
     }));
 
     try {
       await saveAcceptedFlashcards(flashcards);
-      
+
       // Sukces - reset widoku
       setViewState({
-        phase: 'input',
+        phase: "input",
         generationData: null,
         isLoading: false,
         error: null,
       });
 
-      toast.success('Fiszki zostały zapisane!', {
-        description: `Zapisano ${flashcards.length} ${flashcards.length === 1 ? 'fiszkę' : 'fiszek'}`,
+      toast.success("Fiszki zostały zapisane!", {
+        description: `Zapisano ${flashcards.length} ${flashcards.length === 1 ? "fiszkę" : "fiszek"}`,
       });
     } catch (error: any) {
       // Błąd - powrót do fazy reviewing
-      setViewState(prev => ({
+      setViewState((prev) => ({
         ...prev,
-        phase: 'reviewing',
+        phase: "reviewing",
       }));
 
       handleSaveError(error);
@@ -108,7 +105,7 @@ export function GenerateView({ initialText }: GenerateViewProps) {
    */
   const handleReset = useCallback(() => {
     setViewState({
-      phase: 'input',
+      phase: "input",
       generationData: null,
       isLoading: false,
       error: null,
@@ -121,32 +118,23 @@ export function GenerateView({ initialText }: GenerateViewProps) {
       <header className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Generuj fiszki AI</h1>
         <p className="text-muted-foreground">
-          Wklej tekst źródłowy (artykuł, notatki, dokumentację), a AI wygeneruje dla Ciebie 
-          gotowe fiszki edukacyjne. Możesz je następnie przeglądnąć, edytować i wybrać te, 
-          które chcesz zapisać.
+          Wklej tekst źródłowy (artykuł, notatki, dokumentację), a AI wygeneruje dla Ciebie gotowe fiszki edukacyjne.
+          Możesz je następnie przeglądnąć, edytować i wybrać te, które chcesz zapisać.
         </p>
       </header>
-      
+
       {/* Formularz - zawsze widoczny, disabled gdy loading */}
       <div className="mb-8">
-        <GenerateForm 
-          onGenerate={handleGenerate}
-          isLoading={viewState.isLoading}
-          initialValue={initialText}
-        />
+        <GenerateForm onGenerate={handleGenerate} isLoading={viewState.isLoading} initialValue={initialText} />
       </div>
-      
+
       {/* Loading indicator */}
-      {viewState.phase === 'loading' && <LoadingIndicator data-testid="generate-loading" />}
-      
+      {viewState.phase === "loading" && <LoadingIndicator data-testid="generate-loading" />}
+
       {/* Propozycje fiszek */}
-      {(viewState.phase === 'reviewing' || viewState.phase === 'saving') && viewState.generationData && (
-        <ProposalSection
-          generationData={viewState.generationData}
-          onSave={handleSave}
-        />
+      {(viewState.phase === "reviewing" || viewState.phase === "saving") && viewState.generationData && (
+        <ProposalSection generationData={viewState.generationData} onSave={handleSave} />
       )}
     </div>
   );
 }
-

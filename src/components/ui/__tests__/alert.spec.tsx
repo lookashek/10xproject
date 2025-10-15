@@ -57,4 +57,3 @@ describe("Alert", () => {
     expect(alert).toHaveClass("custom-class");
   });
 });
-

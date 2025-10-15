@@ -1,30 +1,30 @@
 /**
  * Komponent pojedynczego wiersza w tabeli generacji
- * 
+ *
  * Wyświetla dane pojedynczej generacji w formie wiersza tabeli.
  * Jest klikalny - po kliknięciu nawiguje do szczegółów generacji.
  */
 
-import { format, formatDistanceToNow } from 'date-fns';
-import { pl } from 'date-fns/locale';
-import { TableCell, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Eye } from 'lucide-react';
-import { AcceptanceRateIndicator } from './AcceptanceRateIndicator';
-import { formatTextLength, formatAcceptedCounts } from '@/lib/viewModels/generationViewModels';
-import type { GenerationRowProps } from '@/types';
+import { format, formatDistanceToNow } from "date-fns";
+import { pl } from "date-fns/locale";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Eye } from "lucide-react";
+import { AcceptanceRateIndicator } from "./AcceptanceRateIndicator";
+import { formatTextLength, formatAcceptedCounts } from "@/lib/viewModels/generationViewModels";
+import type { GenerationRowProps } from "@/types";
 
 export function GenerationRow({ generation, onRowClick }: GenerationRowProps) {
   const createdDate = new Date(generation.created_at);
   const formattedDate = formatDistanceToNow(createdDate, { addSuffix: true, locale: pl });
-  const fullDate = format(createdDate, 'PPp', { locale: pl });
+  const fullDate = format(createdDate, "PPp", { locale: pl });
 
   const handleClick = () => {
     onRowClick(generation.id);
   };
 
   return (
-    <TableRow 
+    <TableRow
       onClick={handleClick}
       className="cursor-pointer hover:bg-muted/50 transition-colors"
       data-testid={`generation-row-${generation.id}`}
@@ -35,12 +35,8 @@ export function GenerationRow({ generation, onRowClick }: GenerationRowProps) {
           <span className="text-xs text-muted-foreground">{fullDate}</span>
         </div>
       </TableCell>
-      <TableCell>
-        {formatTextLength(generation.source_text_length)}
-      </TableCell>
-      <TableCell className="text-center">
-        {generation.generated_count}
-      </TableCell>
+      <TableCell>{formatTextLength(generation.source_text_length)}</TableCell>
+      <TableCell className="text-center">{generation.generated_count}</TableCell>
       <TableCell>
         {formatAcceptedCounts(generation.accepted_unedited_count, generation.accepted_edited_count)}
       </TableCell>
@@ -68,4 +64,3 @@ export function GenerationRow({ generation, onRowClick }: GenerationRowProps) {
     </TableRow>
   );
 }
-

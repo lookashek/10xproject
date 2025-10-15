@@ -2,7 +2,7 @@
  * FlashcardGridSkeleton - Grid of skeletons displayed during loading
  */
 
-import FlashcardCardSkeleton from './FlashcardCardSkeleton';
+import FlashcardCardSkeleton from "./FlashcardCardSkeleton";
 
 export default function FlashcardGridSkeleton() {
   return (
@@ -13,4 +13,3 @@ export default function FlashcardGridSkeleton() {
     </div>
   );
 }
-

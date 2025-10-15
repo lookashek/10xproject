@@ -4,12 +4,12 @@
  * Displays user's generation history with statistics and pagination
  */
 
-import Layout from '../layouts/Layout.astro';
-import { GenerationsView } from '../components/generations';
+import Layout from "../layouts/Layout.astro";
+import { GenerationsView } from "../components/generations";
 
 // Parse and validate query params
 const url = new URL(Astro.request.url);
-const pageParam = url.searchParams.get('page');
+const pageParam = url.searchParams.get("page");
 let initialPage = 1;
 
 if (pageParam) {
@@ -21,9 +21,5 @@ if (pageParam) {
 ---
 
 <Layout title="Historia generacji - 10x Cards">
-  <GenerationsView
-    client:load
-    initialPage={initialPage}
-  />
+  <GenerationsView client:load initialPage={initialPage} />
 </Layout>
-

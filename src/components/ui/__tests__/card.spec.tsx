@@ -1,13 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "../card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "../card";
 
 describe("Card", () => {
   it("renderuje Card z zawartością", () => {
@@ -70,4 +63,3 @@ describe("Card", () => {
     expect(card).toHaveClass("custom-class");
   });
 });
-

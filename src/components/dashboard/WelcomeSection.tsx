@@ -1,8 +1,8 @@
-import type { UserProfile } from '@/types';
+import type { UserProfile } from "@/types";
 
-type WelcomeSectionProps = {
+interface WelcomeSectionProps {
   user: UserProfile;
-};
+}
 
 export function WelcomeSection({ user }: WelcomeSectionProps) {
   const displayName = user.username || user.email;
@@ -15,4 +15,3 @@ export function WelcomeSection({ user }: WelcomeSectionProps) {
     </section>
   );
 }
-

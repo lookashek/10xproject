@@ -1,16 +1,16 @@
 /**
  * DeleteAccountSection - Sekcja usuwania konta
- * 
+ *
  * Komponent z interfejsem do trwałego usunięcia konta użytkownika.
  * Wymaga potwierdzenia przez wpisanie "DELETE".
  */
 
-import { useState, useCallback, type FormEvent } from 'react';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useCallback, type FormEvent } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,15 +21,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Trash2, Loader2, AlertTriangle } from 'lucide-react';
+} from "@/components/ui/alert-dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Trash2, Loader2, AlertTriangle } from "lucide-react";
 
-const CONFIRMATION_TEXT = 'DELETE';
+const CONFIRMATION_TEXT = "DELETE";
 
 export function DeleteAccountSection() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [confirmationText, setConfirmationText] = useState('');
+  const [confirmationText, setConfirmationText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
   const isConfirmed = confirmationText === CONFIRMATION_TEXT;
@@ -52,20 +52,19 @@ export function DeleteAccountSection() {
       // }
 
       // toast.success('Konto zostało trwale usunięte');
-      
+
       // // Wylogowanie i redirect do strony głównej
       // window.location.href = '/';
 
       // Tymczasowo - symulacja
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      toast.success('Usuwanie konta - funkcja do zaimplementowania');
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast.success("Usuwanie konta - funkcja do zaimplementowania");
       setIsDialogOpen(false);
-      setConfirmationText('');
-      
+      setConfirmationText("");
     } catch (err: any) {
-      const message = err.message || 'Wystąpił nieoczekiwany błąd';
-      toast.error('Nie udało się usunąć konta', {
-        description: message
+      const message = err.message || "Wystąpił nieoczekiwany błąd";
+      toast.error("Nie udało się usunąć konta", {
+        description: message,
       });
     } finally {
       setIsDeleting(false);
@@ -76,16 +75,14 @@ export function DeleteAccountSection() {
     <Card className="border-destructive" data-testid="delete-account-section">
       <CardHeader>
         <CardTitle className="text-destructive">Strefa niebezpieczna</CardTitle>
-        <CardDescription>
-          Trwałe usunięcie konta i wszystkich danych
-        </CardDescription>
+        <CardDescription>Trwałe usunięcie konta i wszystkich danych</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            Usunięcie konta jest <strong>nieodwracalne</strong>. Wszystkie twoje fiszki, 
-            generacje i dane zostaną trwale usunięte.
+            Usunięcie konta jest <strong>nieodwracalne</strong>. Wszystkie twoje fiszki, generacje i dane zostaną trwale
+            usunięte.
           </AlertDescription>
         </Alert>
 
@@ -102,8 +99,8 @@ export function DeleteAccountSection() {
               <AlertDialogDescription asChild>
                 <div className="space-y-4">
                   <p>
-                    Ta akcja jest <strong className="text-destructive">nieodwracalna</strong>. 
-                    Wszystkie twoje dane zostaną trwale usunięte:
+                    Ta akcja jest <strong className="text-destructive">nieodwracalna</strong>. Wszystkie twoje dane
+                    zostaną trwale usunięte:
                   </p>
                   <ul className="list-disc list-inside space-y-1 text-sm">
                     <li>Wszystkie fiszki</li>
@@ -129,11 +126,7 @@ export function DeleteAccountSection() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel disabled={isDeleting}>Anuluj</AlertDialogCancel>
-              <Button
-                variant="destructive"
-                onClick={handleDelete}
-                disabled={!isConfirmed || isDeleting}
-              >
+              <Button variant="destructive" onClick={handleDelete} disabled={!isConfirmed || isDeleting}>
                 {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Usuń konto na zawsze
               </Button>
@@ -144,4 +137,3 @@ export function DeleteAccountSection() {
     </Card>
   );
 }
-

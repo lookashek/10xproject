@@ -1,7 +1,7 @@
 // OpenRouter service implemented per implementation plan
 // Contains: types, custom error, and OpenRouterService class
 
-import type { z } from 'zod';
+import type { z } from "zod";
 
 // =============================
 // Types
@@ -55,18 +55,18 @@ export interface OpenRouterCompletionResponse<T> {
 }
 
 export type OpenRouterErrorCode =
-  | 'CONFIG_ERROR'
-  | 'TIMEOUT'
-  | 'NETWORK_ERROR'
-  | 'BAD_REQUEST'
-  | 'UNAUTHORIZED'
-  | 'INSUFFICIENT_CREDITS'
-  | 'RATE_LIMIT'
-  | 'SERVICE_UNAVAILABLE'
-  | 'INVALID_RESPONSE'
-  | 'PARSE_ERROR'
-  | 'VALIDATION_ERROR'
-  | 'API_ERROR';
+  | "CONFIG_ERROR"
+  | "TIMEOUT"
+  | "NETWORK_ERROR"
+  | "BAD_REQUEST"
+  | "UNAUTHORIZED"
+  | "INSUFFICIENT_CREDITS"
+  | "RATE_LIMIT"
+  | "SERVICE_UNAVAILABLE"
+  | "INVALID_RESPONSE"
+  | "PARSE_ERROR"
+  | "VALIDATION_ERROR"
+  | "API_ERROR";
 
 // =============================
 // Custom Error
@@ -80,11 +80,16 @@ export class OpenRouterError extends Error {
     public details?: any
   ) {
     super(message);
-    this.name = 'OpenRouterError';
+    this.name = "OpenRouterError";
   }
 
   isRetryable(): boolean {
-    return this.code === 'TIMEOUT' || this.code === 'NETWORK_ERROR' || this.code === 'SERVICE_UNAVAILABLE' || this.code === 'RATE_LIMIT';
+    return (
+      this.code === "TIMEOUT" ||
+      this.code === "NETWORK_ERROR" ||
+      this.code === "SERVICE_UNAVAILABLE" ||
+      this.code === "RATE_LIMIT"
+    );
   }
 
   toApiError() {
@@ -92,8 +97,8 @@ export class OpenRouterError extends Error {
       error: {
         code: this.code,
         message: this.message,
-        details: this.details
-      }
+        details: this.details,
+      },
     };
   }
 }
@@ -111,23 +116,25 @@ export class OpenRouterService {
   private readonly appTitle: string;
 
   constructor(config: OpenRouterConfig) {
-    if (!config.apiKey || config.apiKey.trim() === '') {
-      throw new OpenRouterError('OpenRouter API key is required', 'CONFIG_ERROR', 500);
+    if (!config.apiKey || config.apiKey.trim() === "") {
+      throw new OpenRouterError("OpenRouter API key is required", "CONFIG_ERROR", 500);
     }
 
     this.apiKey = config.apiKey;
-    this.apiUrl = config.apiUrl ?? 'https://openrouter.ai/api/v1/chat/completions';
-    this.defaultModel = config.defaultModel ?? 'anthropic/claude-3.5-sonnet';
+    this.apiUrl = config.apiUrl ?? "https://openrouter.ai/api/v1/chat/completions";
+    this.defaultModel = config.defaultModel ?? "anthropic/claude-3.5-sonnet";
     this.requestTimeout = config.requestTimeout ?? 60000;
-    this.httpReferer = config.httpReferer ?? 'https://10xproject.app';
-    this.appTitle = config.appTitle ?? '10x Flashcards';
+    this.httpReferer = config.httpReferer ?? "https://10xproject.app";
+    this.appTitle = config.appTitle ?? "10x Flashcards";
   }
 
   // -----------------------------
   // Public API
   // -----------------------------
 
-  async generateCompletion<T = string>(request: OpenRouterCompletionRequest<T>): Promise<OpenRouterCompletionResponse<T>> {
+  async generateCompletion<T = string>(
+    request: OpenRouterCompletionRequest<T>
+  ): Promise<OpenRouterCompletionResponse<T>> {
     const startTime = Date.now();
 
     const requestBody = this.buildRequestBody<T>(request);
@@ -150,21 +157,21 @@ export class OpenRouterService {
     } catch (error) {
       clearTimeout(timeoutId);
 
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw new OpenRouterError('Request timed out', 'TIMEOUT', 503);
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new OpenRouterError("Request timed out", "TIMEOUT", 503);
       }
 
       if (error instanceof OpenRouterError) {
         throw error;
       }
 
-      throw new OpenRouterError('Network error occurred', 'NETWORK_ERROR', 503);
+      throw new OpenRouterError("Network error occurred", "NETWORK_ERROR", 503);
     }
   }
 
   async generateCompletionWithRetry<T = string>(
     request: OpenRouterCompletionRequest<T>,
-    maxRetries: number = 3
+    maxRetries = 3
   ): Promise<OpenRouterCompletionResponse<T>> {
     let lastError: OpenRouterError | null = null;
 
@@ -181,19 +188,19 @@ export class OpenRouterService {
         if (error instanceof OpenRouterError) {
           throw error;
         }
-        throw new OpenRouterError('Network error occurred', 'NETWORK_ERROR', 503);
+        throw new OpenRouterError("Network error occurred", "NETWORK_ERROR", 503);
       }
     }
 
-    throw lastError ?? new OpenRouterError('Unknown error', 'API_ERROR', 500);
+    throw lastError ?? new OpenRouterError("Unknown error", "API_ERROR", 500);
   }
 
   async testConnection(): Promise<boolean> {
     try {
       await this.generateCompletion({
-        systemMessage: 'You are a helpful assistant.',
+        systemMessage: "You are a helpful assistant.",
         userMessage: 'Say "OK"',
-        modelParams: { maxTokens: 10 }
+        modelParams: { maxTokens: 10 },
       });
       return true;
     } catch (error) {
@@ -210,9 +217,9 @@ export class OpenRouterService {
     const body: Record<string, any> = {
       model: request.model ?? this.defaultModel,
       messages: [
-        { role: 'system', content: request.systemMessage },
-        { role: 'user', content: request.userMessage }
-      ]
+        { role: "system", content: request.systemMessage },
+        { role: "user", content: request.userMessage },
+      ],
     };
 
     if (request.modelParams) {
@@ -221,12 +228,12 @@ export class OpenRouterService {
 
     if (request.responseSchema) {
       body.response_format = {
-        type: 'json_schema',
+        type: "json_schema",
         json_schema: {
           name: request.responseSchema.name,
           strict: true,
-          schema: request.responseSchema.jsonSchema
-        }
+          schema: request.responseSchema.jsonSchema,
+        },
       };
     }
 
@@ -253,20 +260,20 @@ export class OpenRouterService {
 
   private buildHeaders(): Record<string, string> {
     return {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.apiKey}`,
-      'HTTP-Referer': this.httpReferer,
-      'X-Title': this.appTitle
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.apiKey}`,
+      "HTTP-Referer": this.httpReferer,
+      "X-Title": this.appTitle,
     };
   }
 
   private async executeRequest(body: object, abortSignal: AbortSignal): Promise<Response> {
     try {
       const response = await fetch(this.apiUrl, {
-        method: 'POST',
+        method: "POST",
         headers: this.buildHeaders(),
         body: JSON.stringify(body),
-        signal: abortSignal
+        signal: abortSignal,
       });
 
       if (!response.ok) {
@@ -275,13 +282,13 @@ export class OpenRouterService {
 
       return response;
     } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw new OpenRouterError('Request timed out', 'TIMEOUT', 503);
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new OpenRouterError("Request timed out", "TIMEOUT", 503);
       }
       if (error instanceof OpenRouterError) {
         throw error;
       }
-      throw new OpenRouterError('Network error', 'NETWORK_ERROR', 503);
+      throw new OpenRouterError("Network error", "NETWORK_ERROR", 503);
     }
   }
 
@@ -289,7 +296,7 @@ export class OpenRouterService {
     const content = responseData?.choices?.[0]?.message?.content;
 
     if (!content) {
-      throw new OpenRouterError('Invalid response structure from OpenRouter', 'INVALID_RESPONSE', 500);
+      throw new OpenRouterError("Invalid response structure from OpenRouter", "INVALID_RESPONSE", 500);
     }
 
     if (!schema) {
@@ -300,14 +307,14 @@ export class OpenRouterService {
     try {
       parsedContent = JSON.parse(content);
     } catch (e) {
-      throw new OpenRouterError('Failed to parse JSON from response', 'PARSE_ERROR', 500, { rawContent: content });
+      throw new OpenRouterError("Failed to parse JSON from response", "PARSE_ERROR", 500, { rawContent: content });
     }
 
     const validationResult = schema.safeParse(parsedContent);
     if (!validationResult.success) {
-      throw new OpenRouterError('Response failed schema validation', 'VALIDATION_ERROR', 500, {
+      throw new OpenRouterError("Response failed schema validation", "VALIDATION_ERROR", 500, {
         errors: validationResult.error.errors,
-        receivedData: parsedContent
+        receivedData: parsedContent,
       });
     }
 
@@ -322,35 +329,35 @@ export class OpenRouterService {
       // ignore parse error
     }
 
-    const errorMessage = errorData?.error?.message || 'Unknown error';
+    const errorMessage = errorData?.error?.message || "Unknown error";
 
     switch (response.status) {
       case 400:
-        throw new OpenRouterError(`Bad request: ${errorMessage}`, 'BAD_REQUEST', 400, errorData);
+        throw new OpenRouterError(`Bad request: ${errorMessage}`, "BAD_REQUEST", 400, errorData);
       case 401:
-        throw new OpenRouterError('Invalid API key', 'UNAUTHORIZED', 401);
+        throw new OpenRouterError("Invalid API key", "UNAUTHORIZED", 401);
       case 402:
-        throw new OpenRouterError('Insufficient credits in OpenRouter account', 'INSUFFICIENT_CREDITS', 402);
+        throw new OpenRouterError("Insufficient credits in OpenRouter account", "INSUFFICIENT_CREDITS", 402);
       case 429:
-        throw new OpenRouterError('Rate limit exceeded', 'RATE_LIMIT', 429, { retryAfter: response.headers.get('Retry-After') });
+        throw new OpenRouterError("Rate limit exceeded", "RATE_LIMIT", 429, {
+          retryAfter: response.headers.get("Retry-After"),
+        });
       case 500:
       case 502:
       case 503:
       case 504:
-        throw new OpenRouterError('OpenRouter service temporarily unavailable', 'SERVICE_UNAVAILABLE', 503);
+        throw new OpenRouterError("OpenRouter service temporarily unavailable", "SERVICE_UNAVAILABLE", 503);
       default:
-        throw new OpenRouterError(`API error: ${errorMessage}`, 'API_ERROR', response.status, errorData);
+        throw new OpenRouterError(`API error: ${errorMessage}`, "API_ERROR", response.status, errorData);
     }
   }
 
-  private extractMetadata(data: any): OpenRouterCompletionResponse<any>['metadata'] {
+  private extractMetadata(data: any): OpenRouterCompletionResponse<any>["metadata"] {
     return {
       model: data?.model,
       tokensPrompt: data?.usage?.prompt_tokens,
       tokensCompletion: data?.usage?.completion_tokens,
-      tokensTotal: data?.usage?.total_tokens
+      tokensTotal: data?.usage?.total_tokens,
     };
   }
 }
-
-

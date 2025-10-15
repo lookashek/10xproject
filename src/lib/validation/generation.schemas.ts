@@ -3,7 +3,7 @@
  * Validates request bodies, query params, and LLM responses
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * Schema for POST /api/generations request body
@@ -13,8 +13,8 @@ export const generationCreateSchema = z.object({
   source_text: z
     .string()
     .trim()
-    .min(1000, 'Source text must be at least 1000 characters')
-    .max(10000, 'Source text must not exceed 10000 characters'),
+    .min(1000, "Source text must be at least 1000 characters")
+    .max(10000, "Source text must not exceed 10000 characters"),
 });
 
 /**
@@ -44,4 +44,3 @@ export const proposedFlashcardSchema = z.object({
  * Schema for validating array of proposed flashcards from LLM
  */
 export const proposedFlashcardsArraySchema = z.array(proposedFlashcardSchema).min(1);
-

@@ -50,4 +50,3 @@ describe("Badge", () => {
     expect(badge).toBeInTheDocument();
   });
 });
-

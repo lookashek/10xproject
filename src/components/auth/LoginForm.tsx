@@ -1,21 +1,22 @@
 /**
  * LoginForm - Formularz logowania
- * 
+ *
  * Komponent React z formularzem logowania użytkownika.
  * Zawiera walidację client-side i obsługę błędów.
  */
 
-import { useState, useCallback, type FormEvent } from 'react';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Eye, EyeOff, Loader2, CircleAlert } from 'lucide-react';
+import { useState, useCallback, type FormEvent } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Eye, EyeOff, Loader2, CircleAlert } from "lucide-react";
+import { supabaseClient } from "@/db/supabase.client";
 
 export function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,63 +28,71 @@ export function LoginForm() {
   // Walidacja formularza
   const canSubmit = email.length > 0 && password.length > 0 && isValidEmail && !isLoading;
 
-  const handleSubmit = useCallback(async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    if (!canSubmit) return;
+  const handleSubmit = useCallback(
+    async (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
 
-    setError(null);
-    setIsLoading(true);
+      if (!canSubmit) return;
 
-    try {
-      // Wywołanie API logowania
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+      setError(null);
+      setIsLoading(true);
 
-      const data = await response.json();
+      try {
+        // Wywołanie API logowania
+        const response = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
 
-      if (!response.ok) {
-        // Obsługa błędów API
-        const errorMessage = data.error?.message || 'Błąd logowania';
-        throw new Error(errorMessage);
+        const data = await response.json();
+
+        if (!response.ok) {
+          // Obsługa błędów API
+          const errorMessage = data.error?.message || "Błąd logowania";
+          throw new Error(errorMessage);
+        }
+
+        // Ustaw sesję po stronie klienta (dla SSR)
+        if (data.session) {
+          const { error: sessionError } = await supabaseClient.auth.setSession({
+            access_token: data.session.access_token,
+            refresh_token: data.session.refresh_token,
+          });
+
+          if (sessionError) {
+            throw new Error("Nie udało się ustawić sesji");
+          }
+        }
+
+        // Sukces - wyświetl toast i przekieruj
+        toast.success("Zalogowano pomyślnie!");
+
+        // Redirect do dashboardu lub zapisanego URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirectTo = urlParams.get("redirect") || data.redirectTo || "/dashboard";
+        window.location.href = redirectTo;
+      } catch (err: any) {
+        const message = err.message || "Wystąpił nieoczekiwany błąd";
+        setError(message);
+        toast.error("Nie udało się zalogować", {
+          description: message,
+        });
+      } finally {
+        setIsLoading(false);
       }
-
-      // Sukces - wyświetl toast i przekieruj
-      toast.success('Zalogowano pomyślnie!');
-      
-      // Redirect do dashboardu lub zapisanego URL
-      const urlParams = new URLSearchParams(window.location.search);
-      const redirectTo = urlParams.get('redirect') || data.redirectTo || '/dashboard';
-      window.location.href = redirectTo;
-      
-    } catch (err: any) {
-      const message = err.message || 'Wystąpił nieoczekiwany błąd';
-      setError(message);
-      toast.error('Nie udało się zalogować', {
-        description: message
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [email, password, canSubmit]);
+    },
+    [email, password, canSubmit]
+  );
 
   return (
     <div className="w-full max-w-md mx-auto space-y-6">
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold">Logowanie</h1>
-        <p className="text-muted-foreground">
-          Zaloguj się do swojego konta 10x cards
-        </p>
+        <p className="text-muted-foreground">Zaloguj się do swojego konta 10x cards</p>
       </div>
 
-      <form
-        data-testid="login-form"
-        onSubmit={handleSubmit}
-        className="space-y-4"
-      >
+      <form data-testid="login-form" onSubmit={handleSubmit} className="space-y-4">
         {/* Email */}
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
@@ -97,7 +106,7 @@ export function LoginForm() {
             disabled={isLoading}
             required
             aria-invalid={email.length > 0 && !isValidEmail}
-            aria-describedby={email.length > 0 && !isValidEmail ? 'email-error' : undefined}
+            aria-describedby={email.length > 0 && !isValidEmail ? "email-error" : undefined}
           />
           {email.length > 0 && !isValidEmail && (
             <p id="email-error" className="text-sm text-destructive">
@@ -108,12 +117,12 @@ export function LoginForm() {
 
         {/* Password */}
         <div className="space-y-2">
-        <Label htmlFor="password">Hasło</Label>
+          <Label htmlFor="password">Hasło</Label>
           <div className="relative">
             <Input
               id="password"
               name="password"
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -128,7 +137,7 @@ export function LoginForm() {
               size="icon"
               className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
               onClick={() => setShowPassword(!showPassword)}
-              aria-label={showPassword ? 'Ukryj hasło' : 'Pokaż hasło'}
+              aria-label={showPassword ? "Ukryj hasło" : "Pokaż hasło"}
               disabled={isLoading}
             >
               {showPassword ? (
@@ -149,12 +158,7 @@ export function LoginForm() {
         )}
 
         {/* Submit Button */}
-        <Button 
-          type="submit" 
-          className="w-full"
-          disabled={!canSubmit}
-          data-testid="login-submit"
-        >
+        <Button type="submit" className="w-full" disabled={!canSubmit} data-testid="login-submit">
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Zaloguj się
         </Button>
@@ -174,15 +178,10 @@ export function LoginForm() {
       {/* Register Link */}
       <div className="text-center text-sm">
         <span className="text-muted-foreground">Nie masz konta? </span>
-        <a
-          href="/register"
-          className="font-medium text-primary hover:underline"
-          data-testid="register-link"
-        >
+        <a href="/register" className="font-medium text-primary hover:underline" data-testid="register-link">
           Zarejestruj się
         </a>
       </div>
     </div>
   );
 }
-

@@ -2,7 +2,7 @@
  * DeleteConfirmDialog - Confirmation dialog for deleting flashcards
  */
 
-import { Loader2, Trash2 } from 'lucide-react';
+import { Loader2, Trash2 } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -11,8 +11,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Button } from '@/components/ui/button';
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 interface DeleteConfirmDialogProps {
   open: boolean;
@@ -38,7 +38,7 @@ export default function DeleteConfirmDialog({
             Ta operacja jest nieodwracalna. Fiszka zostanie trwale usunięta.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        
+
         {flashcardFront && (
           <div className="bg-muted p-4 rounded-md border border-border">
             <p className="text-sm text-muted-foreground line-clamp-2">
@@ -46,16 +46,10 @@ export default function DeleteConfirmDialog({
             </p>
           </div>
         )}
-        
+
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isDeleting}>
-            Anuluj
-          </AlertDialogCancel>
-          <Button
-            onClick={onConfirm}
-            disabled={isDeleting}
-            variant="destructive"
-          >
+          <AlertDialogCancel disabled={isDeleting}>Anuluj</AlertDialogCancel>
+          <Button onClick={onConfirm} disabled={isDeleting} variant="destructive">
             {isDeleting ? (
               <>
                 <Loader2 className="size-4 animate-spin" />
@@ -73,4 +67,3 @@ export default function DeleteConfirmDialog({
     </AlertDialog>
   );
 }
-

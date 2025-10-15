@@ -3,15 +3,15 @@
  * Uses SHA-256 to create consistent hashes for duplicate detection
  */
 
-import { createHash } from 'node:crypto';
+import { createHash } from "node:crypto";
 
 /**
  * Calculates SHA-256 hash of given text
  * Used to detect duplicate generation requests with same source text
- * 
+ *
  * @param text - Source text to hash
  * @returns Hexadecimal SHA-256 hash string
- * 
+ *
  * @example
  * ```typescript
  * const hash = await calculateSHA256("TypeScript is a strongly typed...");
@@ -19,8 +19,7 @@ import { createHash } from 'node:crypto';
  * ```
  */
 export async function calculateSHA256(text: string): Promise<string> {
-  const hash = createHash('sha256');
+  const hash = createHash("sha256");
   hash.update(text);
-  return hash.digest('hex');
+  return hash.digest("hex");
 }
-

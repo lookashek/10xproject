@@ -1,6 +1,6 @@
 /**
  * StudySessionView - Główny kontener widoku sesji nauki
- * 
+ *
  * Integruje:
  * - useStudySession hook (zarządzanie stanem)
  * - useKeyboardShortcuts hook (keyboard navigation)
@@ -8,16 +8,16 @@
  * - Error handling z toast notifications
  */
 
-import { useState, useEffect } from 'react';
-import { toast } from 'sonner';
-import { useStudySession } from '@/lib/hooks/useStudySession';
-import { useKeyboardShortcuts } from '@/lib/hooks/useKeyboardShortcuts';
-import { StudySessionHeader } from './StudySessionHeader';
-import { ActiveSession } from './ActiveSession';
-import { LoadingState } from './LoadingState';
-import { EmptyState } from './EmptyState';
-import { CompletedState } from './CompletedState';
-import { StudyErrorBoundary } from './ErrorBoundary';
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
+import { useStudySession } from "@/lib/hooks/useStudySession";
+import { useKeyboardShortcuts } from "@/lib/hooks/useKeyboardShortcuts";
+import { StudySessionHeader } from "./StudySessionHeader";
+import { ActiveSession } from "./ActiveSession";
+import { LoadingState } from "./LoadingState";
+import { EmptyState } from "./EmptyState";
+import { CompletedState } from "./CompletedState";
+import { StudyErrorBoundary } from "./ErrorBoundary";
 
 function StudySessionViewInner() {
   const {
@@ -37,23 +37,17 @@ function StudySessionViewInner() {
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Keyboard shortcuts - aktywne tylko w active state
-  useKeyboardShortcuts(
-    sessionState.type === 'active',
-    isFlipped,
-    flipCard,
-    rateCard,
-    exitSession
-  );
+  useKeyboardShortcuts(sessionState.type === "active", isFlipped, flipCard, rateCard, exitSession);
 
   // Error handling z toast
   useEffect(() => {
     if (error) {
       toast.error(error.message, {
-        description: 'Spróbuj odświeżyć stronę lub wrócić do panelu.',
+        description: "Spróbuj odświeżyć stronę lub wrócić do panelu.",
         action: {
-          label: 'Powrót do panelu',
+          label: "Powrót do panelu",
           onClick: () => {
-            window.location.href = '/dashboard';
+            window.location.href = "/dashboard";
           },
         },
       });
@@ -63,7 +57,7 @@ function StudySessionViewInner() {
   // Wrapper dla rateCard z processing state (smooth transitions)
   const handleRate = async (quality: Parameters<typeof rateCard>[0]) => {
     setIsProcessing(true);
-    
+
     // Małe opóźnienie dla smooth UX
     setTimeout(() => {
       rateCard(quality);
@@ -72,22 +66,16 @@ function StudySessionViewInner() {
   };
 
   // Conditional rendering based on session state
-  if (sessionState.type === 'initializing') {
+  if (sessionState.type === "initializing") {
     return <LoadingState />;
   }
 
-  if (sessionState.type === 'empty') {
+  if (sessionState.type === "empty") {
     return <EmptyState data-testid="study-empty" />;
   }
 
-  if (sessionState.type === 'completed') {
-    return (
-      <CompletedState
-        stats={sessionState.stats}
-        onRestart={restartSession}
-        onExit={exitSession}
-      />
-    );
+  if (sessionState.type === "completed") {
+    return <CompletedState stats={sessionState.stats} onRestart={restartSession} onExit={exitSession} />;
   }
 
   // Active session
@@ -131,4 +119,3 @@ export function StudySessionView() {
     </StudyErrorBoundary>
   );
 }
-

@@ -1,16 +1,16 @@
 ---
 /**
  * Strona Rejestracji
- * 
+ *
  * Publiczny widok umożliwiający utworzenie nowego konta użytkownika.
  * MVP: Auto-login po rejestracji (bez email verification - zgodnie z PRD US-001).
  * Po udanej rejestracji przekierowanie do /dashboard.
- * 
+ *
  * Middleware: Jeśli użytkownik już zalogowany → redirect do /dashboard
  */
 
-import Layout from '../layouts/Layout.astro';
-import { RegisterForm } from '../components/auth/RegisterForm';
+import Layout from "../layouts/Layout.astro";
+import { RegisterForm } from "../components/auth/RegisterForm";
 ---
 
 <Layout title="Rejestracja - 10x cards">
@@ -18,4 +18,3 @@ import { RegisterForm } from '../components/auth/RegisterForm';
     <RegisterForm client:load />
   </main>
 </Layout>
-

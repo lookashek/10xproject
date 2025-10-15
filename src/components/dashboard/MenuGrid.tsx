@@ -1,5 +1,5 @@
-import { MenuTile } from './MenuTile';
-import { Wand2, Library, GraduationCap, History } from 'lucide-react';
+import { MenuTile } from "./MenuTile";
+import { Wand2, Library, GraduationCap, History } from "lucide-react";
 
 export function MenuGrid() {
   return (
@@ -37,4 +37,3 @@ export function MenuGrid() {
     </nav>
   );
 }
-

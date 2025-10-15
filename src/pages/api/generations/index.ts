@@ -4,17 +4,13 @@
  * POST /api/generations - Create new generation from source text
  */
 
-import type { APIContext } from 'astro';
-import type { GenerationCreateCommand, GenerationCreateResponse } from '../../../types';
-import { generationCreateSchema, generationListQuerySchema } from '../../../lib/validation/generation.schemas';
-import { calculateSHA256 } from '../../../lib/services/hashService';
-import { generateFlashcards, LLMServiceError } from '../../../lib/services/llmService';
-import { logGenerationError } from '../../../lib/services/errorLogService';
-import {
-  checkDuplicateHash,
-  createGeneration,
-  listGenerations,
-} from '../../../lib/services/generationService';
+import type { APIContext } from "astro";
+import type { GenerationCreateCommand, GenerationCreateResponse } from "../../../types";
+import { generationCreateSchema, generationListQuerySchema } from "../../../lib/validation/generation.schemas";
+import { calculateSHA256 } from "../../../lib/services/hashService";
+import { generateFlashcards, LLMServiceError } from "../../../lib/services/llmService";
+import { logGenerationError } from "../../../lib/services/errorLogService";
+import { checkDuplicateHash, createGeneration, listGenerations } from "../../../lib/services/generationService";
 import {
   badRequest,
   conflict,
@@ -23,14 +19,14 @@ import {
   internalServerError,
   serviceUnavailable,
   successResponse,
-} from '../../../lib/utils/errors';
+} from "../../../lib/utils/errors";
 
 export const prerender = false;
 
 /**
  * Default model for flashcard generation
  */
-const DEFAULT_MODEL = 'anthropic/claude-3.5-sonnet';
+const DEFAULT_MODEL = "anthropic/claude-3.5-sonnet";
 
 /**
  * GET /api/generations
@@ -41,8 +37,8 @@ export async function GET({ request, locals }: APIContext) {
     // Parse query params from URL
     const url = new URL(request.url);
     const queryParams = {
-      page: url.searchParams.get('page'),
-      limit: url.searchParams.get('limit'),
+      page: url.searchParams.get("page"),
+      limit: url.searchParams.get("limit"),
     };
 
     // Validate query params
@@ -59,17 +55,16 @@ export async function GET({ request, locals }: APIContext) {
     // Get user ID from auth context (middleware ensures user is authenticated)
     const userId = locals.user?.id;
     if (!userId) {
-      return unauthorized('Wymagane zalogowanie');
+      return unauthorized("Wymagane zalogowanie");
     }
 
     // Fetch generations from database
     const result = await listGenerations(locals.supabase, userId, query);
 
     return successResponse(result, 200);
-
   } catch (error) {
-    console.error('Error in GET /api/generations:', error);
-    return internalServerError('Database error');
+    console.error("Error in GET /api/generations:", error);
+    return internalServerError("Database error");
   }
 }
 
@@ -84,33 +79,33 @@ export async function POST({ request, locals }: APIContext) {
     try {
       body = await request.json();
     } catch {
-      return badRequest('Invalid request body');
+      return badRequest("Invalid request body");
     }
 
     // Validate request body
     const validation = generationCreateSchema.safeParse(body);
     if (!validation.success) {
       const firstError = validation.error.errors[0];
-      
+
       // Check if it's a length validation error for better error message
-      if (firstError.code === 'too_small') {
+      if (firstError.code === "too_small") {
         return unprocessableEntity(firstError.message, {
-          field: 'source_text',
+          field: "source_text",
           min: 1000,
           actual: (body as GenerationCreateCommand).source_text?.length,
         });
       }
-      
-      if (firstError.code === 'too_big') {
+
+      if (firstError.code === "too_big") {
         return unprocessableEntity(firstError.message, {
-          field: 'source_text',
+          field: "source_text",
           max: 10000,
           actual: (body as GenerationCreateCommand).source_text?.length,
         });
       }
 
       return badRequest(firstError.message, {
-        field: 'source_text',
+        field: "source_text",
       });
     }
 
@@ -119,7 +114,7 @@ export async function POST({ request, locals }: APIContext) {
     // Get user ID from auth context (middleware ensures user is authenticated)
     const userId = locals.user?.id;
     if (!userId) {
-      return unauthorized('Wymagane zalogowanie');
+      return unauthorized("Wymagane zalogowanie");
     }
 
     // Calculate hash of source text
@@ -127,14 +122,10 @@ export async function POST({ request, locals }: APIContext) {
     const sourceTextLength = source_text.length;
 
     // Check for duplicate hash
-    const existingGenerationId = await checkDuplicateHash(
-      locals.supabase,
-      userId,
-      sourceTextHash
-    );
+    const existingGenerationId = await checkDuplicateHash(locals.supabase, userId, sourceTextHash);
 
     if (existingGenerationId) {
-      return conflict('Generation already exists for this source text', {
+      return conflict("Generation already exists for this source text", {
         existing_generation_id: existingGenerationId,
       });
     }
@@ -155,22 +146,22 @@ export async function POST({ request, locals }: APIContext) {
         sourceTextHash,
         sourceTextLength,
         DEFAULT_MODEL,
-        error instanceof LLMServiceError ? error.code : 'UNKNOWN_ERROR',
-        error instanceof Error ? error.message : 'Unknown error occurred'
+        error instanceof LLMServiceError ? error.code : "UNKNOWN_ERROR",
+        error instanceof Error ? error.message : "Unknown error occurred"
       );
 
       // Return appropriate error response
       if (error instanceof LLMServiceError) {
-        if (error.statusCode === 503 || error.code === 'TIMEOUT') {
-          return serviceUnavailable('AI service temporarily unavailable');
+        if (error.statusCode === 503 || error.code === "TIMEOUT") {
+          return serviceUnavailable("AI service temporarily unavailable");
         }
         if (error.statusCode === 429) {
-          return serviceUnavailable('AI service rate limit exceeded', 60);
+          return serviceUnavailable("AI service rate limit exceeded", 60);
         }
       }
 
-      console.error('LLM generation error:', error);
-      return internalServerError('Failed to generate flashcards');
+      console.error("LLM generation error:", error);
+      return internalServerError("Failed to generate flashcards");
     }
 
     // Save generation to database
@@ -186,8 +177,8 @@ export async function POST({ request, locals }: APIContext) {
         accepted_edited_count: null,
       });
     } catch (error) {
-      console.error('Database error while creating generation:', error);
-      return internalServerError('Database error');
+      console.error("Database error while creating generation:", error);
+      return internalServerError("Database error");
     }
 
     // Remove user_id from response (convert to DTO)
@@ -200,10 +191,8 @@ export async function POST({ request, locals }: APIContext) {
     };
 
     return successResponse(response, 201);
-
   } catch (error) {
-    console.error('Unexpected error in POST /api/generations:', error);
-    return internalServerError('Internal server error');
+    console.error("Unexpected error in POST /api/generations:", error);
+    return internalServerError("Internal server error");
   }
 }
-

@@ -3,15 +3,15 @@
  * Integrates with OpenRouter.ai API via OpenRouterService to generate flashcards
  */
 
-import type { ProposedFlashcard } from '../../types';
-import { proposedFlashcardsArraySchema } from '../validation/generation.schemas';
-import { zodToJsonSchema } from 'zod-to-json-schema';
-import { OpenRouterService, OpenRouterError } from '../openrouter.service';
+import type { ProposedFlashcard } from "../../types";
+import { proposedFlashcardsArraySchema } from "../validation/generation.schemas";
+import { zodToJsonSchema } from "zod-to-json-schema";
+import { OpenRouterService, OpenRouterError } from "../openrouter.service";
 
 /**
  * OpenRouter.ai API configuration
  */
-const DEFAULT_MODEL = 'anthropic/claude-3.5-sonnet';
+const DEFAULT_MODEL = "anthropic/claude-3.5-sonnet";
 const REQUEST_TIMEOUT = 60000; // 60 seconds
 
 /**
@@ -60,7 +60,7 @@ export class LLMServiceError extends Error {
     public statusCode?: number
   ) {
     super(message);
-    this.name = 'LLMServiceError';
+    this.name = "LLMServiceError";
   }
 }
 
@@ -68,21 +68,17 @@ export class LLMServiceError extends Error {
  * Converts OpenRouterError to LLMServiceError
  */
 function convertError(error: OpenRouterError): LLMServiceError {
-  return new LLMServiceError(
-    error.message,
-    error.code,
-    error.statusCode
-  );
+  return new LLMServiceError(error.message, error.code, error.statusCode);
 }
 
 /**
  * Generates flashcards from source text using OpenRouter.ai API
- * 
+ *
  * @param sourceText - Source text to analyze (1000-10000 characters)
  * @param model - AI model to use (default: anthropic/claude-3.5-sonnet)
  * @returns Object containing proposed flashcards and generation duration in milliseconds
  * @throws {LLMServiceError} When API call fails or times out
- * 
+ *
  * @example
  * ```typescript
  * const result = await generateFlashcards(
@@ -103,11 +99,7 @@ export async function generateFlashcards(
   const apiKey = import.meta.env.OPENROUTER_API_KEY;
 
   if (!apiKey) {
-    throw new LLMServiceError(
-      'OpenRouter API key not configured',
-      'CONFIG_ERROR',
-      500
-    );
+    throw new LLMServiceError("OpenRouter API key not configured", "CONFIG_ERROR", 500);
   }
 
   const startTime = Date.now();
@@ -121,8 +113,8 @@ export async function generateFlashcards(
 
   // Prepare JSON Schema for response_format
   const jsonSchema = zodToJsonSchema(proposedFlashcardsArraySchema, {
-    name: 'flashcards_array',
-    $refStrategy: 'none',
+    name: "flashcards_array",
+    $refStrategy: "none",
   });
 
   try {
@@ -135,7 +127,7 @@ export async function generateFlashcards(
         maxTokens: 2000,
       },
       responseSchema: {
-        name: 'flashcards_array',
+        name: "flashcards_array",
         schema: proposedFlashcardsArraySchema,
         jsonSchema,
       },
@@ -143,16 +135,14 @@ export async function generateFlashcards(
 
     const duration = Date.now() - startTime;
 
-    const flashcards: ProposedFlashcard[] = (response.data as Array<{ front: string; back: string }> ).map(
-      (fc) => ({
-        front: fc.front,
-        back: fc.back,
-        source: 'ai-full' as const,
-      })
-    );
+    const flashcards: ProposedFlashcard[] = (response.data as { front: string; back: string }[]).map((fc) => ({
+      front: fc.front,
+      back: fc.back,
+      source: "ai-full" as const,
+    }));
 
     if (flashcards.length === 0) {
-      throw new LLMServiceError('No flashcards generated', 'VALIDATION_ERROR', 500);
+      throw new LLMServiceError("No flashcards generated", "VALIDATION_ERROR", 500);
     }
 
     return { flashcards, duration };
@@ -163,18 +153,18 @@ export async function generateFlashcards(
     if (error instanceof LLMServiceError) {
       throw error;
     }
-    throw new LLMServiceError('Unexpected error during flashcard generation', 'INTERNAL_ERROR', 500);
+    throw new LLMServiceError("Unexpected error during flashcard generation", "INTERNAL_ERROR", 500);
   }
 }
 
 /**
  * Parses flashcards from LLM response content
  * Extracts JSON array from response and validates each flashcard
- * 
+ *
  * @param content - Raw content from LLM response
  * @returns Array of validated proposed flashcards
  * @throws {LLMServiceError} When parsing fails or validation fails
- * 
+ *
  * @example
  * ```typescript
  * const content = '[{"front":"Q1","back":"A1"},{"front":"Q2","back":"A2"}]';
@@ -185,9 +175,9 @@ export function parseFlashcardsFromResponse(content: string): ProposedFlashcard[
   try {
     // Try to extract JSON from content (in case LLM adds extra text)
     const jsonMatch = content.match(/\[[\s\S]*\]/);
-    
+
     if (!jsonMatch) {
-      throw new Error('No JSON array found in response');
+      throw new Error("No JSON array found in response");
     }
 
     const parsed = JSON.parse(jsonMatch[0]);
@@ -196,28 +186,22 @@ export function parseFlashcardsFromResponse(content: string): ProposedFlashcard[
     const validationResult = proposedFlashcardsArraySchema.safeParse(parsed);
 
     if (!validationResult.success) {
-      console.error('Flashcard validation errors:', validationResult.error.errors);
-      throw new Error('Generated flashcards failed validation');
+      console.error("Flashcard validation errors:", validationResult.error.errors);
+      throw new Error("Generated flashcards failed validation");
     }
 
     // Add source field to each flashcard
-    const flashcards: ProposedFlashcard[] = validationResult.data.map(fc => ({
+    const flashcards: ProposedFlashcard[] = validationResult.data.map((fc) => ({
       ...fc,
-      source: 'ai-full' as const,
+      source: "ai-full" as const,
     }));
 
     if (flashcards.length === 0) {
-      throw new Error('No flashcards generated');
+      throw new Error("No flashcards generated");
     }
 
     return flashcards;
-
   } catch (error) {
-    throw new LLMServiceError(
-      'Failed to parse flashcards from AI response',
-      'PARSE_ERROR',
-      500
-    );
+    throw new LLMServiceError("Failed to parse flashcards from AI response", "PARSE_ERROR", 500);
   }
 }
-

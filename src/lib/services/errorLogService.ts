@@ -3,14 +3,14 @@
  * Logs failed AI generation attempts to database for debugging and analytics
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../db/database.types';
-import type { GenerationErrorLogInsert } from '../../types';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "../../db/database.types";
+import type { GenerationErrorLogInsert } from "../../types";
 
 /**
  * Logs a generation error to the database
  * Uses ON CONFLICT to update existing error logs for the same source text
- * 
+ *
  * @param supabase - Supabase client instance
  * @param userId - User ID (UUID) or null for unauthenticated requests
  * @param sourceTextHash - SHA-256 hash of the source text
@@ -18,7 +18,7 @@ import type { GenerationErrorLogInsert } from '../../types';
  * @param model - AI model used (or attempted to use)
  * @param errorCode - Error code from the AI service
  * @param errorMessage - Human-readable error message
- * 
+ *
  * @example
  * ```typescript
  * await logGenerationError(
@@ -51,15 +51,12 @@ export async function logGenerationError(
   };
 
   // Insert or update on conflict (UNIQUE constraint on user_id, source_text_hash)
-  const { error } = await supabase
-    .from('generation_error_logs')
-    .upsert(errorLog, {
-      onConflict: 'user_id,source_text_hash',
-    });
+  const { error } = await supabase.from("generation_error_logs").upsert(errorLog, {
+    onConflict: "user_id,source_text_hash",
+  });
 
   if (error) {
     // Log to console but don't throw - we don't want error logging to break the main flow
-    console.error('Failed to log generation error:', error);
+    console.error("Failed to log generation error:", error);
   }
 }
-

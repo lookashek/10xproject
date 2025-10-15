@@ -1,29 +1,25 @@
 /**
  * Typy ViewModel dla widoku Generowania Fiszek
- * 
+ *
  * Ten plik zawiera typy specyficzne dla widoku /generate,
  * które nie są częścią ogólnych typów API.
  */
 
-import type { 
-  ProposedFlashcard, 
-  GenerationDTO,
-  FlashcardCreateCommand 
-} from '../../types';
+import type { ProposedFlashcard, GenerationDTO, FlashcardCreateCommand } from "../../types";
 
 /**
  * Stan głównego widoku GenerateView
  */
 export interface GenerateViewState {
   /** Faza widoku */
-  phase: 'input' | 'loading' | 'reviewing' | 'saving';
-  
+  phase: "input" | "loading" | "reviewing" | "saving";
+
   /** Dane wygenerowane z API (null przed generowaniem) */
   generationData: GenerationData | null;
-  
+
   /** Stan ładowania */
   isLoading: boolean;
-  
+
   /** Błąd jeśli wystąpił */
   error: GenerateViewError | null;
 }
@@ -40,7 +36,7 @@ export interface GenerationData {
  * Struktura błędu w widoku
  */
 export interface GenerateViewError {
-  type: 'validation' | 'duplicate' | 'llm_error' | 'network' | 'server';
+  type: "validation" | "duplicate" | "llm_error" | "network" | "server";
   message: string;
   details?: {
     existingGenerationId?: number;
@@ -82,10 +78,10 @@ export interface GenerateFormProps {
 export interface ProposalListState {
   /** Set indeksów zaznaczonych propozycji */
   selectedIds: Set<number>;
-  
+
   /** Mapa edytowanych pól (index -> zmiany) */
   editedProposals: Map<number, ProposalEdit>;
-  
+
   /** Stan zapisywania */
   isSaving: boolean;
 }
@@ -94,8 +90,8 @@ export interface ProposalListState {
  * Edycja propozycji
  */
 export interface ProposalEdit {
-  front?: string;  // Jeśli undefined, bez zmian
-  back?: string;   // Jeśli undefined, bez zmian
+  front?: string; // Jeśli undefined, bez zmian
+  back?: string; // Jeśli undefined, bez zmian
 }
 
 /**
@@ -116,7 +112,7 @@ export interface ProposalCardProps {
   isSelected: boolean;
   editedValues?: ProposalEdit; // Aktualne edycje (jeśli są)
   onToggleSelect: (index: number, checked: boolean) => void;
-  onEdit: (index: number, field: 'front' | 'back', value: string) => void;
+  onEdit: (index: number, field: "front" | "back", value: string) => void;
 }
 
 /**
@@ -144,4 +140,3 @@ export interface ProposalSectionProps {
   generationData: GenerationData;
   onSave: (flashcards: FlashcardCreateCommand[]) => Promise<void>;
 }
-

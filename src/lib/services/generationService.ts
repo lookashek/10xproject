@@ -3,8 +3,8 @@
  * Handles CRUD operations for generations with pagination and statistics
  */
 
-import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '../../db/database.types';
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "../../db/database.types";
 import type {
   GenerationEntity,
   GenerationInsert,
@@ -12,17 +12,17 @@ import type {
   GenerationListQuery,
   GenerationListResponse,
   GenerationDetailDTO,
-} from '../../types';
+} from "../../types";
 
 /**
  * Checks if a generation with the same source text hash already exists for the user
  * Used to prevent duplicate generations from the same source text
- * 
+ *
  * @param supabase - Supabase client instance
  * @param userId - User ID (UUID)
  * @param hash - SHA-256 hash of source text
  * @returns Generation ID if duplicate exists, null otherwise
- * 
+ *
  * @example
  * ```typescript
  * const existingId = await checkDuplicateHash(supabase, userId, hash);
@@ -37,10 +37,10 @@ export async function checkDuplicateHash(
   hash: string
 ): Promise<number | null> {
   const { data, error } = await supabase
-    .from('generations')
-    .select('id')
-    .eq('user_id', userId)
-    .eq('source_text_hash', hash)
+    .from("generations")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("source_text_hash", hash)
     .maybeSingle();
 
   if (error) {
@@ -52,12 +52,12 @@ export async function checkDuplicateHash(
 
 /**
  * Creates a new generation record in the database
- * 
+ *
  * @param supabase - Supabase client instance
  * @param userId - User ID (UUID)
  * @param data - Generation data without user_id
  * @returns Created generation entity
- * 
+ *
  * @example
  * ```typescript
  * const generation = await createGeneration(supabase, userId, {
@@ -72,25 +72,21 @@ export async function checkDuplicateHash(
 export async function createGeneration(
   supabase: SupabaseClient<Database>,
   userId: string,
-  data: Omit<GenerationInsert, 'user_id'>
+  data: Omit<GenerationInsert, "user_id">
 ): Promise<GenerationEntity> {
   const insertData: GenerationInsert = {
     ...data,
     user_id: userId,
   };
 
-  const { data: generation, error } = await supabase
-    .from('generations')
-    .insert(insertData)
-    .select()
-    .single();
+  const { data: generation, error } = await supabase.from("generations").insert(insertData).select().single();
 
   if (error) {
     throw new Error(`Database error while creating generation: ${error.message}`);
   }
 
   if (!generation) {
-    throw new Error('Failed to create generation: No data returned');
+    throw new Error("Failed to create generation: No data returned");
   }
 
   return generation;
@@ -99,12 +95,12 @@ export async function createGeneration(
 /**
  * Lists all generations for a user with pagination
  * Ordered by created_at DESC (newest first)
- * 
+ *
  * @param supabase - Supabase client instance
  * @param userId - User ID (UUID)
  * @param query - Pagination parameters (page, limit)
  * @returns Paginated list of generations with metadata
- * 
+ *
  * @example
  * ```typescript
  * const result = await listGenerations(supabase, userId, {
@@ -126,9 +122,9 @@ export async function listGenerations(
 
   // Get total count
   const { count, error: countError } = await supabase
-    .from('generations')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', userId);
+    .from("generations")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", userId);
 
   if (countError) {
     throw new Error(`Database error while counting generations: ${countError.message}`);
@@ -138,10 +134,10 @@ export async function listGenerations(
 
   // Get paginated data
   const { data, error } = await supabase
-    .from('generations')
-    .select('*')
-    .eq('user_id', userId)
-    .order('created_at', { ascending: false })
+    .from("generations")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
     .range(offset, offset + limit - 1);
 
   if (error) {
@@ -165,12 +161,12 @@ export async function listGenerations(
 /**
  * Gets a single generation by ID with associated flashcards
  * Uses LEFT JOIN to include flashcards that were accepted from this generation
- * 
+ *
  * @param supabase - Supabase client instance
  * @param userId - User ID (UUID)
  * @param id - Generation ID
  * @returns Generation details with flashcards, or null if not found
- * 
+ *
  * @example
  * ```typescript
  * const detail = await getGenerationById(supabase, userId, 46);
@@ -187,10 +183,10 @@ export async function getGenerationById(
 ): Promise<GenerationDetailDTO | null> {
   // Get generation
   const { data: generation, error: genError } = await supabase
-    .from('generations')
-    .select('*')
-    .eq('id', id)
-    .eq('user_id', userId)
+    .from("generations")
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", userId)
     .maybeSingle();
 
   if (genError) {
@@ -203,11 +199,11 @@ export async function getGenerationById(
 
   // Get associated flashcards
   const { data: flashcards, error: fcError } = await supabase
-    .from('flashcards')
-    .select('id, front, back, source')
-    .eq('generation_id', id)
-    .eq('user_id', userId)
-    .order('created_at', { ascending: true });
+    .from("flashcards")
+    .select("id, front, back, source")
+    .eq("generation_id", id)
+    .eq("user_id", userId)
+    .order("created_at", { ascending: true });
 
   if (fcError) {
     throw new Error(`Database error while fetching flashcards: ${fcError.message}`);
@@ -221,4 +217,3 @@ export async function getGenerationById(
     flashcards: flashcards ?? [],
   };
 }
-

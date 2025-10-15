@@ -1,13 +1,13 @@
 /**
  * AssociatedFlashcardsSection - Sekcja z powiązanymi fiszkami
- * 
+ *
  * Wyświetla listę fiszek zaakceptowanych z tej generacji.
  * Pokazuje front, back i badge ze statusem (AI - bez edycji / AI - edytowana).
  */
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import type { AssociatedFlashcardsSectionProps } from '@/types';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import type { AssociatedFlashcardsSectionProps } from "@/types";
 
 export function AssociatedFlashcardsSection({ flashcards }: AssociatedFlashcardsSectionProps) {
   return (
@@ -32,11 +32,11 @@ export function AssociatedFlashcardsSection({ flashcards }: AssociatedFlashcards
                       <dt className="text-xs font-medium text-muted-foreground mb-1">Przód</dt>
                       <dd className="text-sm font-medium">{flashcard.front}</dd>
                     </div>
-                    <Badge variant={flashcard.source === 'ai-full' ? 'default' : 'secondary'}>
-                      {flashcard.source === 'ai-full' ? 'AI - bez edycji' : 'AI - edytowana'}
+                    <Badge variant={flashcard.source === "ai-full" ? "default" : "secondary"}>
+                      {flashcard.source === "ai-full" ? "AI - bez edycji" : "AI - edytowana"}
                     </Badge>
                   </div>
-                  
+
                   <div>
                     <dt className="text-xs font-medium text-muted-foreground mb-1">Tył</dt>
                     <dd className="text-sm text-muted-foreground">{flashcard.back}</dd>
@@ -50,4 +50,3 @@ export function AssociatedFlashcardsSection({ flashcards }: AssociatedFlashcards
     </Card>
   );
 }
-

@@ -1,21 +1,21 @@
 /**
  * Hook do zarządzania listą generacji
- * 
+ *
  * Pobiera i zarządza stanem listy generacji z paginacją.
  * Obsługuje ładowanie, błędy i refresh danych.
  */
 
-import { useState, useEffect } from 'react';
-import type { GenerationDTO, PaginationMeta, ErrorState } from '@/types';
-import { fetchGenerations } from '@/lib/api/generations';
+import { useState, useEffect } from "react";
+import type { GenerationDTO, PaginationMeta, ErrorState } from "@/types";
+import { fetchGenerations } from "@/lib/api/generations";
 
 /**
  * Hook do pobierania i zarządzania listą generacji
- * 
+ *
  * @param initialPage - Początkowa strona paginacji (domyślnie 1)
  * @returns Obiekt ze stanem listy generacji
  */
-export function useGenerationsList(initialPage: number = 1) {
+export function useGenerationsList(initialPage = 1) {
   const [generations, setGenerations] = useState<GenerationDTO[]>([]);
   const [pagination, setPagination] = useState<PaginationMeta | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,7 +30,7 @@ export function useGenerationsList(initialPage: number = 1) {
       setGenerations(response.data);
       setPagination(response.pagination);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Wystąpił błąd podczas ładowania generacji';
+      const errorMessage = err instanceof Error ? err.message : "Wystąpił błąd podczas ładowania generacji";
       setError({ message: errorMessage });
       setGenerations([]);
       setPagination(null);
@@ -51,4 +51,3 @@ export function useGenerationsList(initialPage: number = 1) {
     refetch: loadGenerations,
   };
 }
-

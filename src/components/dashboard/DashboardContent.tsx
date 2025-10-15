@@ -1,14 +1,14 @@
-import { useAuth, useDashboardStats } from '@/lib/hooks';
-import { ThemeProvider } from '@/lib/context/ThemeContext';
-import { DashboardHeader } from './DashboardHeader';
-import { WelcomeSection } from './WelcomeSection';
-import { StatsSection } from './StatsSection';
-import { NavigationSection } from './NavigationSection';
-import type { UserProfile } from '@/types';
+import { useAuth, useDashboardStats } from "@/lib/hooks";
+import { ThemeProvider } from "@/lib/context/ThemeContext";
+import { DashboardHeader } from "./DashboardHeader";
+import { WelcomeSection } from "./WelcomeSection";
+import { StatsSection } from "./StatsSection";
+import { NavigationSection } from "./NavigationSection";
+import type { UserProfile } from "@/types";
 
-type DashboardContentProps = {
+interface DashboardContentProps {
   initialUser?: UserProfile;
-};
+}
 
 function DashboardContentInner({ initialUser }: DashboardContentProps) {
   const { user, isLoading: isAuthLoading, logout } = useAuth();
@@ -42,27 +42,22 @@ function DashboardContentInner({ initialUser }: DashboardContentProps) {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Skip to main content link for accessibility */}
-      <a 
-        href="#main-content" 
+      <a
+        href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md"
       >
         Przejdź do głównej zawartości
       </a>
-      
+
       <DashboardHeader user={currentUser} onLogout={logout} />
-      
+
       <main id="main-content" className="flex-1" tabIndex={-1}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <WelcomeSection user={currentUser} />
-          
+
           <div className="space-y-6 sm:space-y-8">
-            <StatsSection 
-              stats={stats} 
-              isLoading={isStatsLoading} 
-              error={error} 
-              onRetry={refetch}
-            />
-            
+            <StatsSection stats={stats} isLoading={isStatsLoading} error={error} onRetry={refetch} />
+
             <NavigationSection />
           </div>
         </div>
@@ -78,4 +73,3 @@ export function DashboardContent(props: DashboardContentProps) {
     </ThemeProvider>
   );
 }
-

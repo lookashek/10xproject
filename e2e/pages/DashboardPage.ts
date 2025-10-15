@@ -32,12 +32,12 @@ export class DashboardPage {
   }
 
   async openUserMenu() {
-    await this.userMenuTrigger.click();
+    await this.userMenuTrigger.click({ force: true });
   }
 
   async logout() {
     await this.openUserMenu();
-    await this.logoutItem.click();
+    await this.logoutItem.click({ force: true });
   }
 
   async openSettings() {

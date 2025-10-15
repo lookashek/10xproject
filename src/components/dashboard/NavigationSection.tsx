@@ -1,4 +1,4 @@
-import { MenuGrid } from './MenuGrid';
+import { MenuGrid } from "./MenuGrid";
 
 export function NavigationSection() {
   return (
@@ -7,4 +7,3 @@ export function NavigationSection() {
     </section>
   );
 }
-

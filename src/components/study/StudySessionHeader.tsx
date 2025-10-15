@@ -1,16 +1,16 @@
 /**
  * StudySessionHeader - Kompaktowy header widoczny przez całą sesję
- * 
+ *
  * Zawiera:
  * - Progress bar
  * - Statystyki (pozostałe, przejrzane)
  * - Przycisk "Zakończ sesję"
  */
 
-import { X, BookOpen, CheckCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { StudyProgressBar } from './StudyProgressBar';
-import type { StudySessionHeaderProps } from '@/types';
+import { X, BookOpen, CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { StudyProgressBar } from "./StudyProgressBar";
+import type { StudySessionHeaderProps } from "@/types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 
 export function StudySessionHeader({
   currentIndex,
@@ -68,9 +68,7 @@ export function StudySessionHeader({
 
           {showConfirmation ? (
             <AlertDialog>
-              <AlertDialogTrigger asChild>
-                {exitButton}
-              </AlertDialogTrigger>
+              <AlertDialogTrigger asChild>{exitButton}</AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>Czy na pewno chcesz zakończyć sesję?</AlertDialogTitle>
@@ -80,9 +78,7 @@ export function StudySessionHeader({
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Anuluj</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleExit}>
-                    Zakończ
-                  </AlertDialogAction>
+                  <AlertDialogAction onClick={handleExit}>Zakończ</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -91,12 +87,8 @@ export function StudySessionHeader({
           )}
         </div>
 
-        <StudyProgressBar 
-          current={currentIndex + 1} 
-          total={totalCards} 
-        />
+        <StudyProgressBar current={currentIndex + 1} total={totalCards} />
       </div>
     </header>
   );
 }
-

@@ -1,10 +1,10 @@
 ---
 /**
  * Widok Dashboard
- * 
+ *
  * Chroniony widok główny aplikacji 10x-cards, służący jako centrum nawigacyjne
  * i panel przeglądu statystyk użytkownika.
- * 
+ *
  * Główne funkcjonalności:
  * - Wyświetlenie powitania użytkownika
  * - Cztery karty ze statystykami (liczba fiszek, generacji, wskaźnik akceptacji, fiszki do nauki)
@@ -13,8 +13,8 @@
  * - Obsługa wylogowania
  */
 
-import Layout from '../layouts/Layout.astro';
-import { DashboardContent } from '../components/dashboard/DashboardContent';
+import Layout from "../layouts/Layout.astro";
+import { DashboardContent } from "../components/dashboard/DashboardContent";
 
 // Użytkownik jest już weryfikowany przez middleware
 // Jeśli dotarliśmy tutaj, użytkownik jest zalogowany
@@ -24,4 +24,3 @@ const user = Astro.locals.user;
 <Layout title="Dashboard - 10x cards">
   <DashboardContent client:load initialUser={user} />
 </Layout>
-

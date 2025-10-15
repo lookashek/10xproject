@@ -1,26 +1,18 @@
 /**
  * ProposalList - Lista propozycji fiszek
- * 
+ *
  * Lista propozycji fiszek z kontrolkami do zaznaczania wszystkich/żadnych
  * oraz przyciskiem zapisu. Zarządza stanem zaznaczenia i edycji każdej propozycji.
  */
 
-import { useState, useCallback } from 'react';
-import { Save, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ProposalCard } from './ProposalCard';
-import type { 
-  ProposalListProps, 
-  ProposalListState,
-  ProposalEdit 
-} from '@/lib/viewModels/generateView.types';
-import type { FlashcardCreateCommand } from '@/types';
+import { useState, useCallback } from "react";
+import { Save, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ProposalCard } from "./ProposalCard";
+import type { ProposalListProps, ProposalListState, ProposalEdit } from "@/lib/viewModels/generateView.types";
+import type { FlashcardCreateCommand } from "@/types";
 
-export function ProposalList({
-  proposals,
-  generationId,
-  onSave,
-}: ProposalListProps) {
+export function ProposalList({ proposals, generationId, onSave }: ProposalListProps) {
   // Stan: Domyślnie wszystkie zaznaczone
   const [state, setState] = useState<ProposalListState>({
     selectedIds: new Set(proposals.map((_, index) => index)),
@@ -32,21 +24,21 @@ export function ProposalList({
   const totalCount = proposals.length;
 
   const handleSelectAll = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       selectedIds: new Set(proposals.map((_, i) => i)),
     }));
   }, [proposals]);
 
   const handleDeselectAll = useCallback(() => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       selectedIds: new Set(),
     }));
   }, []);
 
   const handleToggleSelect = useCallback((index: number, checked: boolean) => {
-    setState(prev => {
+    setState((prev) => {
       const newSet = new Set(prev.selectedIds);
       if (checked) {
         newSet.add(index);
@@ -60,8 +52,8 @@ export function ProposalList({
     });
   }, []);
 
-  const handleEdit = useCallback((index: number, field: 'front' | 'back', value: string) => {
-    setState(prev => {
+  const handleEdit = useCallback((index: number, field: "front" | "back", value: string) => {
+    setState((prev) => {
       const newMap = new Map(prev.editedProposals);
       const currentEdit = newMap.get(index) || {};
       newMap.set(index, {
@@ -80,55 +72,42 @@ export function ProposalList({
       return;
     }
 
-    setState(prev => ({ ...prev, isSaving: true }));
+    setState((prev) => ({ ...prev, isSaving: true }));
 
     try {
       // Przygotowanie danych do zapisu
       const flashcardsToSave: FlashcardCreateCommand[] = [];
-      
+
       for (const index of state.selectedIds) {
         const proposal = proposals[index];
         const edits = state.editedProposals.get(index);
-        
+
         // Określenie czy fiszka była edytowana
         const wasEdited = edits && (edits.front !== undefined || edits.back !== undefined);
-        
+
         flashcardsToSave.push({
           front: edits?.front ?? proposal.front,
           back: edits?.back ?? proposal.back,
-          source: wasEdited ? 'ai-edited' : 'ai-full',
+          source: wasEdited ? "ai-edited" : "ai-full",
           generation_id: generationId,
         });
       }
 
       await onSave(flashcardsToSave);
     } finally {
-      setState(prev => ({ ...prev, isSaving: false }));
+      setState((prev) => ({ ...prev, isSaving: false }));
     }
   };
 
   return (
     <div className="space-y-4">
       {/* Kontrolki zaznaczania */}
-      <div
-        className="flex items-center justify-between p-4 bg-muted/50 rounded-lg"
-        data-testid="proposal-controls"
-      >
+      <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg" data-testid="proposal-controls">
         <div className="flex gap-2">
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={handleSelectAll}
-            disabled={state.isSaving}
-          >
+          <Button variant="outline" size="sm" onClick={handleSelectAll} disabled={state.isSaving}>
             Zaznacz wszystkie
           </Button>
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={handleDeselectAll}
-            disabled={state.isSaving}
-          >
+          <Button variant="outline" size="sm" onClick={handleDeselectAll} disabled={state.isSaving}>
             Odznacz wszystkie
           </Button>
         </div>
@@ -177,4 +156,3 @@ export function ProposalList({
     </div>
   );
 }
-

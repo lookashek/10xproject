@@ -1,13 +1,13 @@
 /**
  * StudyProgressBar - Wizualny pasek postępu sesji nauki
- * 
+ *
  * Wyświetla:
  * - Progress bar z procentowym uzupełnieniem
  * - Tekst "Fiszka X z Y"
  */
 
-import { Progress } from '@/components/ui/progress';
-import type { StudyProgressBarProps } from '@/types';
+import { Progress } from "@/components/ui/progress";
+import type { StudyProgressBarProps } from "@/types";
 
 export function StudyProgressBar({ current, total }: StudyProgressBarProps) {
   // Zabezpieczenie przed dzieleniem przez zero
@@ -19,12 +19,9 @@ export function StudyProgressBar({ current, total }: StudyProgressBarProps) {
         <span className="font-medium text-muted-foreground">
           Fiszka {current} z {total}
         </span>
-        <span className="font-medium text-muted-foreground">
-          {percentage}%
-        </span>
+        <span className="font-medium text-muted-foreground">{percentage}%</span>
       </div>
       <Progress value={percentage} className="h-2" />
     </div>
   );
 }
-

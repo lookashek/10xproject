@@ -2,8 +2,8 @@
  * Pagination - Pagination controls for flashcard list
  */
 
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface PaginationProps {
   currentPage: number;
@@ -21,40 +21,35 @@ function getPluralForm(count: number, singular: string, plural2to4: string, plur
 function getPageNumbers(currentPage: number, totalPages: number): (number | string)[] {
   const delta = 1; // ile stron po każdej stronie bieżącej
   const range: (number | string)[] = [];
-  
+
   if (totalPages <= 1) return [1];
-  
+
   // Zawsze pokazuj pierwszą stronę
   range.push(1);
-  
+
   // Dodaj ellipsis lub strony przed bieżącą
   if (currentPage - delta > 2) {
-    range.push('...');
+    range.push("...");
   }
-  
+
   for (let i = Math.max(2, currentPage - delta); i <= Math.min(totalPages - 1, currentPage + delta); i++) {
     range.push(i);
   }
-  
+
   // Dodaj ellipsis lub strony po bieżącej
   if (currentPage + delta < totalPages - 1) {
-    range.push('...');
+    range.push("...");
   }
-  
+
   // Zawsze pokazuj ostatnią stronę (jeśli więcej niż 1 strona)
   if (totalPages > 1) {
     range.push(totalPages);
   }
-  
+
   return range;
 }
 
-export default function Pagination({
-  currentPage,
-  totalPages,
-  totalItems,
-  onPageChange,
-}: PaginationProps) {
+export default function Pagination({ currentPage, totalPages, totalItems, onPageChange }: PaginationProps) {
   const pageNumbers = getPageNumbers(currentPage, totalPages);
 
   return (
@@ -70,16 +65,16 @@ export default function Pagination({
           <ChevronLeft className="size-4" />
           Poprzednia
         </Button>
-        
+
         {pageNumbers.map((pageNum, index) => {
-          if (pageNum === '...') {
+          if (pageNum === "...") {
             return (
               <span key={`ellipsis-${index}`} className="px-2 text-muted-foreground">
                 ...
               </span>
             );
           }
-          
+
           const page = Number(pageNum);
           return (
             <Button
@@ -94,7 +89,7 @@ export default function Pagination({
             </Button>
           );
         })}
-        
+
         <Button
           variant="outline"
           size="default"
@@ -106,11 +101,10 @@ export default function Pagination({
           <ChevronRight className="size-4" />
         </Button>
       </div>
-      
+
       <p className="text-sm text-muted-foreground">
-        Strona {currentPage} z {totalPages} ({totalItems} {getPluralForm(totalItems, 'fiszka', 'fiszki', 'fiszek')})
+        Strona {currentPage} z {totalPages} ({totalItems} {getPluralForm(totalItems, "fiszka", "fiszki", "fiszek")})
       </p>
     </div>
   );
 }
-

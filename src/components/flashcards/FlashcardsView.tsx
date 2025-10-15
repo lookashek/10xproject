@@ -3,19 +3,19 @@
  * Manages state, pagination, filtering, and CRUD operations
  */
 
-import { useState, useEffect } from 'react';
-import { useFlashcardList } from '@/lib/hooks/useFlashcardList';
-import { useFlashcardQueryParams } from '@/lib/hooks/useFlashcardQueryParams';
-import { ThemeProvider } from '@/lib/context/ThemeContext';
-import type { FlashcardDTO, FlashcardListResponse, FlashcardSource, FlashcardFormData } from '@/types';
-import FlashcardToolbar from './FlashcardToolbar';
-import FlashcardGrid from './FlashcardGrid';
-import FlashcardGridSkeleton from './FlashcardGridSkeleton';
-import EmptyState from './EmptyState';
-import Pagination from './Pagination';
-import FlashcardDialog from './FlashcardDialog';
-import DeleteConfirmDialog from './DeleteConfirmDialog';
-import { toast } from 'sonner';
+import { useState, useEffect } from "react";
+import { useFlashcardList } from "@/lib/hooks/useFlashcardList";
+import { useFlashcardQueryParams } from "@/lib/hooks/useFlashcardQueryParams";
+import { ThemeProvider } from "@/lib/context/ThemeContext";
+import type { FlashcardDTO, FlashcardListResponse, FlashcardSource, FlashcardFormData } from "@/types";
+import FlashcardToolbar from "./FlashcardToolbar";
+import FlashcardGrid from "./FlashcardGrid";
+import FlashcardGridSkeleton from "./FlashcardGridSkeleton";
+import EmptyState from "./EmptyState";
+import Pagination from "./Pagination";
+import FlashcardDialog from "./FlashcardDialog";
+import DeleteConfirmDialog from "./DeleteConfirmDialog";
+import { toast } from "sonner";
 
 interface FlashcardsViewProps {
   initialData: FlashcardListResponse;
@@ -23,11 +23,7 @@ interface FlashcardsViewProps {
   initialSource?: FlashcardSource;
 }
 
-function FlashcardsViewInner({
-  initialData,
-  initialPage,
-  initialSource,
-}: FlashcardsViewProps) {
+function FlashcardsViewInner({ initialData, initialPage, initialSource }: FlashcardsViewProps) {
   const { page, source, updateQueryParams } = useFlashcardQueryParams();
   const {
     flashcards,
@@ -42,7 +38,7 @@ function FlashcardsViewInner({
 
   // Dialog states
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [dialogMode, setDialogMode] = useState<'create' | 'edit'>('create');
+  const [dialogMode, setDialogMode] = useState<"create" | "edit">("create");
   const [selectedFlashcard, setSelectedFlashcard] = useState<FlashcardDTO | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -52,7 +48,7 @@ function FlashcardsViewInner({
   const [isDeleting, setIsDeleting] = useState(false);
 
   // Source filter state
-  const [sourceFilter, setSourceFilter] = useState<FlashcardSource | 'all'>(source || 'all');
+  const [sourceFilter, setSourceFilter] = useState<FlashcardSource | "all">(source || "all");
 
   // Fetch flashcards when page or source changes
   useEffect(() => {
@@ -61,13 +57,13 @@ function FlashcardsViewInner({
 
   // Handlers
   const handleAddClick = () => {
-    setDialogMode('create');
+    setDialogMode("create");
     setSelectedFlashcard(null);
     setIsDialogOpen(true);
   };
 
   const handleEditClick = (flashcard: FlashcardDTO) => {
-    setDialogMode('edit');
+    setDialogMode("edit");
     setSelectedFlashcard(flashcard);
     setIsDialogOpen(true);
   };
@@ -85,16 +81,16 @@ function FlashcardsViewInner({
   const handleDialogSave = async (data: FlashcardFormData) => {
     setIsSaving(true);
     try {
-      if (dialogMode === 'create') {
+      if (dialogMode === "create") {
         await createFlashcard(data);
-        toast.success('Fiszka została utworzona');
+        toast.success("Fiszka została utworzona");
       } else if (selectedFlashcard) {
         await updateFlashcard(selectedFlashcard.id, data);
-        toast.success('Fiszka została zaktualizowana');
+        toast.success("Fiszka została zaktualizowana");
       }
       handleDialogClose();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Wystąpił błąd');
+      toast.error(err instanceof Error ? err.message : "Wystąpił błąd");
       throw err;
     } finally {
       setIsSaving(false);
@@ -103,15 +99,15 @@ function FlashcardsViewInner({
 
   const handleDeleteConfirm = async () => {
     if (!flashcardToDelete) return;
-    
+
     setIsDeleting(true);
     try {
       await deleteFlashcard(flashcardToDelete.id);
-      toast.success('Fiszka została usunięta');
+      toast.success("Fiszka została usunięta");
       setIsDeleteDialogOpen(false);
       setFlashcardToDelete(null);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Nie udało się usunąć fiszki');
+      toast.error(err instanceof Error ? err.message : "Nie udało się usunąć fiszki");
     } finally {
       setIsDeleting(false);
     }
@@ -122,7 +118,7 @@ function FlashcardsViewInner({
     setFlashcardToDelete(null);
   };
 
-  const handleSourceFilterChange = (newSource: FlashcardSource | 'all') => {
+  const handleSourceFilterChange = (newSource: FlashcardSource | "all") => {
     setSourceFilter(newSource);
     updateQueryParams({ page: 1, source: newSource });
   };
@@ -154,12 +150,8 @@ function FlashcardsViewInner({
           <EmptyState onAddClick={handleAddClick} data-testid="flashcard-empty-state" />
         ) : (
           <>
-            <FlashcardGrid
-              flashcards={flashcards}
-              onEditClick={handleEditClick}
-              onDeleteClick={handleDeleteClick}
-            />
-            
+            <FlashcardGrid flashcards={flashcards} onEditClick={handleEditClick} onDeleteClick={handleDeleteClick} />
+
             {pagination.total_pages > 1 && (
               <Pagination
                 currentPage={pagination.page}
@@ -199,4 +191,3 @@ export default function FlashcardsView(props: FlashcardsViewProps) {
     </ThemeProvider>
   );
 }
-
