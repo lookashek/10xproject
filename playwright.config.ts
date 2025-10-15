@@ -57,10 +57,12 @@ export default defineConfig({
     command: "npm run dev:e2e",
     url: BASE_URL,
     timeout: 120 * 1000,
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI,
     env: {
-      ...process.env,
       NODE_ENV: "test",
+      PUBLIC_SUPABASE_URL: process.env.PUBLIC_SUPABASE_URL || "",
+      PUBLIC_SUPABASE_ANON_KEY: process.env.PUBLIC_SUPABASE_ANON_KEY || "",
+      PUBLIC_SUPABASE_KEY: process.env.PUBLIC_SUPABASE_KEY || "",
     },
   },
 });
