@@ -77,7 +77,7 @@ export async function POST({ request, locals }: APIContext) {
         }
       }
 
-      console.error("Login error:", error);
+      // Login error
       return internalServerError("Wystąpił błąd podczas logowania");
     }
 
@@ -96,7 +96,7 @@ export async function POST({ request, locals }: APIContext) {
       {
         user: {
           id: data.user.id,
-          email: data.user.email!,
+          email: data.user.email ?? "",
         },
         session: {
           access_token: data.session.access_token,
@@ -106,8 +106,8 @@ export async function POST({ request, locals }: APIContext) {
       },
       200
     );
-  } catch (error) {
-    console.error("Unexpected error in POST /api/auth/login:", error);
+  } catch {
+    // Unexpected error in POST /api/auth/login
     return internalServerError("Błąd serwera");
   }
 }

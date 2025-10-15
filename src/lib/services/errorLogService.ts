@@ -56,7 +56,6 @@ export async function logGenerationError(
   });
 
   if (error) {
-    // Log to console but don't throw - we don't want error logging to break the main flow
-    console.error("Failed to log generation error:", error);
+    // Failed to log generation error - don't throw, we don't want error logging to break the main flow
   }
 }

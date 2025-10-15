@@ -75,8 +75,8 @@ export function RegisterForm() {
 
         // Redirect do dashboardu (auto-login w MVP)
         window.location.href = "/dashboard";
-      } catch (err: any) {
-        const message = err.message || "Wystąpił nieoczekiwany błąd";
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd";
         setError(message);
         toast.error("Nie udało się zarejestrować", {
           description: message,

@@ -1,4 +1,4 @@
-import type { SM2Quality, SM2ReviewData, SM2Params, SM2Result } from "@/types";
+import type { SM2Quality, SM2ReviewData, SM2Params } from "@/types";
 
 const DEFAULT_PARAMS: SM2Params = {
   minEasiness: 1.3,

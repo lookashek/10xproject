@@ -123,7 +123,8 @@ describe("SM2Algorithm", () => {
       const result = sm2Algorithm.review(initialData, 2);
       const after = new Date();
 
-      const lastReviewed = new Date(result.last_reviewed!);
+      expect(result.last_reviewed).toBeDefined();
+      const lastReviewed = new Date(result.last_reviewed ?? new Date());
       expect(lastReviewed.getTime()).toBeGreaterThanOrEqual(before.getTime());
       expect(lastReviewed.getTime()).toBeLessThanOrEqual(after.getTime());
     });

@@ -72,8 +72,8 @@ export function LoginForm() {
         const urlParams = new URLSearchParams(window.location.search);
         const redirectTo = urlParams.get("redirect") || data.redirectTo || "/dashboard";
         window.location.href = redirectTo;
-      } catch (err: any) {
-        const message = err.message || "Wystąpił nieoczekiwany błąd";
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd";
         setError(message);
         toast.error("Nie udało się zalogować", {
           description: message,

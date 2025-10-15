@@ -85,7 +85,7 @@ export async function POST({ request, locals }: APIContext) {
         }
       }
 
-      console.error("Reset password error:", error);
+      // Reset password error
       return internalServerError("Wystąpił błąd podczas resetowania hasła");
     }
 
@@ -96,8 +96,8 @@ export async function POST({ request, locals }: APIContext) {
       },
       200
     );
-  } catch (error) {
-    console.error("Unexpected error in POST /api/auth/reset-password:", error);
+  } catch {
+    // Unexpected error in POST /api/auth/reset-password
     return internalServerError("Błąd serwera");
   }
 }

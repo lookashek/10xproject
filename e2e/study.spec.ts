@@ -34,7 +34,7 @@ test.describe("Sesja nauki", () => {
 
     await expect(studyPage.loadingState)
       .toBeHidden({ timeout: 10_000 })
-      .catch(() => {});
+      .catch(() => false);
     await expect(studyPage.activeState).toBeVisible({ timeout: 10_000 });
 
     await studyPage.flipCard();

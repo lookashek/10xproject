@@ -23,7 +23,7 @@ interface FlashcardsViewProps {
   initialSource?: FlashcardSource;
 }
 
-function FlashcardsViewInner({ initialData, initialPage, initialSource }: FlashcardsViewProps) {
+function FlashcardsViewInner({ initialData }: FlashcardsViewProps) {
   const { page, source, updateQueryParams } = useFlashcardQueryParams();
   const {
     flashcards,

@@ -54,7 +54,7 @@ export class AuthPage {
     await this.page.goto(`/reset-password?token=${token}`);
   }
 
-  async login(email: string = process.env.E2E_USERNAME!, password: string = process.env.E2E_PASSWORD!) {
+  async login(email: string = process.env.E2E_USERNAME ?? "", password: string = process.env.E2E_PASSWORD ?? "") {
     // Poczekaj na pełne załadowanie strony (hydratacja React)
     await this.page.waitForLoadState("networkidle");
 

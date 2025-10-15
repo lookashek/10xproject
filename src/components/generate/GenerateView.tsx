@@ -49,16 +49,17 @@ export function GenerateView({ initialText }: GenerateViewProps) {
       toast.success("Fiszki zostały wygenerowane!", {
         description: `Wygenerowano ${data.proposals.length} propozycji fiszek`,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Błąd - powrót do fazy input
+      const err = error as { code?: string; message?: string; details?: string };
       setViewState({
         phase: "input",
         generationData: null,
         isLoading: false,
         error: {
-          type: error.code === "NETWORK_ERROR" ? "network" : "llm_error",
-          message: error.message,
-          details: error.details,
+          type: err.code === "NETWORK_ERROR" ? "network" : "llm_error",
+          message: err.message ?? "Nieoczekiwany błąd",
+          details: err.details,
         },
       });
 
@@ -89,7 +90,7 @@ export function GenerateView({ initialText }: GenerateViewProps) {
       toast.success("Fiszki zostały zapisane!", {
         description: `Zapisano ${flashcards.length} ${flashcards.length === 1 ? "fiszkę" : "fiszek"}`,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Błąd - powrót do fazy reviewing
       setViewState((prev) => ({
         ...prev,
@@ -98,18 +99,6 @@ export function GenerateView({ initialText }: GenerateViewProps) {
 
       handleSaveError(error);
     }
-  }, []);
-
-  /**
-   * Reset widoku (opcjonalnie dostępny przez UI)
-   */
-  const handleReset = useCallback(() => {
-    setViewState({
-      phase: "input",
-      generationData: null,
-      isLoading: false,
-      error: null,
-    });
   }, []);
 
   return (

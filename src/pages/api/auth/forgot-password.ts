@@ -65,8 +65,7 @@ export async function POST({ request, locals }: APIContext) {
     // SECURITY: Nie ujawniamy czy email istnieje w bazie
     // Zawsze zwracamy sukces
     if (error) {
-      console.error("Forgot password error:", error);
-      // Nie zwracamy błędu użytkownikowi - zapobiega enumeracji
+      // Forgot password error - nie zwracamy błędu użytkownikowi (zapobiega enumeracji)
     }
 
     // Return success response (zawsze)
@@ -76,8 +75,8 @@ export async function POST({ request, locals }: APIContext) {
       },
       200
     );
-  } catch (error) {
-    console.error("Unexpected error in POST /api/auth/forgot-password:", error);
+  } catch {
+    // Unexpected error in POST /api/auth/forgot-password
     return internalServerError("Błąd serwera");
   }
 }

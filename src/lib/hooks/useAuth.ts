@@ -30,7 +30,7 @@ export function useAuth(): UseAuthReturn {
       if (data.user && !error) {
         setUser({
           id: data.user.id,
-          email: data.user.email!,
+          email: data.user.email ?? "",
           username: data.user.user_metadata?.username,
           avatar_url: data.user.user_metadata?.avatar_url,
         });
@@ -47,7 +47,7 @@ export function useAuth(): UseAuthReturn {
       if (session?.user) {
         setUser({
           id: session.user.id,
-          email: session.user.email!,
+          email: session.user.email ?? "",
           username: session.user.user_metadata?.username,
           avatar_url: session.user.user_metadata?.avatar_url,
         });
@@ -72,8 +72,8 @@ export function useAuth(): UseAuthReturn {
 
       // Redirect do strony głównej
       window.location.href = "/login";
-    } catch (error) {
-      console.error("Logout error:", error);
+    } catch {
+      // Logout error
       toast.error("Nie udało się wylogować", {
         description: "Spróbuj ponownie",
       });

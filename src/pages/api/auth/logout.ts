@@ -29,7 +29,7 @@ export async function POST({ locals }: APIContext) {
     const { error } = await locals.supabase.auth.signOut();
 
     if (error) {
-      console.error("Logout error:", error);
+      // Logout error
       return internalServerError("Nie udało się wylogować");
     }
 
@@ -40,8 +40,8 @@ export async function POST({ locals }: APIContext) {
       },
       200
     );
-  } catch (error) {
-    console.error("Unexpected error in POST /api/auth/logout:", error);
+  } catch {
+    // Unexpected error in POST /api/auth/logout
     return internalServerError("Błąd serwera");
   }
 }

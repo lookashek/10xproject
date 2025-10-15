@@ -29,7 +29,9 @@ export class StudyErrorBoundary extends React.Component<ErrorBoundaryProps, Erro
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("Study session error:", error, errorInfo);
+    // Study session error - can be extended with error reporting service
+    void error;
+    void errorInfo;
   }
 
   render() {

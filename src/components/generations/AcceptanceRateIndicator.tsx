@@ -22,7 +22,7 @@ export function AcceptanceRateIndicator({
     generated_count: generatedCount,
     accepted_unedited_count: acceptedUnedited,
     accepted_edited_count: acceptedEdited,
-  } as any);
+  });
 
   // Kolory progress bar w zależności od wariantu
   const progressColorClass = {

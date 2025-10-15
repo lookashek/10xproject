@@ -1,0 +1,21 @@
+# Build output
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# Test coverage
+coverage/
+
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Auto-generated files
+src/db/database.types.ts
+
+# Astro parsing issues with inline scripts
+src/layouts/*.astro
+

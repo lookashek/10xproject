@@ -145,7 +145,7 @@ export async function listGenerations(
   }
 
   // Map to DTOs (remove user_id)
-  const dtos: GenerationDTO[] = (data ?? []).map(({ user_id, ...rest }) => rest);
+  const dtos: GenerationDTO[] = (data ?? []).map(({ user_id: _, ...rest }) => rest);
 
   return {
     data: dtos,
@@ -210,7 +210,7 @@ export async function getGenerationById(
   }
 
   // Map to DTO (remove user_id from generation)
-  const { user_id, ...generationWithoutUserId } = generation;
+  const { user_id: _, ...generationWithoutUserId } = generation;
 
   return {
     ...generationWithoutUserId,

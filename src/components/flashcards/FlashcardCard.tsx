@@ -87,9 +87,17 @@ export default function FlashcardCard({ flashcard, onEditClick, onDeleteClick }:
         </div>
 
         {/* Hover overlay with actions */}
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
         <div
+          role="group"
+          aria-label="Akcje fiszki"
           className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center gap-4 z-10"
           onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.stopPropagation();
+            }
+          }}
         >
           <Button
             variant="secondary"

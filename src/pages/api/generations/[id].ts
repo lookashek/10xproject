@@ -52,8 +52,8 @@ export async function GET({ params, locals }: APIContext) {
     }
 
     return successResponse(generation, 200);
-  } catch (error) {
-    console.error("Error in GET /api/generations/:id:", error);
+  } catch {
+    // Error in GET /api/generations/:id
     return internalServerError("Database error");
   }
 }

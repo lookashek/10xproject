@@ -43,7 +43,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
     // Użytkownik zalogowany - dodaj do locals
     locals.user = {
       id: session.user.id,
-      email: session.user.email!,
+      email: session.user.email ?? "",
       username: session.user.user_metadata?.username,
       avatar_url: session.user.user_metadata?.avatar_url,
     };
