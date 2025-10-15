@@ -19,11 +19,14 @@ mapEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "PUBLIC_SUPABASE_KEY");
 mapEnv("PUBLIC_SUPABASE_URL", "SUPABASE_URL");
 mapEnv("PUBLIC_SUPABASE_KEY", "SUPABASE_KEY");
 
-const requiredEnvVars = ["PUBLIC_SUPABASE_URL", "PUBLIC_SUPABASE_KEY", "E2E_USERNAME", "E2E_PASSWORD"];
+// Walidacja zmiennych środowiskowych (pomijamy w CI, bo są ustawiane w kroku testu)
+if (!process.env.CI) {
+  const requiredEnvVars = ["PUBLIC_SUPABASE_URL", "PUBLIC_SUPABASE_KEY", "E2E_USERNAME", "E2E_PASSWORD"];
 
-for (const key of requiredEnvVars) {
-  if (!process.env[key]) {
-    throw new Error(`Missing required environment variable '${key}'. Check your .env.test file.`);
+  for (const key of requiredEnvVars) {
+    if (!process.env[key]) {
+      throw new Error(`Missing required environment variable '${key}'. Check your .env.test file.`);
+    }
   }
 }
 

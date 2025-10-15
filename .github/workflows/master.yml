@@ -65,6 +65,8 @@ jobs:
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
+    env:
+      CI: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -89,7 +91,6 @@ jobs:
           PUBLIC_SUPABASE_KEY: ${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}
           E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
           E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
-          CI: true
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
