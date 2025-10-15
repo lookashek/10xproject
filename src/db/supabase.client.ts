@@ -4,16 +4,16 @@ import type { Database } from "../db/database.types.ts";
 
 /**
  * Funkcja pomocnicza do pobierania zmiennych środowiskowych
- * Obsługuje zarówno import.meta.env (Astro) jak i process.env (Node.js/testy)
+ * Obsługuje zarówno process.env (Node.js/CI) jak i import.meta.env (Astro build)
  */
 function getEnvVar(key: string): string | undefined {
-  // Sprawdź import.meta.env (Astro runtime)
-  if (typeof import.meta !== "undefined" && import.meta.env) {
-    return import.meta.env[key];
-  }
-  // Fallback do process.env (Node.js/testy)
-  if (typeof process !== "undefined" && process.env) {
+  // Najpierw sprawdź process.env (priorytet dla CI/testów)
+  if (typeof process !== "undefined" && process.env && process.env[key]) {
     return process.env[key];
+  }
+  // Fallback do import.meta.env (Astro build-time)
+  if (typeof import.meta !== "undefined" && import.meta.env && import.meta.env[key]) {
+    return import.meta.env[key];
   }
   return undefined;
 }
