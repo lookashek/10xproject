@@ -59,7 +59,7 @@ export class FlashcardsPage {
   }
 
   async openEditForCard(cardIndex = 0) {
-    const card = await this.openFirstCardActions(cardIndex);
+    await this.openFirstCardActions(cardIndex);
     const cardId = await this.getCardId(cardIndex);
     const editButton = this.page.getByTestId(`edit-flashcard-${cardId}`);
     await editButton.click({ force: true });
@@ -67,7 +67,7 @@ export class FlashcardsPage {
   }
 
   async openDeleteForCard(cardIndex = 0) {
-    const card = await this.openFirstCardActions(cardIndex);
+    await this.openFirstCardActions(cardIndex);
     const cardId = await this.getCardId(cardIndex);
     const deleteButton = this.page.getByTestId(`delete-flashcard-${cardId}`);
     await deleteButton.click({ force: true });
