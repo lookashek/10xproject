@@ -9,7 +9,7 @@ import { useState, useCallback } from "react";
 import { Save, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProposalCard } from "./ProposalCard";
-import type { ProposalListProps, ProposalListState, ProposalEdit } from "@/lib/viewModels/generateView.types";
+import type { ProposalListProps, ProposalListState } from "@/lib/viewModels/generateView.types";
 import type { FlashcardCreateCommand } from "@/types";
 
 export function ProposalList({ proposals, generationId, onSave }: ProposalListProps) {

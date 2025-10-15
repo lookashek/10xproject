@@ -186,7 +186,7 @@ export function parseFlashcardsFromResponse(content: string): ProposedFlashcard[
     const validationResult = proposedFlashcardsArraySchema.safeParse(parsed);
 
     if (!validationResult.success) {
-      console.error("Flashcard validation errors:", validationResult.error.errors);
+      // Flashcard validation failed
       throw new Error("Generated flashcards failed validation");
     }
 
@@ -201,7 +201,7 @@ export function parseFlashcardsFromResponse(content: string): ProposedFlashcard[
     }
 
     return flashcards;
-  } catch (error) {
+  } catch {
     throw new LLMServiceError("Failed to parse flashcards from AI response", "PARSE_ERROR", 500);
   }
 }

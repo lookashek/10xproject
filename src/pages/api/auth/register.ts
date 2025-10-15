@@ -83,7 +83,7 @@ export async function POST({ request, locals }: APIContext) {
         }
       }
 
-      console.error("Registration error:", error);
+      // Registration error
       return internalServerError("Wystąpił błąd podczas rejestracji");
     }
 
@@ -100,14 +100,14 @@ export async function POST({ request, locals }: APIContext) {
       {
         user: {
           id: data.user.id,
-          email: data.user.email!,
+          email: data.user.email ?? "",
         },
         message: "Rejestracja pomyślna. Jesteś zalogowany.",
       },
       201
     );
-  } catch (error) {
-    console.error("Unexpected error in POST /api/auth/register:", error);
+  } catch {
+    // Unexpected error in POST /api/auth/register
     return internalServerError("Błąd serwera");
   }
 }

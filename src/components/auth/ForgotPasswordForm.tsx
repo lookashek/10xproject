@@ -56,8 +56,8 @@ export function ForgotPasswordForm() {
         toast.success("Email wysłany!", {
           description: "Sprawdź swoją skrzynkę pocztową",
         });
-      } catch (err: any) {
-        const message = err.message || "Wystąpił nieoczekiwany błąd";
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd";
         setError(message);
         toast.error("Nie udało się wysłać emaila", {
           description: message,

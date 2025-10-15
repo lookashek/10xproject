@@ -29,13 +29,13 @@ class StudyProgressStorageService {
 
       // Walidacja schema version
       if (data.version !== STORAGE_VERSION) {
-        console.warn("Storage version mismatch, resetting");
+        // Storage version mismatch, resetting
         return this.createEmpty();
       }
 
       return data;
-    } catch (error) {
-      console.error("Failed to load study progress:", error);
+    } catch {
+      // Failed to load study progress
       return this.createEmpty();
     }
   }
@@ -53,9 +53,8 @@ class StudyProgressStorageService {
       };
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    } catch (error) {
-      console.error("Failed to save study progress:", error);
-      // Graceful degradation - kontynuuj bez zapisywania
+    } catch {
+      // Failed to save study progress - graceful degradation, continue without saving
     }
   }
 

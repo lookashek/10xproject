@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { AuthPage } from "./pages/AuthPage";
 import { DashboardPage } from "./pages/DashboardPage";
 
-const { E2E_USERNAME, E2E_PASSWORD } = process.env;
+const { E2E_USERNAME = "", E2E_PASSWORD = "" } = process.env;
 
 test.describe("Autoryzacja", () => {
   test("użytkownik loguje się i wylogowuje", async ({ page }) => {
@@ -10,7 +10,7 @@ test.describe("Autoryzacja", () => {
     const dashboardPage = new DashboardPage(page);
 
     await authPage.gotoLogin();
-    await authPage.login(E2E_USERNAME!, E2E_PASSWORD!);
+    await authPage.login(E2E_USERNAME, E2E_PASSWORD);
 
     await expect(dashboardPage.welcomeHeading).toBeVisible();
     await dashboardPage.openUserMenu();

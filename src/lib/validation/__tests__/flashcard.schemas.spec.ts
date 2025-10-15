@@ -236,8 +236,9 @@ describe("flashcard.schemas", () => {
     it("ma polskie komunikaty błędów", () => {
       try {
         flashcardFormSchema.parse({ front: "", back: "Test" });
-      } catch (error: any) {
-        expect(error.errors[0].message).toContain("wymagany");
+      } catch (error: unknown) {
+        const err = error as { errors?: { message: string }[] };
+        expect(err.errors?.[0].message).toContain("wymagany");
       }
     });
 
@@ -247,8 +248,9 @@ describe("flashcard.schemas", () => {
           front: "a".repeat(201),
           back: "Test",
         });
-      } catch (error: any) {
-        expect(error.errors[0].message).toContain("maksymalnie");
+      } catch (error: unknown) {
+        const err = error as { errors?: { message: string }[] };
+        expect(err.errors?.[0].message).toContain("maksymalnie");
       }
     });
   });

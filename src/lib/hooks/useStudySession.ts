@@ -89,8 +89,8 @@ export function useStudySession() {
         startedAt: new Date().toISOString(),
         completedAt: "",
       });
-    } catch (err) {
-      console.error("Failed to initialize study session:", err);
+    } catch {
+      // Failed to initialize study session
       setError({
         message: "Nie udało się załadować fiszek",
         code: "INTERNAL_SERVER_ERROR",
@@ -202,6 +202,7 @@ export function useStudySession() {
   const exitSession = useCallback(() => {
     // Nawigacja obsługiwana przez komponent (window.location lub Astro navigation)
     if (typeof window !== "undefined") {
+      // eslint-disable-next-line react-compiler/react-compiler
       window.location.href = "/dashboard";
     }
   }, []);

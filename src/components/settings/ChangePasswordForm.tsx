@@ -77,8 +77,8 @@ export function ChangePasswordForm() {
         setCurrentPassword("");
         setNewPassword("");
         setConfirmNewPassword("");
-      } catch (err: any) {
-        const message = err.message || "Wystąpił nieoczekiwany błąd";
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd";
         setError(message);
         toast.error("Nie udało się zmienić hasła", {
           description: message,
@@ -87,7 +87,7 @@ export function ChangePasswordForm() {
         setIsLoading(false);
       }
     },
-    [currentPassword, newPassword, canSubmit]
+    [canSubmit]
   );
 
   return (

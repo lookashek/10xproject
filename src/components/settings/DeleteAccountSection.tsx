@@ -5,7 +5,7 @@
  * Wymaga potwierdzenia przez wpisanie "DELETE".
  */
 
-import { useState, useCallback, type FormEvent } from "react";
+import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -61,8 +60,8 @@ export function DeleteAccountSection() {
       toast.success("Usuwanie konta - funkcja do zaimplementowania");
       setIsDialogOpen(false);
       setConfirmationText("");
-    } catch (err: any) {
-      const message = err.message || "Wystąpił nieoczekiwany błąd";
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd";
       toast.error("Nie udało się usunąć konta", {
         description: message,
       });

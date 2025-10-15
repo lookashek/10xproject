@@ -552,6 +552,7 @@ export interface SessionStats {
 /**
  * Props dla głównego widoku sesji nauki
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface StudySessionViewProps {
   // Brak propsów - wszystkie dane ładowane dynamicznie
 }

@@ -79,7 +79,7 @@ export async function listFlashcards(
   }
 
   // Map to DTOs (remove user_id)
-  const dtos: FlashcardDTO[] = (data ?? []).map(({ user_id, ...rest }) => rest);
+  const dtos: FlashcardDTO[] = (data ?? []).map(({ user_id: _, ...rest }) => rest);
 
   return {
     data: dtos,
@@ -129,7 +129,7 @@ export async function getFlashcardById(
   }
 
   // Map to DTO (remove user_id)
-  const { user_id, ...flashcardDTO } = data;
+  const { user_id: _, ...flashcardDTO } = data;
   return flashcardDTO;
 }
 
@@ -221,7 +221,7 @@ export async function createFlashcard(
   }
 
   // Map to DTO (remove user_id)
-  const { user_id, ...flashcardDTO } = data;
+  const { user_id: _, ...flashcardDTO } = data;
   return flashcardDTO;
 }
 
@@ -292,13 +292,13 @@ export async function createFlashcardsBatch(
       .eq("user_id", userId);
 
     if (updateError) {
-      // Log error but don't fail the operation since flashcards were created
-      console.error(`Warning: Failed to update generation statistics for generation ${generationId}:`, updateError);
+      // Failed to update generation statistics - non-critical error, continue
+      // Error details available in updateError for debugging
     }
   }
 
   // Map to DTOs (remove user_id)
-  const dtos: FlashcardDTO[] = data.map(({ user_id, ...rest }) => rest);
+  const dtos: FlashcardDTO[] = data.map(({ user_id: _, ...rest }) => rest);
   return dtos;
 }
 
@@ -370,7 +370,7 @@ export async function updateFlashcard(
   }
 
   // Map to DTO (remove user_id)
-  const { user_id, ...flashcardDTO } = data;
+  const { user_id: _, ...flashcardDTO } = data;
   return flashcardDTO;
 }
 

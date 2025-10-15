@@ -72,8 +72,8 @@ export function ResetPasswordForm() {
         setTimeout(() => {
           window.location.href = "/login";
         }, 1500);
-      } catch (err: any) {
-        const message = err.message || "Wystąpił nieoczekiwany błąd";
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd";
         setError(message);
         toast.error("Nie udało się zmienić hasła", {
           description: message,

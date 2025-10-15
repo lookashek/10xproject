@@ -5,7 +5,7 @@
  */
 
 import type { APIContext } from "astro";
-import type { FlashcardCreateCommand, FlashcardBatchCreateCommand } from "../../../types";
+import type { FlashcardCreateCommand } from "../../../types";
 import {
   flashcardListQuerySchema,
   flashcardCreateSchema,
@@ -59,8 +59,8 @@ export async function GET({ request, locals }: APIContext) {
     const result = await listFlashcards(locals.supabase, userId, query);
 
     return successResponse(result, 200);
-  } catch (error) {
-    console.error("Error in GET /api/flashcards:", error);
+  } catch {
+    // Error in GET /api/flashcards
     return internalServerError("Database error");
   }
 }
@@ -139,9 +139,11 @@ export async function POST({ request, locals }: APIContext) {
 
         // Check for length validation errors
         if (firstError.code === "too_big") {
+          type TooBigError = typeof firstError & { maximum?: number };
+          const max = (firstError as TooBigError).maximum;
           return unprocessableEntity(firstError.message, {
             field: firstError.path[0]?.toString(),
-            max: firstError.code === "too_big" ? (firstError as any).maximum : undefined,
+            max,
             actual: (body as FlashcardCreateCommand)[firstError.path[0] as keyof FlashcardCreateCommand]?.toString()
               .length,
           });
@@ -171,8 +173,8 @@ export async function POST({ request, locals }: APIContext) {
         throw error;
       }
     }
-  } catch (error) {
-    console.error("Unexpected error in POST /api/flashcards:", error);
+  } catch {
+    // Unexpected error in POST /api/flashcards
     return internalServerError("Internal server error");
   }
 }

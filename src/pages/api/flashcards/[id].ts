@@ -63,8 +63,8 @@ export async function GET({ params, locals }: APIContext) {
     }
 
     return successResponse(flashcard, 200);
-  } catch (error) {
-    console.error("Error in GET /api/flashcards/:id:", error);
+  } catch {
+    // Error in GET /api/flashcards/:id
     return internalServerError("Database error");
   }
 }
@@ -111,9 +111,11 @@ export async function PUT({ params, request, locals }: APIContext) {
 
       // Check for length validation errors
       if (firstError.code === "too_big") {
+        type TooBigError = typeof firstError & { maximum?: number };
+        const max = (firstError as TooBigError).maximum;
         return unprocessableEntity(firstError.message, {
           field: firstError.path[0]?.toString(),
-          max: (firstError as any).maximum,
+          max,
           actual: (body as FlashcardUpdateCommand)[firstError.path[0] as keyof FlashcardUpdateCommand]?.toString()
             .length,
         });
@@ -155,8 +157,8 @@ export async function PUT({ params, request, locals }: APIContext) {
 
       throw error;
     }
-  } catch (error) {
-    console.error("Unexpected error in PUT /api/flashcards/:id:", error);
+  } catch {
+    // Unexpected error in PUT /api/flashcards/:id
     return internalServerError("Internal server error");
   }
 }
@@ -213,8 +215,8 @@ export async function DELETE({ params, locals }: APIContext) {
 
       throw error;
     }
-  } catch (error) {
-    console.error("Error in DELETE /api/flashcards/:id:", error);
+  } catch {
+    // Error in DELETE /api/flashcards/:id
     return internalServerError("Database error");
   }
 }

@@ -39,7 +39,7 @@ export interface OpenRouterCompletionRequest<T = string> {
   metadata?: {
     operationName?: string;
     userId?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
@@ -77,7 +77,7 @@ export class OpenRouterError extends Error {
     message: string,
     public code: OpenRouterErrorCode,
     public statusCode?: number,
-    public details?: any
+    public details?: unknown
   ) {
     super(message);
     this.name = "OpenRouterError";
@@ -203,7 +203,7 @@ export class OpenRouterService {
         modelParams: { maxTokens: 10 },
       });
       return true;
-    } catch (error) {
+    } catch {
       // Keep this quiet; just return false on failure
       return false;
     }
@@ -213,8 +213,8 @@ export class OpenRouterService {
   // Internals
   // -----------------------------
 
-  private buildRequestBody<T>(request: OpenRouterCompletionRequest<T>): Record<string, any> {
-    const body: Record<string, any> = {
+  private buildRequestBody<T>(request: OpenRouterCompletionRequest<T>): Record<string, unknown> {
+    const body: Record<string, unknown> = {
       model: request.model ?? this.defaultModel,
       messages: [
         { role: "system", content: request.systemMessage },
@@ -240,7 +240,7 @@ export class OpenRouterService {
     return body;
   }
 
-  private applyModelParameters(body: Record<string, any>, params: ModelParameters): void {
+  private applyModelParameters(body: Record<string, unknown>, params: ModelParameters): void {
     if (params.temperature !== undefined) {
       body.temperature = params.temperature;
     }
@@ -292,7 +292,7 @@ export class OpenRouterService {
     }
   }
 
-  private async parseAndValidateResponse<T>(responseData: any, schema?: z.ZodSchema<T>): Promise<T> {
+  private async parseAndValidateResponse<T>(responseData: unknown, schema?: z.ZodSchema<T>): Promise<T> {
     const content = responseData?.choices?.[0]?.message?.content;
 
     if (!content) {
@@ -306,7 +306,7 @@ export class OpenRouterService {
     let parsedContent: unknown;
     try {
       parsedContent = JSON.parse(content);
-    } catch (e) {
+    } catch {
       throw new OpenRouterError("Failed to parse JSON from response", "PARSE_ERROR", 500, { rawContent: content });
     }
 
@@ -322,10 +322,10 @@ export class OpenRouterService {
   }
 
   private async handleHttpError(response: Response): Promise<never> {
-    let errorData: any = {};
+    let errorData: unknown = {};
     try {
       errorData = await response.json();
-    } catch (e) {
+    } catch {
       // ignore parse error
     }
 
@@ -352,7 +352,7 @@ export class OpenRouterService {
     }
   }
 
-  private extractMetadata(data: any): OpenRouterCompletionResponse<any>["metadata"] {
+  private extractMetadata(data: Record<string, unknown>): OpenRouterCompletionResponse<unknown>["metadata"] {
     return {
       model: data?.model,
       tokensPrompt: data?.usage?.prompt_tokens,

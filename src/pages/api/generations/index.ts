@@ -62,8 +62,8 @@ export async function GET({ request, locals }: APIContext) {
     const result = await listGenerations(locals.supabase, userId, query);
 
     return successResponse(result, 200);
-  } catch (error) {
-    console.error("Error in GET /api/generations:", error);
+  } catch {
+    // Error in GET /api/generations
     return internalServerError("Database error");
   }
 }
@@ -160,7 +160,7 @@ export async function POST({ request, locals }: APIContext) {
         }
       }
 
-      console.error("LLM generation error:", error);
+      // LLM generation error
       return internalServerError("Failed to generate flashcards");
     }
 
@@ -176,13 +176,13 @@ export async function POST({ request, locals }: APIContext) {
         accepted_unedited_count: null,
         accepted_edited_count: null,
       });
-    } catch (error) {
-      console.error("Database error while creating generation:", error);
+    } catch {
+      // Database error while creating generation
       return internalServerError("Database error");
     }
 
     // Remove user_id from response (convert to DTO)
-    const { user_id, ...generationDTO } = generation;
+    const { user_id: _, ...generationDTO } = generation;
 
     // Prepare response
     const response: GenerationCreateResponse = {
@@ -191,8 +191,8 @@ export async function POST({ request, locals }: APIContext) {
     };
 
     return successResponse(response, 201);
-  } catch (error) {
-    console.error("Unexpected error in POST /api/generations:", error);
+  } catch {
+    // Unexpected error in POST /api/generations
     return internalServerError("Internal server error");
   }
 }
