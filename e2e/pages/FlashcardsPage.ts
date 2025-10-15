@@ -52,15 +52,25 @@ export class FlashcardsPage {
     return card;
   }
 
+  async getCardId(cardIndex = 0) {
+    const card = this.page.locator(`[data-testid^='flashcard-']`).nth(cardIndex);
+    const testId = await card.getAttribute("data-testid");
+    return testId?.replace("flashcard-", "") || "";
+  }
+
   async openEditForCard(cardIndex = 0) {
     const card = await this.openFirstCardActions(cardIndex);
-    await card.getByRole("button", { name: /Edytuj fiszkę/i }).click();
+    const cardId = await this.getCardId(cardIndex);
+    const editButton = this.page.getByTestId(`edit-flashcard-${cardId}`);
+    await editButton.click({ force: true });
     await this.dialog.waitFor({ state: "visible" });
   }
 
   async openDeleteForCard(cardIndex = 0) {
     const card = await this.openFirstCardActions(cardIndex);
-    await card.getByRole("button", { name: /Usuń fiszkę/i }).click();
+    const cardId = await this.getCardId(cardIndex);
+    const deleteButton = this.page.getByTestId(`delete-flashcard-${cardId}`);
+    await deleteButton.click({ force: true });
     await this.deleteDialog.waitFor({ state: "visible" });
   }
 

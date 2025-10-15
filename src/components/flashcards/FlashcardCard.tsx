@@ -107,6 +107,7 @@ export default function FlashcardCard({ flashcard, onEditClick, onDeleteClick }:
               onEditClick();
             }}
             aria-label="Edytuj fiszkę"
+            data-testid={`edit-flashcard-${flashcard.id}`}
           >
             <Pencil className="size-4" />
           </Button>
@@ -118,6 +119,7 @@ export default function FlashcardCard({ flashcard, onEditClick, onDeleteClick }:
               onDeleteClick();
             }}
             aria-label="Usuń fiszkę"
+            data-testid={`delete-flashcard-${flashcard.id}`}
           >
             <Trash2 className="size-4" />
           </Button>
