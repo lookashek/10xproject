@@ -31,7 +31,7 @@ export default function FlashcardDialog({
 }: FlashcardDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px]" data-testid="flashcard-dialog">
         <DialogHeader>
           <DialogTitle>
             {mode === 'create' ? 'Dodaj nową fiszkę' : 'Edytuj fiszkę'}

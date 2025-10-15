@@ -46,6 +46,7 @@ export function DashboardHeader({ user, onLogout }: DashboardHeaderProps) {
           size="icon"
           onClick={toggleTheme}
           aria-label="Przełącz tryb ciemny"
+          data-testid="toggle-theme"
         >
           {theme === 'dark' ? (
             <Sun className="h-5 w-5" />
@@ -57,10 +58,11 @@ export function DashboardHeader({ user, onLogout }: DashboardHeaderProps) {
         {/* User Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               className="relative h-10 w-10 rounded-full"
               aria-label="Menu użytkownika"
+              data-testid="user-menu-trigger"
             >
               <Avatar>
                 {user.avatar_url ? (

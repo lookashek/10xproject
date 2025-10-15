@@ -14,8 +14,19 @@ export function useAuth(): UseAuthReturn {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Pobranie aktualnego użytkownika
-    supabaseClient.auth.getUser().then(({ data, error }) => {
+    const isTestMode = import.meta.env.MODE === 'test';
+
+    const loadUser = async () => {
+      if (isTestMode && import.meta.env.E2E_USERNAME) {
+        setUser({
+          id: import.meta.env.E2E_USERNAME_ID ?? 'test-user-id',
+          email: import.meta.env.E2E_USERNAME,
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabaseClient.auth.getUser();
       if (data.user && !error) {
         setUser({
           id: data.user.id,
@@ -25,7 +36,9 @@ export function useAuth(): UseAuthReturn {
         });
       }
       setIsLoading(false);
-    });
+    };
+
+    void loadUser();
 
     // Subskrypcja zmian stanu auth
     const { data: { subscription } } = supabaseClient.auth.onAuthStateChange(

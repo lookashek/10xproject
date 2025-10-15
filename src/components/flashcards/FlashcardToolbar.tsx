@@ -25,7 +25,10 @@ export default function FlashcardToolbar({
   onSourceFilterChange,
 }: FlashcardToolbarProps) {
   return (
-    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-6 gap-4">
+    <div
+      className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between mb-6 gap-4"
+      data-testid="flashcard-toolbar"
+    >
       <div className="flex items-center gap-2">
         <label htmlFor="source-filter" className="text-sm font-medium text-foreground">
           Filtr:
@@ -33,6 +36,7 @@ export default function FlashcardToolbar({
         <Select
           value={sourceFilter}
           onValueChange={(value) => onSourceFilterChange(value as FlashcardSource | 'all')}
+          data-testid="flashcard-source-filter"
         >
           <SelectTrigger id="source-filter" className="w-[180px]">
             <SelectValue placeholder="Wszystkie" />
@@ -46,7 +50,7 @@ export default function FlashcardToolbar({
         </Select>
       </div>
 
-      <Button onClick={onAddClick} variant="default">
+      <Button onClick={onAddClick} variant="default" data-testid="add-flashcard-btn">
         <Plus className="size-4" />
         Dodaj fiszkę
       </Button>

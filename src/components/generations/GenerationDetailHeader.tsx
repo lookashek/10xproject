@@ -14,7 +14,7 @@ export function GenerationDetailHeader({ generation }: GenerationDetailHeaderPro
   const formattedDate = format(createdDate, 'PPp', { locale: pl });
 
   return (
-    <div className="mb-8">
+    <div className="mb-8" data-testid="generation-detail-header">
       <div className="flex items-center gap-3 mb-2">
         <h1 className="text-3xl font-bold">Generacja #{generation.id}</h1>
         <Badge variant="secondary">{formattedDate}</Badge>

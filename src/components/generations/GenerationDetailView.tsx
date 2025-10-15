@@ -102,10 +102,12 @@ export function GenerationDetailView({ generationId }: GenerationDetailViewProps
 
       {/* Content State */}
       {generation && !isLoading && (
-        <>
+        <div data-testid="generation-detail">
           <GenerationDetailHeader generation={generation} />
           
-          <GenerationStatsGrid generation={generation} />
+          <div data-testid="generation-detail-stats">
+            <GenerationStatsGrid generation={generation} />
+          </div>
           
           <SourceTextSection
             sourceTextHash={generation.source_text_hash}
@@ -113,7 +115,7 @@ export function GenerationDetailView({ generationId }: GenerationDetailViewProps
           />
           
           <AssociatedFlashcardsSection flashcards={generation.flashcards} />
-        </>
+        </div>
       )}
     </div>
   );

@@ -132,7 +132,7 @@ function FlashcardsViewInner({
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" data-testid="flashcards-view">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <h1 className="text-3xl font-bold mb-8 text-foreground">Moje fiszki</h1>
 
@@ -149,9 +149,9 @@ function FlashcardsViewInner({
         )}
 
         {isLoading ? (
-          <FlashcardGridSkeleton />
+          <FlashcardGridSkeleton data-testid="flashcard-grid-skeleton" />
         ) : flashcards.length === 0 ? (
-          <EmptyState onAddClick={handleAddClick} />
+          <EmptyState onAddClick={handleAddClick} data-testid="flashcard-empty-state" />
         ) : (
           <>
             <FlashcardGrid

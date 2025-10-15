@@ -13,7 +13,10 @@ export function LoadingIndicator({
   subtext = 'To może potrwać kilka sekund' 
 }: LoadingIndicatorProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-12 space-y-4">
+    <div
+      className="flex flex-col items-center justify-center py-12 space-y-4"
+      data-testid="loading-indicator"
+    >
       <Loader2 className="h-12 w-12 animate-spin text-primary" />
       <div className="text-center space-y-2">
         <p className="text-lg font-medium">{text}</p>

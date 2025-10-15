@@ -27,6 +27,7 @@ export function GenerationRow({ generation, onRowClick }: GenerationRowProps) {
     <TableRow 
       onClick={handleClick}
       className="cursor-pointer hover:bg-muted/50 transition-colors"
+      data-testid={`generation-row-${generation.id}`}
     >
       <TableCell>
         <div className="flex flex-col">

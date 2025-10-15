@@ -5,10 +5,11 @@ export function MenuTile({ icon, title, description, href, variant = 'default' }
   const isPrimary = variant === 'primary';
 
   return (
-    <a 
+    <a
       href={href}
       className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-xl group"
       aria-label={`${title}: ${description}`}
+      data-testid={`menu-tile-${title.toLowerCase().replace(/\s+/g, '-')}`}
     >
       <Card 
         className={`

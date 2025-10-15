@@ -137,9 +137,7 @@ export function GenerateView({ initialText }: GenerateViewProps) {
       </div>
       
       {/* Loading indicator */}
-      {viewState.phase === 'loading' && (
-        <LoadingIndicator />
-      )}
+      {viewState.phase === 'loading' && <LoadingIndicator data-testid="generate-loading" />}
       
       {/* Propozycje fiszek */}
       {(viewState.phase === 'reviewing' || viewState.phase === 'saving') && viewState.generationData && (

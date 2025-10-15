@@ -35,11 +35,12 @@ export function ProposalCard({
   };
 
   return (
-    <Card 
+    <Card
       className={cn(
         "p-4 transition-all",
         isSelected ? "border-primary bg-primary/5" : "border-border"
       )}
+      data-testid={`proposal-card-${index}`}
     >
       <div className="flex gap-3">
         {/* Checkbox */}

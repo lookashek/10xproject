@@ -16,7 +16,7 @@ import type { GenerationListProps } from '@/types';
 
 export function GenerationList({ generations, onRowClick }: GenerationListProps) {
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border" data-testid="generation-list">
       <Table>
         <TableHeader>
           <TableRow>

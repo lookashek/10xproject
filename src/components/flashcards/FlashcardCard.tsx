@@ -56,7 +56,7 @@ export default function FlashcardCard({
   };
 
   return (
-    <div className="perspective-1000 h-[240px]">
+    <div className="perspective-1000 h-[240px]" data-testid={`flashcard-${flashcard.id}`}>
       <div 
         className={cn(
           "relative w-full h-full transition-transform duration-500 transform-style-3d cursor-pointer",

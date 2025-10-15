@@ -97,7 +97,11 @@ export function GenerateForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form
+      data-testid="generate-form"
+      onSubmit={handleSubmit}
+      className="space-y-4"
+    >
       <div>
         <Label htmlFor="source-text">
           Tekst źródłowy
@@ -114,9 +118,9 @@ export function GenerateForm({
           aria-describedby="char-counter char-error"
           aria-invalid={!formState.isValid && formState.charCount > 0}
         />
-        <CharacterCounter 
-          current={formState.charCount} 
-          min={1000} 
+        <CharacterCounter
+          current={formState.charCount}
+          min={1000}
           max={10000}
           isValid={formState.isValid}
         />

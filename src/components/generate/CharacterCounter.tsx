@@ -25,7 +25,7 @@ export function CharacterCounter({
   };
 
   return (
-    <div 
+    <div
       className={cn(
         "flex justify-between text-sm mt-2",
         isValid ? "text-muted-foreground" : "text-destructive"
@@ -33,6 +33,7 @@ export function CharacterCounter({
       role="status"
       aria-live="polite"
       aria-atomic="true"
+      data-testid="character-counter"
     >
       <span>{getStatusText()}</span>
       <span className="font-mono">

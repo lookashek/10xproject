@@ -16,6 +16,7 @@ export function FlipButton({ onFlip }: FlipButtonProps) {
         size="lg"
         onClick={onFlip}
         className="gap-2 min-w-[200px] text-lg animate-pulse-subtle"
+        data-testid="flip-card-btn"
       >
         <Eye className="h-5 w-5" />
         Pokaż odpowiedź

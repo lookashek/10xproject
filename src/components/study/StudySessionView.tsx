@@ -77,7 +77,7 @@ function StudySessionViewInner() {
   }
 
   if (sessionState.type === 'empty') {
-    return <EmptyState />;
+    return <EmptyState data-testid="study-empty" />;
   }
 
   if (sessionState.type === 'completed') {

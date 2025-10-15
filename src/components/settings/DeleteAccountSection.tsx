@@ -73,7 +73,7 @@ export function DeleteAccountSection() {
   }, [isConfirmed, isDeleting]);
 
   return (
-    <Card className="border-destructive">
+    <Card className="border-destructive" data-testid="delete-account-section">
       <CardHeader>
         <CardTitle className="text-destructive">Strefa niebezpieczna</CardTitle>
         <CardDescription>
@@ -96,7 +96,7 @@ export function DeleteAccountSection() {
               Usuń konto
             </Button>
           </AlertDialogTrigger>
-          <AlertDialogContent>
+          <AlertDialogContent data-testid="delete-account-dialog">
             <AlertDialogHeader>
               <AlertDialogTitle>Czy na pewno chcesz usunąć konto?</AlertDialogTitle>
               <AlertDialogDescription asChild>

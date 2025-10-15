@@ -102,7 +102,11 @@ export function RegisterForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form
+        data-testid="register-form"
+        onSubmit={handleSubmit}
+        className="space-y-4"
+      >
         {/* Email */}
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
@@ -216,7 +220,7 @@ export function RegisterForm() {
 
         {/* Error Alert */}
         {error && (
-          <Alert variant="destructive">
+          <Alert variant="destructive" data-testid="register-error">
             <CircleAlert className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>

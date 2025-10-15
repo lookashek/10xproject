@@ -9,10 +9,11 @@
 import { BookOpen, Plus, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import type { HTMLAttributes } from 'react';
 
-export function EmptyState() {
+export function EmptyState(props: HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className="container mx-auto px-4 py-24">
+    <div className="container mx-auto px-4 py-24" {...props}>
       <div className="max-w-2xl mx-auto">
         <Card>
           <CardContent className="p-12 text-center space-y-6">

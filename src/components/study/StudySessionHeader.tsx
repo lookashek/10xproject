@@ -42,6 +42,7 @@ export function StudySessionHeader({
       size="sm"
       onClick={showConfirmation ? undefined : handleExit}
       className="gap-2"
+      data-testid="study-exit-btn"
     >
       <X className="h-4 w-4" />
       Zakończ sesję

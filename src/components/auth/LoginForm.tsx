@@ -79,7 +79,11 @@ export function LoginForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form
+        data-testid="login-form"
+        onSubmit={handleSubmit}
+        className="space-y-4"
+      >
         {/* Email */}
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
@@ -104,7 +108,7 @@ export function LoginForm() {
 
         {/* Password */}
         <div className="space-y-2">
-          <Label htmlFor="password">Hasło</Label>
+        <Label htmlFor="password">Hasło</Label>
           <div className="relative">
             <Input
               id="password"
@@ -116,6 +120,7 @@ export function LoginForm() {
               disabled={isLoading}
               required
               className="pr-10"
+              data-testid="password-input"
             />
             <Button
               type="button"
@@ -137,7 +142,7 @@ export function LoginForm() {
 
         {/* Error Alert */}
         {error && (
-          <Alert variant="destructive">
+          <Alert variant="destructive" data-testid="login-error">
             <CircleAlert className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
@@ -146,8 +151,9 @@ export function LoginForm() {
         {/* Submit Button */}
         <Button 
           type="submit" 
-          className="w-full" 
+          className="w-full"
           disabled={!canSubmit}
+          data-testid="login-submit"
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Zaloguj się
@@ -155,9 +161,10 @@ export function LoginForm() {
 
         {/* Forgot Password Link */}
         <div className="text-center">
-          <a 
-            href="/forgot-password" 
+          <a
+            href="/forgot-password"
             className="text-sm text-muted-foreground hover:text-primary transition-colors"
+            data-testid="forgot-password-link"
           >
             Zapomniałeś hasła?
           </a>
@@ -167,9 +174,10 @@ export function LoginForm() {
       {/* Register Link */}
       <div className="text-center text-sm">
         <span className="text-muted-foreground">Nie masz konta? </span>
-        <a 
-          href="/register" 
+        <a
+          href="/register"
           className="font-medium text-primary hover:underline"
+          data-testid="register-link"
         >
           Zarejestruj się
         </a>

@@ -5,7 +5,6 @@
  * Wyświetla conditional rendering w zależności od stanu (loading/empty/error/list).
  */
 
-import { useEffect } from 'react';
 import { useGenerationsList } from '@/lib/hooks';
 import { GenerationList } from './GenerationList';
 import { GenerationsListSkeleton } from './GenerationsListSkeleton';
@@ -67,7 +66,7 @@ export function GenerationsView({ initialPage = 1 }: GenerationsViewProps) {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto py-8 px-4" data-testid="generations-view">
       {/* Header Section */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Historia generacji</h1>

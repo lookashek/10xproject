@@ -103,7 +103,11 @@ export function ChangePasswordForm() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form
+          data-testid="change-password-form"
+          onSubmit={handleSubmit}
+          className="space-y-4"
+        >
           {/* Current Password */}
           <div className="space-y-2">
             <Label htmlFor="currentPassword">Obecne hasło</Label>

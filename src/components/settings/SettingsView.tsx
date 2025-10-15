@@ -14,7 +14,10 @@ type SettingsViewProps = {
 
 export function SettingsView({ user }: SettingsViewProps) {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div
+      className="container mx-auto px-4 py-8 max-w-4xl"
+      data-testid="settings-view"
+    >
       {/* Header */}
       <header className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Ustawienia konta</h1>

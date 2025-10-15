@@ -16,7 +16,12 @@ export function StatsSection({ stats, isLoading, error, onRetry }: StatsSectionP
   // Loading state
   if (isLoading) {
     return (
-      <section className="space-y-4" aria-busy="true" aria-label="Ładowanie statystyk">
+      <section
+        className="space-y-4"
+        aria-busy="true"
+        aria-label="Ładowanie statystyk"
+        data-testid="stats-section"
+      >
         <StatsSkeleton />
       </section>
     );
@@ -25,7 +30,12 @@ export function StatsSection({ stats, isLoading, error, onRetry }: StatsSectionP
   // Error state
   if (error) {
     return (
-      <section className="space-y-4" role="alert" aria-live="assertive">
+      <section
+        className="space-y-4"
+        role="alert"
+        aria-live="assertive"
+        data-testid="stats-section"
+      >
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertTitle>Błąd</AlertTitle>
@@ -45,7 +55,7 @@ export function StatsSection({ stats, isLoading, error, onRetry }: StatsSectionP
   // Empty state
   if (!stats) {
     return (
-      <section className="space-y-4" role="status">
+      <section className="space-y-4" role="status" data-testid="stats-section">
         <div className="text-center py-8 text-muted-foreground">
           Brak danych do wyświetlenia
         </div>
@@ -55,7 +65,11 @@ export function StatsSection({ stats, isLoading, error, onRetry }: StatsSectionP
 
   // Success state
   return (
-    <section className="space-y-4" aria-label="Statystyki użytkownika">
+    <section
+      className="space-y-4"
+      aria-label="Statystyki użytkownika"
+      data-testid="stats-section"
+    >
       <StatsGrid stats={stats} />
     </section>
   );

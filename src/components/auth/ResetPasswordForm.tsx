@@ -94,7 +94,11 @@ export function ResetPasswordForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form
+        data-testid="reset-password-form"
+        onSubmit={handleSubmit}
+        className="space-y-4"
+      >
         {/* Password */}
         <div className="space-y-2">
           <Label htmlFor="password">Nowe hasło</Label>

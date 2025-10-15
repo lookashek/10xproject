@@ -13,6 +13,10 @@ import { supabaseClient } from '../db/supabase.client.ts';
  */
 export const onRequest = defineMiddleware(async (context, next) => {
   const { request, redirect, locals } = context;
+
+  if (import.meta.env.MODE === 'test') {
+    return next();
+  }
   
   // Dodaj supabaseClient do locals
   locals.supabase = supabaseClient;

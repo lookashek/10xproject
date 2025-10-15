@@ -110,7 +110,10 @@ export function ProposalList({
   return (
     <div className="space-y-4">
       {/* Kontrolki zaznaczania */}
-      <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
+      <div
+        className="flex items-center justify-between p-4 bg-muted/50 rounded-lg"
+        data-testid="proposal-controls"
+      >
         <div className="flex gap-2">
           <Button 
             variant="outline" 
@@ -135,7 +138,7 @@ export function ProposalList({
       </div>
 
       {/* Lista propozycji */}
-      <div className="space-y-3">
+      <div className="space-y-3" data-testid="proposal-list">
         {proposals.map((proposal, index) => (
           <ProposalCard
             key={index}
@@ -156,6 +159,7 @@ export function ProposalList({
           onClick={handleSave}
           disabled={selectedCount === 0 || state.isSaving}
           className="min-w-[200px]"
+          data-testid="save-proposals-btn"
         >
           {state.isSaving ? (
             <>

@@ -28,9 +28,10 @@ export function StudyCard({ flashcard, isFlipped, onFlip }: StudyCardProps) {
   const isLongContent = content.length > 500;
 
   return (
-    <article 
+    <article
       className="w-full max-w-3xl mx-auto animate-fade-in"
       aria-label="Fiszka do nauki"
+      data-testid="study-card"
     >
       <Card 
         className="min-h-[300px] md:min-h-[400px] max-h-[600px] flex items-center justify-center cursor-pointer hover:shadow-lg transition-all duration-300"

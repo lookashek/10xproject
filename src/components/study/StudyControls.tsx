@@ -54,7 +54,10 @@ export function StudyControls({ isFlipped, onRate, isProcessing }: StudyControls
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto mt-8 animate-slide-up">
+    <div
+      className="w-full max-w-3xl mx-auto mt-8 animate-slide-up"
+      data-testid="study-controls"
+    >
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {ratingButtons.map(({ quality, label, description, color, icon: Icon, keyboardShortcut }) => (
           <Button

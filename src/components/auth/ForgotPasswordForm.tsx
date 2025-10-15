@@ -120,7 +120,11 @@ export function ForgotPasswordForm() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form
+        data-testid="forgot-password-form"
+        onSubmit={handleSubmit}
+        className="space-y-4"
+      >
         {/* Email */}
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
