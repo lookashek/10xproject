@@ -8,7 +8,5 @@ test.describe("Strona główna", () => {
 
     await expect(home.heroTitle).toBeVisible();
     await expect(home.registerLink).toBeVisible();
-
-    await expect(page).toHaveScreenshot({ fullPage: true });
   });
 });

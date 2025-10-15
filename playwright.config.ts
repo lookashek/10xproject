@@ -38,6 +38,7 @@ export default defineConfig({
   timeout: 30 * 1000,
   fullyParallel: true,
   retries: process.env.CI ? 2 : 0,
+  workers: 1, // Uruchamiaj testy sekwencyjnie (jeden web server)
   reporter: [["html", { open: "never" }]],
   use: {
     baseURL: BASE_URL,

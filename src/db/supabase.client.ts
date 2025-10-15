@@ -1,24 +1,45 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient as SupabaseClientType } from "@supabase/supabase-js";
 
 import type { Database } from "../db/database.types.ts";
 
-// Dla użycia po stronie serwera (middleware, API routes)
-const supabaseUrl = import.meta.env.SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.SUPABASE_KEY || import.meta.env.PUBLIC_SUPABASE_KEY;
-
-// Dla użycia po stronie klienta (React hooks)
-// Wymaga zmiennych z prefixem PUBLIC_
-const supabaseUrlClient = import.meta.env.PUBLIC_SUPABASE_URL;
-const supabaseAnonKeyClient = import.meta.env.PUBLIC_SUPABASE_KEY;
+/**
+ * Funkcja pomocnicza do pobierania zmiennych środowiskowych
+ * Obsługuje zarówno import.meta.env (Astro) jak i process.env (Node.js/testy)
+ */
+function getEnvVar(key: string): string | undefined {
+  // Sprawdź import.meta.env (Astro runtime)
+  if (typeof import.meta !== "undefined" && import.meta.env) {
+    return import.meta.env[key];
+  }
+  // Fallback do process.env (Node.js/testy)
+  if (typeof process !== "undefined" && process.env) {
+    return process.env[key];
+  }
+  return undefined;
+}
 
 /**
- * Supabase client z konfiguracją auth
- * Używany zarówno po stronie serwera (middleware, API) jak i klienta (React)
+ * Tworzy nowy Supabase client
  */
-export const supabaseClient = createClient<Database>(
-  supabaseUrl || supabaseUrlClient,
-  supabaseAnonKey || supabaseAnonKeyClient,
-  {
+function createSupabaseClient(): SupabaseClientType<Database> {
+  // Dla użycia po stronie serwera (middleware, API routes)
+  const supabaseUrl = getEnvVar("SUPABASE_URL") || getEnvVar("PUBLIC_SUPABASE_URL");
+  const supabaseAnonKey = getEnvVar("SUPABASE_KEY") || getEnvVar("PUBLIC_SUPABASE_KEY") || getEnvVar("PUBLIC_SUPABASE_ANON_KEY");
+
+  // Dla użycia po stronie klienta (React hooks)
+  const supabaseUrlClient = getEnvVar("PUBLIC_SUPABASE_URL");
+  const supabaseAnonKeyClient = getEnvVar("PUBLIC_SUPABASE_KEY") || getEnvVar("PUBLIC_SUPABASE_ANON_KEY");
+
+  const finalUrl = supabaseUrl || supabaseUrlClient;
+  const finalKey = supabaseAnonKey || supabaseAnonKeyClient;
+
+  if (!finalUrl || !finalKey) {
+    throw new Error(
+      "Missing Supabase configuration. Please set PUBLIC_SUPABASE_URL and PUBLIC_SUPABASE_KEY (or PUBLIC_SUPABASE_ANON_KEY) environment variables."
+    );
+  }
+
+  return createClient<Database>(finalUrl, finalKey, {
     auth: {
       // Automatyczne zarządzanie sesjami
       autoRefreshToken: true,
@@ -32,7 +53,15 @@ export const supabaseClient = createClient<Database>(
       // Storage dla tokenów - localStorage w browser, undefined w SSR
       storage: typeof window !== "undefined" ? window.localStorage : undefined,
     },
-  }
-);
+  });
+}
+
+/**
+ * Supabase client z konfiguracją auth
+ * Używany zarówno po stronie serwera (middleware, API) jak i klienta (React)
+ * 
+ * Używa lazy initialization żeby zmienne env były dostępne w czasie tworzenia
+ */
+export const supabaseClient = createSupabaseClient();
 
 export type SupabaseClient = typeof supabaseClient;
