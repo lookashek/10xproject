@@ -24,7 +24,8 @@ function getEnvVar(key: string): string | undefined {
 function createSupabaseClient(): SupabaseClientType<Database> {
   // Dla użycia po stronie serwera (middleware, API routes)
   const supabaseUrl = getEnvVar("SUPABASE_URL") || getEnvVar("PUBLIC_SUPABASE_URL");
-  const supabaseAnonKey = getEnvVar("SUPABASE_KEY") || getEnvVar("PUBLIC_SUPABASE_KEY") || getEnvVar("PUBLIC_SUPABASE_ANON_KEY");
+  const supabaseAnonKey =
+    getEnvVar("SUPABASE_KEY") || getEnvVar("PUBLIC_SUPABASE_KEY") || getEnvVar("PUBLIC_SUPABASE_ANON_KEY");
 
   // Dla użycia po stronie klienta (React hooks)
   const supabaseUrlClient = getEnvVar("PUBLIC_SUPABASE_URL");
@@ -59,7 +60,7 @@ function createSupabaseClient(): SupabaseClientType<Database> {
 /**
  * Supabase client z konfiguracją auth
  * Używany zarówno po stronie serwera (middleware, API) jak i klienta (React)
- * 
+ *
  * Używa lazy initialization żeby zmienne env były dostępne w czasie tworzenia
  */
 export const supabaseClient = createSupabaseClient();
