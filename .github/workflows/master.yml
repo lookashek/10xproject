@@ -1,13 +1,10 @@
-name: Test & Build
+name: Master CI/CD
 
 on:
-  pull_request:
+  push:
     branches:
       - master
-    types:
-      - opened
-      - synchronize
-      - reopened
+      - main
 
 jobs:
   # Job 1: Linting
