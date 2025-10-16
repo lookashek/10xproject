@@ -51,7 +51,7 @@ export default defineConfig({
       OPENROUTER_API_KEY: envField.string({
         context: "server",
         access: "secret",
-        optional: false,
+        optional: true, // Must be optional for Cloudflare runtime compatibility
       }),
 
       // Test variables
