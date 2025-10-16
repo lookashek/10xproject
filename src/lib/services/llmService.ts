@@ -7,6 +7,7 @@ import type { ProposedFlashcard } from "../../types";
 import { proposedFlashcardsArraySchema } from "../validation/generation.schemas";
 import { zodToJsonSchema } from "zod-to-json-schema";
 import { OpenRouterService, OpenRouterError } from "../openrouter.service";
+import { OPENROUTER_API_KEY } from "astro:env/server";
 
 /**
  * OpenRouter.ai API configuration
@@ -96,9 +97,7 @@ export async function generateFlashcards(
   flashcards: ProposedFlashcard[];
   duration: number;
 }> {
-  const apiKey = import.meta.env.OPENROUTER_API_KEY;
-
-  if (!apiKey) {
+  if (!OPENROUTER_API_KEY) {
     throw new LLMServiceError("OpenRouter API key not configured", "CONFIG_ERROR", 500);
   }
 
@@ -106,7 +105,7 @@ export async function generateFlashcards(
 
   // Initialize OpenRouter service
   const service = new OpenRouterService({
-    apiKey,
+    apiKey: OPENROUTER_API_KEY,
     defaultModel: model,
     requestTimeout: REQUEST_TIMEOUT,
   });
