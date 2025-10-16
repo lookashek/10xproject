@@ -1,13 +1,13 @@
 /**
  * Hashing utilities for source text deduplication
  * Uses SHA-256 to create consistent hashes for duplicate detection
+ * Compatible with Cloudflare Workers (Web Crypto API)
  */
-
-import { createHash } from "node:crypto";
 
 /**
  * Calculates SHA-256 hash of given text
  * Used to detect duplicate generation requests with same source text
+ * Uses Web Crypto API for cross-platform compatibility (Node.js + Cloudflare Workers)
  *
  * @param text - Source text to hash
  * @returns Hexadecimal SHA-256 hash string
@@ -19,7 +19,16 @@ import { createHash } from "node:crypto";
  * ```
  */
 export async function calculateSHA256(text: string): Promise<string> {
-  const hash = createHash("sha256");
-  hash.update(text);
-  return hash.digest("hex");
+  // Encode text as UTF-8
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+
+  // Calculate SHA-256 hash using Web Crypto API
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+
+  // Convert ArrayBuffer to hex string
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+
+  return hashHex;
 }
