@@ -97,39 +97,29 @@ export async function generateFlashcards(
   flashcards: ProposedFlashcard[];
   duration: number;
 }> {
-  console.log("[llmService] generateFlashcards called with model:", model);
-  console.log("[llmService] Source text length:", sourceText.length);
-
   // Get API key dynamically at runtime (works better with Cloudflare)
   const apiKey = getSecret("OPENROUTER_API_KEY");
 
-  console.log("[llmService] API key retrieved:", apiKey ? `Present (length: ${apiKey.length})` : "Missing or empty");
-
   if (!apiKey || apiKey.trim() === "") {
-    console.error("[llmService] OpenRouter API key not configured!");
     throw new LLMServiceError("OpenRouter API key not configured", "CONFIG_ERROR", 500);
   }
 
   const startTime = Date.now();
 
   // Initialize OpenRouter service
-  console.log("[llmService] Initializing OpenRouterService");
+  const service = new OpenRouterService({
+    apiKey,
+    defaultModel: model,
+    requestTimeout: REQUEST_TIMEOUT,
+  });
+
+  // Prepare JSON Schema for response_format
+  const jsonSchema = zodToJsonSchema(proposedFlashcardsArraySchema, {
+    name: "flashcards_array",
+    $refStrategy: "none",
+  });
+
   try {
-    const service = new OpenRouterService({
-      apiKey,
-      defaultModel: model,
-      requestTimeout: REQUEST_TIMEOUT,
-    });
-    console.log("[llmService] OpenRouterService initialized successfully");
-
-    // Prepare JSON Schema for response_format
-    const jsonSchema = zodToJsonSchema(proposedFlashcardsArraySchema, {
-      name: "flashcards_array",
-      $refStrategy: "none",
-    });
-    console.log("[llmService] JSON schema prepared");
-
-    console.log("[llmService] Calling OpenRouter API...");
     const response = await service.generateCompletion({
       systemMessage: SYSTEM_PROMPT,
       userMessage: createUserPrompt(sourceText),
@@ -146,7 +136,6 @@ export async function generateFlashcards(
     });
 
     const duration = Date.now() - startTime;
-    console.log("[llmService] OpenRouter API call completed, duration:", duration, "ms");
 
     const flashcards: ProposedFlashcard[] = (response.data as { front: string; back: string }[]).map((fc) => ({
       front: fc.front,
@@ -154,35 +143,18 @@ export async function generateFlashcards(
       source: "ai-full" as const,
     }));
 
-    console.log("[llmService] Flashcards generated:", flashcards.length);
-
     if (flashcards.length === 0) {
-      console.error("[llmService] No flashcards generated!");
       throw new LLMServiceError("No flashcards generated", "VALIDATION_ERROR", 500);
     }
 
     return { flashcards, duration };
   } catch (error) {
-    console.error("[llmService] Error during generation:", error);
-    console.error("[llmService] Error type:", error instanceof Error ? error.constructor.name : typeof error);
-
     if (error instanceof OpenRouterError) {
-      console.error("[llmService] OpenRouterError:", {
-        code: error.code,
-        message: error.message,
-        statusCode: error.statusCode,
-      });
       throw convertError(error);
     }
     if (error instanceof LLMServiceError) {
-      console.error("[llmService] LLMServiceError:", {
-        code: error.code,
-        message: error.message,
-        statusCode: error.statusCode,
-      });
       throw error;
     }
-    console.error("[llmService] Unexpected error - wrapping in LLMServiceError");
     throw new LLMServiceError("Unexpected error during flashcard generation", "INTERNAL_ERROR", 500);
   }
 }
