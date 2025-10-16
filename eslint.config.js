@@ -64,6 +64,19 @@ const reactConfig = tseslint.config({
   },
 });
 
+const nodeConfig = tseslint.config({
+  files: ["**/*.mjs", "**/*.config.js", "**/*.config.ts"],
+  languageOptions: {
+    globals: {
+      process: true,
+      __dirname: true,
+      __filename: true,
+      module: true,
+      require: true,
+    },
+  },
+});
+
 export default tseslint.config(
   {
     ignores: [
@@ -82,6 +95,7 @@ export default tseslint.config(
   baseConfig,
   jsxA11yConfig,
   reactConfig,
+  nodeConfig,
   eslintPluginAstro.configs["flat/recommended"],
   eslintPluginPrettier
 );
