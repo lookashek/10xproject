@@ -55,4 +55,3 @@ describe("calculateSHA256", () => {
     expect(hash1).toBe(hash2);
   });
 });
-
