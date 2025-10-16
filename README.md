@@ -1,6 +1,6 @@
 # 10x Cards
 
-> AI-powered flashcard generation & spaced-repetition learning.
+> AI-powered flashcard generation & spaced-repetition learning. Hi Jack!
 
 ## Table of Contents
 
