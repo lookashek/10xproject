@@ -133,15 +133,7 @@ jobs:
             -H "Content-Type: application/json" | jq '.result[] | .name' || echo "No projects found or API error"
           echo ""
           echo "🔍 Deployment configuration:"
-          echo "Account ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}"
-          echo "Project Name: 10x-cards"
-          echo "Branch: ${{ github.ref_name }}"
-          echo "Directory: dist"
-          echo ""
-          echo "📂 Contents of dist directory:"
-          ls -la dist/ || echo "dist directory does not exist!"
-          echo ""
-          echo "🔑 API Token is set: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}"
+          echo "Project Name :${{ secrets.CLOUDFLARE_PROJECT_NAME }}"
 
       - name: Deploy to Cloudflare Pages
         id: deploy
@@ -149,7 +141,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: 10x-cards
+          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
           directory: dist
           branch: ${{ github.ref_name }}
           wranglerVersion: '3'
