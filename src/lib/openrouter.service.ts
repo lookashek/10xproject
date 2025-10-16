@@ -135,36 +135,48 @@ export class OpenRouterService {
   async generateCompletion<T = string>(
     request: OpenRouterCompletionRequest<T>
   ): Promise<OpenRouterCompletionResponse<T>> {
+    console.log("[OpenRouterService] generateCompletion called");
     const startTime = Date.now();
 
+    console.log("[OpenRouterService] Building request body");
     const requestBody = this.buildRequestBody<T>(request);
+    console.log("[OpenRouterService] Request body built, model:", requestBody.model);
 
     const abortController = new AbortController();
     const timeoutId = setTimeout(() => abortController.abort(), this.requestTimeout);
 
     try {
+      console.log("[OpenRouterService] Executing HTTP request to:", this.apiUrl);
       const httpResponse = await this.executeRequest(requestBody, abortController.signal);
       clearTimeout(timeoutId);
+      console.log("[OpenRouterService] HTTP request completed, status:", httpResponse.status);
 
+      console.log("[OpenRouterService] Parsing response JSON");
       const responseData = await httpResponse.json();
 
+      console.log("[OpenRouterService] Parsing and validating response");
       const data = await this.parseAndValidateResponse<T>(responseData, request.responseSchema?.schema);
 
       const durationMs = Date.now() - startTime;
       const metadata = this.extractMetadata(responseData);
 
+      console.log("[OpenRouterService] Response validated successfully, duration:", durationMs, "ms");
       return { data, durationMs, metadata };
     } catch (error) {
       clearTimeout(timeoutId);
+      console.error("[OpenRouterService] Error in generateCompletion:", error);
 
       if (error instanceof Error && error.name === "AbortError") {
+        console.error("[OpenRouterService] Request timed out after", this.requestTimeout, "ms");
         throw new OpenRouterError("Request timed out", "TIMEOUT", 503);
       }
 
       if (error instanceof OpenRouterError) {
+        console.error("[OpenRouterService] OpenRouterError:", error.code, error.message);
         throw error;
       }
 
+      console.error("[OpenRouterService] Unexpected network error");
       throw new OpenRouterError("Network error occurred", "NETWORK_ERROR", 503);
     }
   }
@@ -269,6 +281,7 @@ export class OpenRouterService {
 
   private async executeRequest(body: object, abortSignal: AbortSignal): Promise<Response> {
     try {
+      console.log("[OpenRouterService] Executing fetch request");
       const response = await fetch(this.apiUrl, {
         method: "POST",
         headers: this.buildHeaders(),
@@ -276,12 +289,16 @@ export class OpenRouterService {
         signal: abortSignal,
       });
 
+      console.log("[OpenRouterService] Fetch completed, response.ok:", response.ok, "status:", response.status);
+
       if (!response.ok) {
+        console.error("[OpenRouterService] Response not OK, handling HTTP error");
         await this.handleHttpError(response);
       }
 
       return response;
     } catch (error) {
+      console.error("[OpenRouterService] executeRequest error:", error);
       if (error instanceof Error && error.name === "AbortError") {
         throw new OpenRouterError("Request timed out", "TIMEOUT", 503);
       }
@@ -322,23 +339,29 @@ export class OpenRouterService {
   }
 
   private async handleHttpError(response: Response): Promise<never> {
+    console.error("[OpenRouterService] handleHttpError called with status:", response.status);
     let errorData: unknown = {};
     try {
       errorData = await response.json();
-    } catch {
-      // ignore parse error
+      console.error("[OpenRouterService] Error response data:", errorData);
+    } catch (parseError) {
+      console.error("[OpenRouterService] Failed to parse error response:", parseError);
     }
 
     const errorMessage = errorData?.error?.message || "Unknown error";
 
     switch (response.status) {
       case 400:
+        console.error("[OpenRouterService] Bad request (400):", errorMessage);
         throw new OpenRouterError(`Bad request: ${errorMessage}`, "BAD_REQUEST", 400, errorData);
       case 401:
+        console.error("[OpenRouterService] Unauthorized (401) - Invalid API key");
         throw new OpenRouterError("Invalid API key", "UNAUTHORIZED", 401);
       case 402:
+        console.error("[OpenRouterService] Payment required (402) - Insufficient credits");
         throw new OpenRouterError("Insufficient credits in OpenRouter account", "INSUFFICIENT_CREDITS", 402);
       case 429:
+        console.error("[OpenRouterService] Rate limit exceeded (429)");
         throw new OpenRouterError("Rate limit exceeded", "RATE_LIMIT", 429, {
           retryAfter: response.headers.get("Retry-After"),
         });
@@ -346,8 +369,10 @@ export class OpenRouterService {
       case 502:
       case 503:
       case 504:
+        console.error("[OpenRouterService] Service unavailable (5xx):", response.status);
         throw new OpenRouterError("OpenRouter service temporarily unavailable", "SERVICE_UNAVAILABLE", 503);
       default:
+        console.error("[OpenRouterService] API error (", response.status, "):", errorMessage);
         throw new OpenRouterError(`API error: ${errorMessage}`, "API_ERROR", response.status, errorData);
     }
   }
