@@ -99,7 +99,7 @@ export async function generateFlashcards(
 }> {
   // Get API key dynamically at runtime (works better with Cloudflare)
   const apiKey = getSecret("OPENROUTER_API_KEY");
-  
+
   if (!apiKey || apiKey.trim() === "") {
     throw new LLMServiceError("OpenRouter API key not configured", "CONFIG_ERROR", 500);
   }
