@@ -79,7 +79,7 @@ export function ChangePasswordForm() {
         setIsLoading(false);
       }
     },
-    [canSubmit]
+    [canSubmit, currentPassword, newPassword]
   );
 
   return (

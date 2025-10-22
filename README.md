@@ -26,19 +26,19 @@ Key features:
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| Framework | [Astro 5](https://astro.build/) – islands architecture & static generation |
-| UI Library | React 19 + [shadcn/ui](https://ui.shadcn.com/) |
-| Language | TypeScript 5 |
-| Styling | Tailwind CSS 4 + `tw-animate-css` |
-| Backend-as-a-Service | Supabase (Postgres, Auth, RLS) |
-| AI Gateway | OpenRouter.ai |
-| Tooling | ESLint, Prettier, Husky, GitHub Actions |
-| Runtime | Node.js 22.14 ([`.nvmrc`](./.nvmrc)) |
-| Testing (Unit/Integration) | Vitest, @testing-library/react, MSW, supertest/undici |
-| Testing (E2E & Accessibility) | Playwright, axe-core/@axe-core/playwright |
-| Reporting & Coverage | JUnit/HTML reporters; `vitest --coverage` |
+| Layer                         | Technology                                                                 |
+| ----------------------------- | -------------------------------------------------------------------------- |
+| Framework                     | [Astro 5](https://astro.build/) – islands architecture & static generation |
+| UI Library                    | React 19 + [shadcn/ui](https://ui.shadcn.com/)                             |
+| Language                      | TypeScript 5                                                               |
+| Styling                       | Tailwind CSS 4 + `tw-animate-css`                                          |
+| Backend-as-a-Service          | Supabase (Postgres, Auth, RLS)                                             |
+| AI Gateway                    | OpenRouter.ai                                                              |
+| Tooling                       | ESLint, Prettier, Husky, GitHub Actions                                    |
+| Runtime                       | Node.js 22.14 ([`.nvmrc`](./.nvmrc))                                       |
+| Testing (Unit/Integration)    | Vitest, @testing-library/react, MSW, supertest/undici                      |
+| Testing (E2E & Accessibility) | Playwright, axe-core/@axe-core/playwright                                  |
+| Reporting & Coverage          | JUnit/HTML reporters; `vitest --coverage`                                  |
 
 > For more details see [`./.ai/tech-stack.md`](./.ai/tech-stack.md).
 
@@ -78,25 +78,25 @@ OPENROUTER_API_KEY=your-openrouter-key
 
 ## Available Scripts
 
-| Script | Purpose |
-|--------|---------|
-| `npm run dev` | Start Astro dev server with hot reload |
-| `npm run build` | Build the production-ready static site |
-| `npm run preview` | Preview the built site locally |
-| `npm run astro` | Expose the full Astro CLI |
-| `npm run lint` | Run ESLint over the codebase |
-| `npm run lint:fix` | Run ESLint and automatically fix problems |
-| `npm run format` | Format files using Prettier |
-| `npm run test` | Run unit tests with Vitest |
-| `npm run test:unit` | Run unit tests (alias for `test`) |
-| `npm run test:watch` | Run unit tests in watch mode |
-| `npm run test:ui` | Run unit tests with Vitest UI |
-| `npm run test:coverage` | Run unit tests with coverage report |
-| `npm run e2e` | Run E2E tests with Playwright |
-| `npm run e2e:ui` | Run E2E tests with Playwright UI |
-| `npm run e2e:install` | Install Playwright browsers |
-| `npm run e2e:codegen` | Generate E2E tests with Playwright codegen |
-| `npm run e2e:report` | Show Playwright HTML report |
+| Script                  | Purpose                                    |
+| ----------------------- | ------------------------------------------ |
+| `npm run dev`           | Start Astro dev server with hot reload     |
+| `npm run build`         | Build the production-ready static site     |
+| `npm run preview`       | Preview the built site locally             |
+| `npm run astro`         | Expose the full Astro CLI                  |
+| `npm run lint`          | Run ESLint over the codebase               |
+| `npm run lint:fix`      | Run ESLint and automatically fix problems  |
+| `npm run format`        | Format files using Prettier                |
+| `npm run test`          | Run unit tests with Vitest                 |
+| `npm run test:unit`     | Run unit tests (alias for `test`)          |
+| `npm run test:watch`    | Run unit tests in watch mode               |
+| `npm run test:ui`       | Run unit tests with Vitest UI              |
+| `npm run test:coverage` | Run unit tests with coverage report        |
+| `npm run e2e`           | Run E2E tests with Playwright              |
+| `npm run e2e:ui`        | Run E2E tests with Playwright UI           |
+| `npm run e2e:install`   | Install Playwright browsers                |
+| `npm run e2e:codegen`   | Generate E2E tests with Playwright codegen |
+| `npm run e2e:report`    | Show Playwright HTML report                |
 
 ## Testing
 
@@ -117,6 +117,7 @@ npm run test:coverage
 ```
 
 Unit tests are located in `__tests__` directories next to the tested files:
+
 - `src/components/ui/__tests__/` - UI component tests
 - `src/lib/__tests__/` - Utility function tests
 - `src/lib/algorithms/__tests__/` - Algorithm tests (e.g., SM2)
@@ -142,6 +143,7 @@ npm run e2e:report
 ```
 
 E2E tests are located in the `e2e/` directory:
+
 - `e2e/pages/` - Page Object Models
 - `e2e/*.spec.ts` - Test specifications
 

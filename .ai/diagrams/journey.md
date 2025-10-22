@@ -4,12 +4,12 @@
   chronione: `/generate`, `/dashboard`, `/flashcards`, `/study`,
   `/generations`, `/generations/[id]`.
 - Główne podróże:
-  1) Dostęp do chronionych stron (middleware + redirect),
-  2) Rejestracja (MVP: auto‑login; alt: weryfikacja e‑mail),
-  3) Logowanie (JWT w HttpOnly cookies),
-  4) Wylogowanie,
-  5) Zmiana hasła (w `Settings`),
-  6) Usunięcie konta (admin API + cascade + wylogowanie).
+  1. Dostęp do chronionych stron (middleware + redirect),
+  2. Rejestracja (MVP: auto‑login; alt: weryfikacja e‑mail),
+  3. Logowanie (JWT w HttpOnly cookies),
+  4. Wylogowanie,
+  5. Zmiana hasła (w `Settings`),
+  6. Usunięcie konta (admin API + cascade + wylogowanie).
 - Punkty decyzyjne:
   - `isAuthenticated?` (middleware),
   - Walidacja formularzy (email/hasło),
@@ -64,7 +64,7 @@ state "Proces Logowania" as Logowanie {
 
   note right of FormularzLogowania
     Pola: email, hasło. Enter = submit.
-    Toasty: sukces/błąd. 
+    Toasty: sukces/błąd.
   end note
 }
 
@@ -147,5 +147,3 @@ end note
 ```
 
 </mermaid_diagram>
-
-

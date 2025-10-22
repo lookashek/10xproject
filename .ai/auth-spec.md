@@ -1,5 +1,7 @@
 # Specyfikacja Techniczna: Moduł Autentykacji i Autoryzacji (MVP)
+
 ## Dokument architektoniczny dla systemu logowania użytkowników w aplikacji 10x-cards
+
 ### 🎯 Wersja MVP - Minimalna implementacja zgodna z PRD
 
 ---
@@ -11,6 +13,7 @@
 #### 1.1.1 Nowe Strony Astro (Public Routes)
 
 **`/login` - Strona Logowania**
+
 - **Plik:** `src/pages/login.astro`
 - **Layout:** `Layout.astro` (używamy tego samego co reszta app)
 - **Główny komponent:** `LoginForm` (React, client:load)
@@ -22,6 +25,7 @@
 - **Middleware:** Jeśli użytkownik już zalogowany → redirect do `/generate`
 
 **`/register` - Strona Rejestracji**
+
 - **Plik:** `src/pages/register.astro`
 - **Layout:** `Layout.astro` (używamy tego samego co reszta app)
 - **Główny komponent:** `RegisterForm` (React, client:load)
@@ -34,6 +38,7 @@
 - **Middleware:** Jeśli użytkownik już zalogowany → redirect do `/generate`
 
 **`/settings` - Strona Ustawień Konta (MVP - minimalna wersja)**
+
 - **Plik:** `src/pages/settings.astro`
 - **Layout:** `Layout.astro` (z pełnym headerem)
 - **Główny komponent:** `SettingsView` (React, client:load)
@@ -46,6 +51,7 @@
 #### 1.1.2 Aktualizacja Istniejących Stron
 
 **`/` (Index) - Strona Powitalna**
+
 - **Zmiana:** Dodanie przycisków CTA
 - **Nowe elementy:**
   - Przycisk "Zaloguj się" → `/login`
@@ -53,11 +59,13 @@
   - Jeśli użytkownik zalogowany → automatyczne przekierowanie do `/generate`
 
 **`/dashboard` - Panel Główny**
+
 - **Zmiana:** Brak zmian strukturalnych
 - **Walidacja:** Middleware wymusza autoryzację
 - **Props:** `Astro.locals.user` zawsze wypełniony (po włączeniu auth)
 
 **Wszystkie Protected Routes**
+
 - `/flashcards`, `/generate`, `/study`, `/generations`, `/generations/[id]`
 - **Zmiana:** Middleware wymusza autoryzację
 - **Przekierowanie:** Niezalogowany użytkownik → `/login` z query param `?redirect={current_path}`
@@ -67,6 +75,7 @@
 #### 1.2.1 Komponenty Formularzy Autoryzacji
 
 **`LoginForm.tsx`**
+
 - **Lokalizacja:** `src/components/auth/LoginForm.tsx`
 - **Technologia:** React + shadcn/ui (Input, Button, Label)
 - **State Management:**
@@ -88,6 +97,7 @@
   - Keyboard navigation (Enter submits form)
 
 **`RegisterForm.tsx`**
+
 - **Lokalizacja:** `src/components/auth/RegisterForm.tsx`
 - **Technologia:** React + shadcn/ui
 - **State Management:**
@@ -110,6 +120,7 @@
   - Ikona "show/hide password"
 
 **`ChangePasswordForm.tsx`**
+
 - **Lokalizacja:** `src/components/settings/ChangePasswordForm.tsx`
 - **State Management:**
   - `currentPassword: string`
@@ -126,6 +137,7 @@
   - Wymaga podania obecnego hasła dla bezpieczeństwa
 
 **`DeleteAccountSection.tsx`**
+
 - **Lokalizacja:** `src/components/settings/DeleteAccountSection.tsx`
 - **State Management:**
   - `confirmationText: string` - użytkownik wpisuje "DELETE"
@@ -143,17 +155,18 @@
 #### 1.2.2 Aktualizacja Istniejących Komponentów
 
 **`DashboardHeader.tsx`**
+
 - **Zmiana:** Implementacja funkcji `onLogout`
 - **Nowa logika:**
   ```typescript
   const handleLogout = async () => {
     try {
-      const response = await fetch('/api/auth/logout', { 
-        method: 'POST' 
+      const response = await fetch("/api/auth/logout", {
+        method: "POST",
       });
-      
+
       if (response.ok) {
-        window.location.href = '/login';
+        window.location.href = "/login";
       } else {
         // Toast error
       }
@@ -167,10 +180,12 @@
   - "Wyloguj się" (już istnieje)
 
 **`DashboardContent.tsx`**
+
 - **Zmiana:** Przekazywanie `handleLogout` do `DashboardHeader`
 - Brak innych zmian
 
 **`MenuGrid.tsx` / `MenuTile.tsx`**
+
 - **Zmiana:** Dodanie nowego kafelka "Ustawienia" (opcjonalnie)
 - Ikona: Settings/Cog
 - Link: `/settings`
@@ -180,12 +195,14 @@
 #### 1.3.1 Walidacja Client-Side (React)
 
 **Reguły Walidacji Email:**
+
 ```typescript
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const isValidEmail = emailRegex.test(email);
 ```
 
 **Reguły Walidacji Hasła:**
+
 ```typescript
 const passwordRules = {
   minLength: 8,
@@ -195,37 +212,41 @@ const passwordRules = {
 
 const validatePassword = (password: string) => {
   if (password.length < passwordRules.minLength) {
-    return 'Hasło musi mieć minimum 8 znaków';
+    return "Hasło musi mieć minimum 8 znaków";
   }
   if (!passwordRules.requireUppercase.test(password)) {
-    return 'Hasło musi zawierać przynajmniej jedną wielką literę';
+    return "Hasło musi zawierać przynajmniej jedną wielką literę";
   }
   if (!passwordRules.requireNumber.test(password)) {
-    return 'Hasło musi zawierać przynajmniej jedną cyfrę';
+    return "Hasło musi zawierać przynajmniej jedną cyfrę";
   }
   return null;
 };
 ```
 
 **Walidacja Zgodności Haseł:**
+
 ```typescript
 if (password !== confirmPassword) {
-  return 'Hasła nie są identyczne';
+  return "Hasła nie są identyczne";
 }
 ```
 
 #### 1.3.2 Komunikaty Błędów API
 
 **Login Errors:**
+
 - `INVALID_CREDENTIALS` → "Nieprawidłowy email lub hasło"
 - `RATE_LIMIT` → "Zbyt wiele prób logowania. Spróbuj ponownie za chwilę"
 
 **Register Errors:**
+
 - `EMAIL_ALREADY_EXISTS` → "Użytkownik z tym adresem email już istnieje"
 - `WEAK_PASSWORD` → "Hasło jest zbyt słabe. Spełnij wszystkie wymagania"
 - `INVALID_EMAIL` → "Nieprawidłowy format adresu email"
 
 **General Errors:**
+
 - `RATE_LIMIT_EXCEEDED` → "Zbyt wiele prób. Spróbuj ponownie za {time} sekund"
 - `SERVICE_UNAVAILABLE` → "Serwis tymczasowo niedostępny. Spróbuj ponownie później"
 - `INTERNAL_SERVER_ERROR` → "Wystąpił błąd serwera. Spróbuj ponownie"
@@ -233,28 +254,31 @@ if (password !== confirmPassword) {
 #### 1.3.3 Toast Notifications
 
 **Implementacja:**
+
 - Wykorzystanie istniejącego `ToasterProvider` (shadcn/ui sonner)
 - Typy: success, error, info
 
 **Przykłady:**
+
 ```typescript
-import { toast } from 'sonner';
+import { toast } from "sonner";
 
 // Sukces
-toast.success('Zalogowano pomyślnie!');
+toast.success("Zalogowano pomyślnie!");
 
 // Błąd
-toast.error('Nie udało się zalogować', {
-  description: 'Sprawdź swoje dane logowania'
+toast.error("Nie udało się zalogować", {
+  description: "Sprawdź swoje dane logowania",
 });
 
 // Info
-toast.info('Link resetujący został wysłany na Twój email');
+toast.info("Link resetujący został wysłany na Twój email");
 ```
 
 ### 1.4 Obsługa Najważniejszych Scenariuszy
 
 #### Scenariusz 1: Nowy Użytkownik Rejestruje Się (MVP - bez email verification)
+
 1. Użytkownik wchodzi na `/register`
 2. Wypełnia formularz (email, hasło, potwierdzenie)
 3. Walidacja client-side w czasie rzeczywistym
@@ -263,6 +287,7 @@ toast.info('Link resetujący został wysłany na Twój email');
 6. Redirect do `/generate` (użytkownik od razu zalogowany - zgodnie z PRD US-001)
 
 #### Scenariusz 2: Użytkownik Loguje Się
+
 1. Użytkownik wchodzi na `/login`
 2. Wypełnia email i hasło
 3. Submit → POST `/api/auth/login`
@@ -274,6 +299,7 @@ toast.info('Link resetujący został wysłany na Twój email');
    - Toast z komunikatem błędu
 
 #### Scenariusz 3: Użytkownik Chce Zmienić Hasło (zalogowany)
+
 1. Zalogowany użytkownik wchodzi na `/settings`
 2. Sekcja "Zmiana hasła"
 3. Wpisuje obecne hasło, nowe hasło, potwierdzenie
@@ -282,6 +308,7 @@ toast.info('Link resetujący został wysłany na Twój email');
 6. Toast sukcesu
 
 #### Scenariusz 4: Użytkownik Chce Usunąć Konto
+
 1. Zalogowany użytkownik wchodzi na `/settings`
 2. Sekcja "Usuwanie konta"
 3. Kliknięcie "Usuń konto" → Alert Dialog
@@ -291,6 +318,7 @@ toast.info('Link resetujący został wysłany na Twój email');
 7. Wylogowanie i redirect do `/`
 
 #### Scenariusz 5: Niezalogowany Użytkownik Próbuje Dostać Się do Chronionej Strony
+
 1. Użytkownik wpisuje `/dashboard` w przeglądarce
 2. Middleware sprawdza sesję → brak sesji
 3. Redirect do `/login?redirect=/dashboard`
@@ -305,23 +333,25 @@ toast.info('Link resetujący został wysłany na Twój email');
 #### 2.1.1 Nowe Endpointy Autoryzacji
 
 **POST `/api/auth/register`**
+
 - **Plik:** `src/pages/api/auth/register.ts`
 - **Prerender:** `false`
 - **Request Body:**
   ```typescript
   {
-    email: string;      // format emaila
-    password: string;   // min. 8 znaków, 1 wielka, 1 cyfra
+    email: string; // format emaila
+    password: string; // min. 8 znaków, 1 wielka, 1 cyfra
   }
   ```
 - **Walidacja (Zod Schema):**
   ```typescript
   const registerSchema = z.object({
-    email: z.string().email('Nieprawidłowy format emaila'),
-    password: z.string()
-      .min(8, 'Hasło musi mieć minimum 8 znaków')
-      .regex(/[A-Z]/, 'Hasło musi zawierać wielką literę')
-      .regex(/[0-9]/, 'Hasło musi zawierać cyfrę'),
+    email: z.string().email("Nieprawidłowy format emaila"),
+    password: z
+      .string()
+      .min(8, "Hasło musi mieć minimum 8 znaków")
+      .regex(/[A-Z]/, "Hasło musi zawierać wielką literę")
+      .regex(/[0-9]/, "Hasło musi zawierać cyfrę"),
   });
   ```
 - **Logika (MVP - bez email verification):**
@@ -345,6 +375,7 @@ toast.info('Link resetujący został wysłany na Twój email');
   ```
 
 **POST `/api/auth/login`**
+
 - **Plik:** `src/pages/api/auth/login.ts`
 - **Request Body:**
   ```typescript
@@ -357,7 +388,7 @@ toast.info('Link resetujący został wysłany na Twój email');
   ```typescript
   const loginSchema = z.object({
     email: z.string().email(),
-    password: z.string().min(1, 'Hasło jest wymagane'),
+    password: z.string().min(1, "Hasło jest wymagane"),
   });
   ```
 - **Logika:**
@@ -380,6 +411,7 @@ toast.info('Link resetujący został wysłany na Twój email');
   ```
 
 **POST `/api/auth/logout`**
+
 - **Plik:** `src/pages/api/auth/logout.ts`
 - **Request:** Brak body
 - **Logika:**
@@ -389,11 +421,12 @@ toast.info('Link resetujący został wysłany na Twój email');
 - **Response:**
   ```typescript
   {
-    message: "Wylogowano pomyślnie"
+    message: "Wylogowano pomyślnie";
   }
   ```
 
 **POST `/api/auth/change-password`**
+
 - **Plik:** `src/pages/api/auth/change-password.ts`
 - **Request Body:**
   ```typescript
@@ -412,6 +445,7 @@ toast.info('Link resetujący został wysłany na Twój email');
   - Niezalogowany → 401 UNAUTHORIZED
 
 **DELETE `/api/auth/delete-account`**
+
 - **Plik:** `src/pages/api/auth/delete-account.ts`
 - **Request:** Brak body
 - **Logika:**
@@ -424,7 +458,7 @@ toast.info('Link resetujący został wysłany na Twój email');
 - **Response:**
   ```typescript
   {
-    message: "Konto zostało trwale usunięte"
+    message: "Konto zostało trwale usunięte";
   }
   ```
 
@@ -433,12 +467,14 @@ toast.info('Link resetujący został wysłany na Twój email');
 **Wszystkie endpointy w `/api/flashcards/*` i `/api/generations/*`:**
 
 **Przed (MVP Mock):**
+
 ```typescript
-const PLACEHOLDER_USER_ID = '00000000-0000-0000-0000-000000000000';
+const PLACEHOLDER_USER_ID = "00000000-0000-0000-0000-000000000000";
 const userId = locals.user?.id || PLACEHOLDER_USER_ID;
 ```
 
 **Po (Pełna Autoryzacja):**
+
 ```typescript
 // Usunięcie PLACEHOLDER_USER_ID
 // Middleware gwarantuje, że locals.user istnieje
@@ -447,11 +483,11 @@ const userId = locals.user.id;
 // Dodatkowe sprawdzenie (defensive programming):
 if (!userId) {
   return new Response(
-    JSON.stringify({ 
-      error: { 
-        code: 'UNAUTHORIZED', 
-        message: 'Authentication required' 
-      } 
+    JSON.stringify({
+      error: {
+        code: "UNAUTHORIZED",
+        message: "Authentication required",
+      },
     }),
     { status: 401 }
   );
@@ -459,6 +495,7 @@ if (!userId) {
 ```
 
 **Zmiana struktury:**
+
 - Usunięcie wszystkich fallbacków do `PLACEHOLDER_USER_ID`
 - Middleware już wymusza autoryzację przed dotarciem do endpointów
 - Endpointy mogą założyć, że `locals.user` zawsze istnieje
@@ -470,22 +507,22 @@ if (!userId) {
 **`src/lib/validation/auth.schemas.ts`**
 
 ```typescript
-import { z } from 'zod';
+import { z } from "zod";
 
 /**
  * Wspólne reguły walidacji hasła
  */
 const passwordValidation = z
   .string()
-  .min(8, 'Hasło musi mieć minimum 8 znaków')
-  .regex(/[A-Z]/, 'Hasło musi zawierać przynajmniej jedną wielką literę')
-  .regex(/[0-9]/, 'Hasło musi zawierać przynajmniej jedną cyfrę');
+  .min(8, "Hasło musi mieć minimum 8 znaków")
+  .regex(/[A-Z]/, "Hasło musi zawierać przynajmniej jedną wielką literę")
+  .regex(/[0-9]/, "Hasło musi zawierać przynajmniej jedną cyfrę");
 
 /**
  * Schema dla rejestracji
  */
 export const registerSchema = z.object({
-  email: z.string().email('Nieprawidłowy format adresu email'),
+  email: z.string().email("Nieprawidłowy format adresu email"),
   password: passwordValidation,
 });
 
@@ -493,15 +530,15 @@ export const registerSchema = z.object({
  * Schema dla logowania
  */
 export const loginSchema = z.object({
-  email: z.string().email('Nieprawidłowy format adresu email'),
-  password: z.string().min(1, 'Hasło jest wymagane'),
+  email: z.string().email("Nieprawidłowy format adresu email"),
+  password: z.string().min(1, "Hasło jest wymagane"),
 });
 
 /**
  * Schema dla change password
  */
 export const changePasswordSchema = z.object({
-  currentPassword: z.string().min(1, 'Obecne hasło jest wymagane'),
+  currentPassword: z.string().min(1, "Obecne hasło jest wymagane"),
   newPassword: passwordValidation,
 });
 
@@ -520,7 +557,7 @@ export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 export async function POST({ request, locals }: APIContext) {
   try {
     const body = await request.json();
-    
+
     const validation = someSchema.safeParse(body);
     if (!validation.success) {
       const firstError = validation.error.errors[0];
@@ -528,11 +565,11 @@ export async function POST({ request, locals }: APIContext) {
         field: firstError.path[0]?.toString(),
       });
     }
-    
+
     const data = validation.data;
     // ... reszta logiki
   } catch (error) {
-    return internalServerError('Internal server error');
+    return internalServerError("Internal server error");
   }
 }
 ```
@@ -542,17 +579,18 @@ export async function POST({ request, locals }: APIContext) {
 #### 2.3.1 Nowe Kody Błędów
 
 **Rozszerzenie `src/types.ts` - ApiErrorCode:**
+
 ```typescript
 export type ApiErrorCode =
-  | 'VALIDATION_ERROR'          // Błędy walidacji (400)
-  | 'UNAUTHORIZED'              // Brak autoryzacji (401)
-  | 'FORBIDDEN'                 // Brak dostępu (403)
-  | 'NOT_FOUND'                 // Zasób nie znaleziony (404)
-  | 'CONFLICT'                  // Konflikt (409, np. email exists)
-  | 'UNPROCESSABLE_ENTITY'      // Błąd logiki biznesowej (422)
-  | 'RATE_LIMIT_EXCEEDED'       // Przekroczono limit (429)
-  | 'INTERNAL_SERVER_ERROR'     // Błąd serwera (500)
-  | 'SERVICE_UNAVAILABLE';      // Usługa niedostępna (503)
+  | "VALIDATION_ERROR" // Błędy walidacji (400)
+  | "UNAUTHORIZED" // Brak autoryzacji (401)
+  | "FORBIDDEN" // Brak dostępu (403)
+  | "NOT_FOUND" // Zasób nie znaleziony (404)
+  | "CONFLICT" // Konflikt (409, np. email exists)
+  | "UNPROCESSABLE_ENTITY" // Błąd logiki biznesowej (422)
+  | "RATE_LIMIT_EXCEEDED" // Przekroczono limit (429)
+  | "INTERNAL_SERVER_ERROR" // Błąd serwera (500)
+  | "SERVICE_UNAVAILABLE"; // Usługa niedostępna (503)
 ```
 
 #### 2.3.2 Obsługa Błędów Supabase Auth
@@ -562,89 +600,92 @@ export type ApiErrorCode =
 ```typescript
 // src/lib/utils/auth-errors.ts (nowy plik)
 
-import { AuthError } from '@supabase/supabase-js';
-import type { ApiErrorCode } from '@/types';
+import { AuthError } from "@supabase/supabase-js";
+import type { ApiErrorCode } from "@/types";
 
 export function mapSupabaseAuthError(error: AuthError): {
   code: ApiErrorCode;
   message: string;
 } {
   // Email already registered
-  if (error.message.includes('already registered')) {
+  if (error.message.includes("already registered")) {
     return {
-      code: 'CONFLICT',
-      message: 'Użytkownik z tym adresem email już istnieje',
+      code: "CONFLICT",
+      message: "Użytkownik z tym adresem email już istnieje",
     };
   }
 
   // Invalid credentials
-  if (error.message.includes('Invalid login credentials')) {
+  if (error.message.includes("Invalid login credentials")) {
     return {
-      code: 'UNAUTHORIZED',
-      message: 'Nieprawidłowy email lub hasło',
+      code: "UNAUTHORIZED",
+      message: "Nieprawidłowy email lub hasło",
     };
   }
 
   // Weak password
-  if (error.message.includes('Password')) {
+  if (error.message.includes("Password")) {
     return {
-      code: 'UNPROCESSABLE_ENTITY',
-      message: 'Hasło nie spełnia wymagań bezpieczeństwa',
+      code: "UNPROCESSABLE_ENTITY",
+      message: "Hasło nie spełnia wymagań bezpieczeństwa",
     };
   }
 
   // Rate limit
   if (error.status === 429) {
     return {
-      code: 'RATE_LIMIT_EXCEEDED',
-      message: 'Zbyt wiele prób. Spróbuj ponownie później',
+      code: "RATE_LIMIT_EXCEEDED",
+      message: "Zbyt wiele prób. Spróbuj ponownie później",
     };
   }
 
   // Default
   return {
-    code: 'INTERNAL_SERVER_ERROR',
-    message: 'Wystąpił nieoczekiwany błąd',
+    code: "INTERNAL_SERVER_ERROR",
+    message: "Wystąpił nieoczekiwany błąd",
   };
 }
 ```
 
 **Użycie w API:**
+
 ```typescript
 try {
   const { data, error } = await supabase.auth.signUp({ email, password });
-  
+
   if (error) {
     const { code, message } = mapSupabaseAuthError(error);
-    
-    if (code === 'CONFLICT') {
+
+    if (code === "CONFLICT") {
       return conflict(message);
-    } else if (code === 'UNPROCESSABLE_ENTITY') {
+    } else if (code === "UNPROCESSABLE_ENTITY") {
       return unprocessableEntity(message);
     } else {
       return internalServerError(message);
     }
   }
-  
+
   // success...
 } catch (error) {
-  return internalServerError('Internal server error');
+  return internalServerError("Internal server error");
 }
 ```
 
 #### 2.3.3 Rate Limiting
 
 **Strategia:**
+
 - Supabase Auth ma wbudowany rate limiting
 - Domyślnie: max 10 prób logowania/minutę z jednego IP
 - W przypadku przekroczenia: błąd 429
 - Konfiguracja w Supabase Dashboard (opcjonalnie)
 
 **Obsługa w UI:**
+
 ```typescript
 if (response.status === 429) {
-  toast.error('Zbyt wiele prób logowania', {
-    description: 'Spróbuj ponownie za 60 sekund'
+  toast.error("Zbyt wiele prób logowania", {
+    description: "Spróbuj ponownie za 60 sekund",
   });
 }
 ```
@@ -658,25 +699,28 @@ if (response.status === 429) {
 ```typescript
 export const onRequest = defineMiddleware(async (context, next) => {
   const { request, redirect, locals } = context;
-  
+
   // Dodaj supabaseClient do locals
   locals.supabase = supabaseClient;
-  
+
   const url = new URL(request.url);
-  
+
   // Publiczne ścieżki (dostępne bez logowania)
-  const publicPaths = ['/', '/login', '/register'];
+  const publicPaths = ["/", "/login", "/register"];
   const isPublicPath = publicPaths.includes(url.pathname);
-  
+
   // Auth API endpoints są zawsze publiczne
-  const isAuthAPI = url.pathname.startsWith('/api/auth/');
-  
+  const isAuthAPI = url.pathname.startsWith("/api/auth/");
+
   // Sprawdź sesję użytkownika
-  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  const {
+    data: { session },
+    error,
+  } = await supabaseClient.auth.getSession();
   const isAuthenticated = !!session && !error;
-  
+
   // USUNIĘCIE MOCK USER - teraz wymuszamy prawdziwą autentykację
-  
+
   if (isAuthenticated && session?.user) {
     // Użytkownik zalogowany - dodaj do locals
     locals.user = {
@@ -685,14 +729,14 @@ export const onRequest = defineMiddleware(async (context, next) => {
       username: session.user.user_metadata?.username,
       avatar_url: session.user.user_metadata?.avatar_url,
     };
-    
+
     // Jeśli zalogowany próbuje wejść na /login lub /register
-    if (url.pathname === '/login' || url.pathname === '/register') {
-      return redirect('/generate');
+    if (url.pathname === "/login" || url.pathname === "/register") {
+      return redirect("/generate");
     }
   } else {
     // Użytkownik NIE zalogowany
-    
+
     // Jeśli próbuje dostać się do chronionej strony
     if (!isPublicPath && !isAuthAPI) {
       // Zapisz oryginalny URL jako redirect parameter
@@ -700,12 +744,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
       return redirect(`/login?redirect=${encodeURIComponent(redirectTo)}`);
     }
   }
-  
+
   return next();
 });
 ```
 
 **Kluczowe zmiany:**
+
 1. ✅ **Usunięcie całego bloku z fake/mock userem**
 2. ✅ **Włączenie sprawdzania autentykacji dla chronionych stron**
 3. ✅ **Przekierowanie niezalogowanych użytkowników do `/login`**
@@ -718,8 +763,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 ```astro
 ---
-import Layout from '../layouts/Layout.astro';
-import { DashboardContent } from '../components/dashboard/DashboardContent';
+import Layout from "../layouts/Layout.astro";
+import { DashboardContent } from "../components/dashboard/DashboardContent";
 
 // Middleware już zweryfikował użytkownika
 // Jeśli dotarliśmy tutaj, user ZAWSZE istnieje
@@ -737,6 +782,7 @@ const user = Astro.locals.user;
 ```
 
 **Podobnie dla innych chronionych stron:**
+
 - `/flashcards.astro`
 - `/generate.astro`
 - `/study.astro`
@@ -749,11 +795,12 @@ Wszystkie mogą założyć, że `Astro.locals.user` jest zdefiniowany.
 #### 2.4.3 Obsługa Redirect Query Param
 
 **W `LoginForm.tsx`:**
+
 ```typescript
 const handleLoginSuccess = () => {
   const urlParams = new URLSearchParams(window.location.search);
-  const redirectTo = urlParams.get('redirect') || '/dashboard';
-  
+  const redirectTo = urlParams.get("redirect") || "/dashboard";
+
   window.location.href = redirectTo;
 };
 ```
@@ -767,6 +814,7 @@ const handleLoginSuccess = () => {
 #### 3.1.1 Flow Autentykacji
 
 **Rejestracja (Sign Up):**
+
 ```
 1. User → RegisterForm → POST /api/auth/register
 2. API → supabase.auth.signUp({ email, password })
@@ -780,6 +828,7 @@ const handleLoginSuccess = () => {
 ```
 
 **Logowanie (Sign In):**
+
 ```
 1. User → LoginForm → POST /api/auth/login
 2. API → supabase.auth.signInWithPassword({ email, password })
@@ -792,6 +841,7 @@ const handleLoginSuccess = () => {
 ```
 
 **Sesja (Session Management):**
+
 ```
 1. Każde żądanie do API:
    - Middleware wywołuje supabase.auth.getSession()
@@ -804,6 +854,7 @@ const handleLoginSuccess = () => {
 ```
 
 **Wylogowanie (Sign Out):**
+
 ```
 1. User → DashboardHeader → POST /api/auth/logout
 2. API → supabase.auth.signOut()
@@ -816,16 +867,19 @@ const handleLoginSuccess = () => {
 #### 3.1.2 JWT Tokens i Cookies
 
 **Typ Tokenu:**
+
 - Supabase używa JWT (JSON Web Tokens)
 - Przechowywane w HTTP-only cookies (bezpieczne, nie dostępne z JS)
 - Automatyczna rotacja przy zbliżającym się wygaśnięciu
 
 **Struktura Cookies:**
+
 - Cookie name: `sb-access-token` (domyślnie)
 - Attributes: `HttpOnly`, `Secure` (w production), `SameSite=Lax`
 - TTL: 3600s (1 godzina) - konfigurowane w Supabase
 
 **Refresh Token:**
+
 - Supabase automatycznie odświeża tokeny
 - SDK zarządza refresh token flow w tle
 - Developer nie musi ręcznie implementować
@@ -835,46 +889,41 @@ const handleLoginSuccess = () => {
 **Aktualizacja `src/db/supabase.client.ts`:**
 
 ```typescript
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from './database.types';
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "./database.types";
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.PUBLIC_SUPABASE_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+  throw new Error("Missing Supabase environment variables");
 }
 
 /**
  * Supabase client z konfiguracją auth
  * Używany zarówno po stronie serwera (middleware, API) jak i klienta (React)
  */
-export const supabaseClient = createClient<Database>(
-  supabaseUrl,
-  supabaseAnonKey,
-  {
-    auth: {
-      // Automatyczne zarządzanie sesjami
-      autoRefreshToken: true,
-      
-      // Persist sesji w localStorage (dla klienta) i cookies (dla serwera)
-      persistSession: true,
-      
-      // Wykrywanie zmian sesji
-      detectSessionInUrl: true,
-      
-      // Storage dla tokenów (cookies w SSR, localStorage w browser)
-      storage: typeof window !== 'undefined' 
-        ? window.localStorage 
-        : undefined,
-    }
-  }
-);
+export const supabaseClient = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    // Automatyczne zarządzanie sesjami
+    autoRefreshToken: true,
+
+    // Persist sesji w localStorage (dla klienta) i cookies (dla serwera)
+    persistSession: true,
+
+    // Wykrywanie zmian sesji
+    detectSessionInUrl: true,
+
+    // Storage dla tokenów (cookies w SSR, localStorage w browser)
+    storage: typeof window !== "undefined" ? window.localStorage : undefined,
+  },
+});
 
 export type SupabaseClient = typeof supabaseClient;
 ```
 
 **Zmienne Środowiskowe (.env):**
+
 ```bash
 PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
 PUBLIC_SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -886,6 +935,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ### 3.2 Konfiguracja Supabase Auth (MVP - minimalna)
 
 **Ustawienia w Supabase Dashboard → Authentication → Settings:**
+
 - **Email Confirmation:** WYŁĄCZONE (dla MVP)
 - **Minimum password length:** 8
 - **Auto confirm users:** WŁĄCZONE (dla MVP - użytkownicy od razu potwierdzeni)
@@ -895,6 +945,7 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ### 3.3 Row Level Security (RLS) - Włączenie
 
 **Obecna sytuacja:**
+
 - RLS policies są zdefiniowane w `20251006120000_initial_schema.sql`
 - Ale są WYŁĄCZONE w `20251006180000_disable_rls_for_mvp.sql`
 
@@ -913,18 +964,18 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 -- =====================================================
 
 -- Usuń wszystkie dane powiązane z placeholder userem
-DELETE FROM public.flashcards 
+DELETE FROM public.flashcards
 WHERE user_id = '00000000-0000-0000-0000-000000000000';
 
-DELETE FROM public.generations 
+DELETE FROM public.generations
 WHERE user_id = '00000000-0000-0000-0000-000000000000';
 
-DELETE FROM public.generation_error_logs 
+DELETE FROM public.generation_error_logs
 WHERE user_id = '00000000-0000-0000-0000-000000000000';
 
 -- Usuń testowego użytkownika (jeśli został stworzony)
 -- Uwaga: to wymaga admin permissions
--- DELETE FROM auth.users 
+-- DELETE FROM auth.users
 -- WHERE id = '00000000-0000-0000-0000-000000000000';
 
 -- =====================================================
@@ -970,13 +1021,13 @@ GRANT EXECUTE ON FUNCTION public.is_owner(uuid) TO authenticated;
 -- =====================================================
 
 -- Upewnij się, że każdy rekord ma user_id
-ALTER TABLE public.flashcards 
+ALTER TABLE public.flashcards
   ALTER COLUMN user_id SET NOT NULL;
 
-ALTER TABLE public.generations 
+ALTER TABLE public.generations
   ALTER COLUMN user_id SET NOT NULL;
 
-ALTER TABLE public.generation_error_logs 
+ALTER TABLE public.generation_error_logs
   ALTER COLUMN user_id SET NOT NULL;
 
 -- =====================================================
@@ -984,13 +1035,13 @@ ALTER TABLE public.generation_error_logs
 -- =====================================================
 
 -- Te indeksy już istnieją, ale dla pewności:
-CREATE INDEX IF NOT EXISTS flashcards_user_id_idx 
+CREATE INDEX IF NOT EXISTS flashcards_user_id_idx
   ON public.flashcards(user_id);
 
-CREATE INDEX IF NOT EXISTS generations_user_id_idx 
+CREATE INDEX IF NOT EXISTS generations_user_id_idx
   ON public.generations(user_id);
 
-CREATE INDEX IF NOT EXISTS generation_error_logs_user_id_idx 
+CREATE INDEX IF NOT EXISTS generation_error_logs_user_id_idx
   ON public.generation_error_logs(user_id);
 
 -- =====================================================
@@ -999,6 +1050,7 @@ CREATE INDEX IF NOT EXISTS generation_error_logs_user_id_idx
 ```
 
 **Uruchomienie migracji:**
+
 ```bash
 # Lokalnie (Supabase CLI)
 supabase db push
@@ -1008,10 +1060,11 @@ supabase db push
 ```
 
 **Weryfikacja:**
+
 ```sql
 -- Sprawdź czy RLS jest włączony
-SELECT schemaname, tablename, rowsecurity 
-FROM pg_tables 
+SELECT schemaname, tablename, rowsecurity
+FROM pg_tables
 WHERE schemaname = 'public';
 
 -- Sprawdź policies
@@ -1021,6 +1074,7 @@ SELECT * FROM pg_policies WHERE schemaname = 'public';
 ### 3.4 Obsługa Usuwania Konta (CASCADE)
 
 **Database Constraints:**
+
 ```sql
 -- flashcards.user_id → auth.users(id) ON DELETE CASCADE
 -- generations.user_id → auth.users(id) ON DELETE CASCADE
@@ -1028,6 +1082,7 @@ SELECT * FROM pg_policies WHERE schemaname = 'public';
 ```
 
 **Flow Usuwania Konta:**
+
 ```
 1. User → DELETE /api/auth/delete-account
 2. API → supabase.auth.admin.deleteUser(userId)
@@ -1041,46 +1096,45 @@ SELECT * FROM pg_policies WHERE schemaname = 'public';
 ```
 
 **Implementacja w API:**
+
 ```typescript
 // src/pages/api/auth/delete-account.ts
 export async function DELETE({ locals }: APIContext) {
   const userId = locals.user?.id;
-  
+
   if (!userId) {
-    return unauthorized('Authentication required');
+    return unauthorized("Authentication required");
   }
-  
+
   try {
     // Użyj service role key dla admin operations
-    const supabaseAdmin = createClient(
-      import.meta.env.PUBLIC_SUPABASE_URL,
-      import.meta.env.SUPABASE_SERVICE_ROLE_KEY,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-        },
-      }
-    );
-    
+    const supabaseAdmin = createClient(import.meta.env.PUBLIC_SUPABASE_URL, import.meta.env.SUPABASE_SERVICE_ROLE_KEY, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
+
     // Usuń użytkownika (CASCADE delete dla wszystkich danych)
     const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
-    
+
     if (error) {
-      console.error('Delete user error:', error);
-      return internalServerError('Failed to delete account');
+      console.error("Delete user error:", error);
+      return internalServerError("Failed to delete account");
     }
-    
+
     // Wyloguj sesję
     await locals.supabase.auth.signOut();
-    
-    return successResponse({ 
-      message: 'Konto zostało trwale usunięte' 
-    }, 200);
-    
+
+    return successResponse(
+      {
+        message: "Konto zostało trwale usunięte",
+      },
+      200
+    );
   } catch (error) {
-    console.error('Unexpected error deleting account:', error);
-    return internalServerError('Internal server error');
+    console.error("Unexpected error deleting account:", error);
+    return internalServerError("Internal server error");
   }
 }
 ```
@@ -1088,12 +1142,14 @@ export async function DELETE({ locals }: APIContext) {
 ### 3.5 Best Practices i Security
 
 #### 3.5.1 Bezpieczeństwo Haseł
+
 - ✅ Minimalne wymagania: 8 znaków, 1 wielka litera, 1 cyfra
 - ✅ Supabase hashuje hasła z bcrypt
 - ✅ Nigdy nie przechowuj plaintext passwords
 - ✅ Nie zwracaj haseł w API responses
 
 #### 3.5.2 Protection przed Atakami
+
 - ✅ **CSRF Protection:** Supabase cookies z `SameSite=Lax`
 - ✅ **XSS Protection:** HTTP-only cookies (JS nie może czytać)
 - ✅ **SQL Injection:** Supabase prepared statements + RLS
@@ -1101,6 +1157,7 @@ export async function DELETE({ locals }: APIContext) {
 - ✅ **Brute Force:** Rate limiting + opcjonalna CAPTCHA (Supabase dashboard)
 
 #### 3.5.3 RODO Compliance
+
 - ✅ **Prawo do dostępu:** User może zobaczyć swoje dane (dashboard)
 - ✅ **Prawo do usunięcia:** DELETE `/api/auth/delete-account`
 - ✅ **Prawo do przenoszenia:** Export danych (feature dla przyszłości)
@@ -1108,6 +1165,7 @@ export async function DELETE({ locals }: APIContext) {
 - ✅ **Consent:** Checkbox "Akceptuję regulamin" w rejestracji
 
 #### 3.5.4 Error Handling Best Practices
+
 - ✅ Nie ujawniaj szczegółów wewnętrznych błędów użytkownikowi
 - ✅ Loguj błędy po stronie serwera (console.error)
 - ✅ Zwracaj generyczne komunikaty dla security errors
@@ -1116,6 +1174,7 @@ export async function DELETE({ locals }: APIContext) {
 ### 3.6 Testing Strategy
 
 #### 3.6.1 Manual Testing Checklist (MVP)
+
 - [ ] Rejestracja nowego użytkownika → auto-login i redirect do /generate
 - [ ] Logowanie z poprawnymi credentials → redirect do /generate
 - [ ] Logowanie z błędnymi credentials → error message
@@ -1125,26 +1184,27 @@ export async function DELETE({ locals }: APIContext) {
 - [ ] Delete account → dane usunięte, wylogowanie, redirect do /
 
 #### 3.6.2 E2E Tests (opcjonalnie - Playwright)
+
 ```typescript
 // tests/auth.spec.ts
-test('user can register and login', async ({ page }) => {
-  await page.goto('/register');
-  await page.fill('[name="email"]', 'test@example.com');
-  await page.fill('[name="password"]', 'Test1234');
+test("user can register and login", async ({ page }) => {
+  await page.goto("/register");
+  await page.fill('[name="email"]', "test@example.com");
+  await page.fill('[name="password"]', "Test1234");
   await page.click('button[type="submit"]');
-  
+
   // Sprawdź komunikat o weryfikacji
-  await expect(page.locator('text=Sprawdź email')).toBeVisible();
-  
+  await expect(page.locator("text=Sprawdź email")).toBeVisible();
+
   // Manualnie potwierdź email (lub mock Supabase response)
-  
-  await page.goto('/login');
-  await page.fill('[name="email"]', 'test@example.com');
-  await page.fill('[name="password"]', 'Test1234');
+
+  await page.goto("/login");
+  await page.fill('[name="email"]', "test@example.com");
+  await page.fill('[name="password"]', "Test1234");
   await page.click('button[type="submit"]');
-  
+
   // Sprawdź redirect do dashboard
-  await expect(page).toHaveURL('/dashboard');
+  await expect(page).toHaveURL("/dashboard");
 });
 ```
 
@@ -1153,6 +1213,7 @@ test('user can register and login', async ({ page }) => {
 ## 4. PLAN IMPLEMENTACJI (Kolejność Zadań)
 
 ### Faza 1: Backend i Database (Priority: Critical)
+
 1. ✅ Utworzenie migracji SQL: `20251014000000_enable_rls_with_auth.sql`
 2. ✅ Utworzenie auth schemas: `src/lib/validation/auth.schemas.ts` (tylko register, login, change-password)
 3. ✅ Utworzenie auth error mapper: `src/lib/utils/auth-errors.ts`
@@ -1166,6 +1227,7 @@ test('user can register and login', async ({ page }) => {
 6. ✅ Usunięcie PLACEHOLDER_USER_ID z istniejących API endpoints
 
 ### Faza 2: Frontend - Strony i Formularze (Priority: Critical)
+
 7. ✅ Utworzenie stron Astro (MVP - używamy Layout.astro):
    - `src/pages/login.astro`
    - `src/pages/register.astro`
@@ -1174,11 +1236,12 @@ test('user can register and login', async ({ page }) => {
    - `src/components/auth/LoginForm.tsx`
    - `src/components/auth/RegisterForm.tsx` (bez password strength indicator)
 9. ✅ Utworzenie komponentów Settings (MVP):
-    - `src/components/settings/SettingsView.tsx` (prosty panel)
-    - `src/components/settings/ChangePasswordForm.tsx`
-    - `src/components/settings/DeleteAccountSection.tsx`
+   - `src/components/settings/SettingsView.tsx` (prosty panel)
+   - `src/components/settings/ChangePasswordForm.tsx`
+   - `src/components/settings/DeleteAccountSection.tsx`
 
 ### Faza 3: UX i Integracja (Priority: High)
+
 10. ✅ Aktualizacja `index.astro`: dodanie CTA buttons (login/register)
 11. ✅ Aktualizacja `DashboardHeader.tsx`: implementacja logout
 12. ✅ Dodanie linku "Ustawienia" do menu użytkownika
@@ -1188,16 +1251,19 @@ test('user can register and login', async ({ page }) => {
 16. ✅ Testowanie flow: delete account
 
 ### Faza 4: Supabase Configuration (Priority: High)
+
 17. ✅ Konfiguracja Auth settings w Supabase Dashboard:
     - Email confirmation: OFF (auto-confirm users)
     - Minimum password length: 8
 18. ✅ Uruchomienie migracji RLS: `supabase db push`
 
 ### Faza 5: Security (Priority: Medium)
+
 19. ✅ Weryfikacja RLS policies: test jako anon i authenticated
 20. ✅ Security audit: sprawdzenie podstawowych podatności
 
 ### Faza 6: Testing (Priority: Low)
+
 21. ✅ Manual testing wszystkich flows (checklist)
 22. ✅ E2E tests (opcjonalnie - dla przyszłości)
 
@@ -1287,6 +1353,7 @@ test('user can register and login', async ({ page }) => {
 ## 6. KLUCZOWE PLIKI DO UTWORZENIA/MODYFIKACJI
 
 ### Nowe Pliki (do utworzenia) - MVP:
+
 ```
 src/pages/
   ├─ login.astro                           ✅ NEW
@@ -1322,6 +1389,7 @@ supabase/migrations/
 ```
 
 ### Pliki do Modyfikacji:
+
 ```
 src/middleware/index.ts                    🔧 MODIFY (włączyć auth)
 src/db/supabase.client.ts                  🔧 MODIFY (config auth)
@@ -1339,6 +1407,7 @@ src/types.ts                               🔧 MODIFY (dodać auth types)
 ## 7. ZMIENNE ŚRODOWISKOWE
 
 **`.env` (development & production):**
+
 ```bash
 # Supabase Connection
 PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
@@ -1355,6 +1424,7 @@ OPENROUTER_API_KEY=sk-xxx
 ```
 
 **Supabase Dashboard Config:**
+
 - **Site URL:** `https://app.10x-cards.com`
 - **Redirect URLs:**
   - `https://app.10x-cards.com/login`
@@ -1405,6 +1475,7 @@ OPENROUTER_API_KEY=sk-xxx
    - Indeksy dla wydajności
 
 ### Status Gotowości (MVP):
+
 - ✅ Architektura MVP w pełni zaprojektowana
 - ✅ Wszystkie komponenty zidentyfikowane (minimalna implementacja)
 - ✅ Security considerations uwzględnione
@@ -1413,6 +1484,7 @@ OPENROUTER_API_KEY=sk-xxx
 - ✅ **Zgodność z PRD US-001 do US-009**
 
 ### Następne Kroki dla Developera:
+
 1. Przeczytać tę specyfikację w całości
 2. Skonfigurować Supabase Dashboard:
    - **Email confirmation: OFF**
@@ -1423,6 +1495,7 @@ OPENROUTER_API_KEY=sk-xxx
 5. Deploy na production z odpowiednimi zmiennymi środowiskowymi
 
 ### Różnice MVP vs Full (do dodania później):
+
 - ❌ Email verification (można włączyć później)
 - ❌ Forgot/reset password flow (można dodać później)
 - ❌ Password strength indicator (nice-to-have)
@@ -1433,6 +1506,5 @@ OPENROUTER_API_KEY=sk-xxx
 
 **Koniec Specyfikacji Technicznej**
 
-*Dokument wersja 2.0 (MVP) - 2025-10-13*
-*Zaktualizowany zgodnie z PRD - minimalna implementacja dla MVP*
-
+_Dokument wersja 2.0 (MVP) - 2025-10-13_
+_Zaktualizowany zgodnie z PRD - minimalna implementacja dla MVP_

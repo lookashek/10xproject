@@ -69,14 +69,14 @@ export async function POST({ request, locals }: APIContext) {
       // Sprawdź czy to błąd nieprawidłowego hasła
       if (isAuthError(verifyError)) {
         const mappedError = mapSupabaseAuthError(verifyError);
-        
+
         if (mappedError.code === "UNAUTHORIZED") {
           return unauthorized("Nieprawidłowe obecne hasło");
         } else if (mappedError.code === "RATE_LIMIT_EXCEEDED") {
           return internalServerError(mappedError.message);
         }
       }
-      
+
       return unauthorized("Nieprawidłowe obecne hasło");
     }
 
@@ -90,7 +90,7 @@ export async function POST({ request, locals }: APIContext) {
         const mappedError = mapSupabaseAuthError(updateError);
         return internalServerError(mappedError.message);
       }
-      
+
       return internalServerError("Nie udało się zmienić hasła");
     }
 
@@ -105,4 +105,3 @@ export async function POST({ request, locals }: APIContext) {
     return internalServerError("Błąd serwera");
   }
 }
-

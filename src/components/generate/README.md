@@ -41,24 +41,28 @@ generate/
 ## 🎯 Główne funkcjonalności
 
 ### GenerateView
+
 - Zarządzanie stanem widoku (phase: input/loading/reviewing/saving)
 - Orkiestracja wywołań API
 - Obsługa błędów z toast notifications
 - Reset widoku po zapisaniu
 
 ### GenerateForm
+
 - Real-time walidacja długości tekstu
 - Licznik znaków z wizualnym feedback
 - Obsługa Ctrl+Enter dla szybkiego submitu
 - Disable podczas ładowania
 
 ### ProposalList
+
 - Domyślnie wszystkie propozycje zaznaczone
 - Kontrolki "Zaznacz wszystkie" / "Odznacz wszystkie"
 - Śledzenie edycji każdej propozycji
 - Automatyczne określanie źródła (ai-full/ai-edited)
 
 ### ProposalCard
+
 - Inline edycja front (max 200 znaków) i back (max 500 znaków)
 - Liczniki znaków dla każdego pola
 - Disable pól gdy propozycja niezaznaczona
@@ -81,6 +85,7 @@ generate/
 ## 🎨 Komponenty UI (shadcn/ui)
 
 Wykorzystywane komponenty:
+
 - Button
 - Textarea
 - Input
@@ -92,22 +97,24 @@ Wykorzystywane komponenty:
 ## 🔧 Typy
 
 Wszystkie typy zdefiniowane w:
+
 - `src/lib/viewModels/generateView.types.ts` - typy ViewModel
 - `src/types.ts` - typy API/DTO
 
 ## ⚠️ Obsługa błędów
 
 Wykorzystuje centralne funkcje z `src/lib/utils/errorHandlers.ts`:
+
 - `handleGenerateError()` - błędy generowania (409 Conflict, 422 Validation, 500 Server, 503 Unavailable)
 - `handleSaveError()` - błędy zapisywania (409 Conflict, 422 Validation)
 
 ## 🚀 Użycie
 
 ```tsx
-import { GenerateView } from '@/components/generate';
+import { GenerateView } from "@/components/generate";
 
 // W pliku Astro
-<GenerateView client:load initialText={initialText} />
+<GenerateView client:load initialText={initialText} />;
 ```
 
 ## 📝 TODO (przyszłe ulepszenia)
@@ -117,4 +124,3 @@ import { GenerateView } from '@/components/generate';
 - [ ] Retry mechanism z exponential backoff
 - [ ] WebSocket dla real-time progress updates
 - [ ] Więcej opcji modeli AI (obecnie hardcoded Claude)
-

@@ -3,7 +3,7 @@
  *
  * Endpoint do trwałego usunięcia konta użytkownika
  * Wymaga uwierzytelnienia - użytkownik musi być zalogowany
- * 
+ *
  * UWAGA: Ta operacja jest nieodwracalna i usuwa:
  * - Konto użytkownika z Supabase Auth
  * - Wszystkie powiązane dane (fiszki, generacje, etc.) przez CASCADE DELETE
@@ -39,10 +39,7 @@ export async function DELETE({ locals }: APIContext) {
     const { error: deleteError } = await locals.supabase.rpc("delete_user_account");
 
     if (deleteError) {
-      console.error("Failed to delete user account:", deleteError);
-      return internalServerError(
-        "Nie udało się usunąć konta. Spróbuj ponownie później."
-      );
+      return internalServerError("Nie udało się usunąć konta. Spróbuj ponownie później.");
     }
 
     // Wyloguj użytkownika (cleanup sesji)
@@ -55,9 +52,7 @@ export async function DELETE({ locals }: APIContext) {
       },
       200
     );
-  } catch (error) {
-    console.error("Error in DELETE /api/auth/delete-account:", error);
+  } catch {
     return internalServerError("Błąd serwera");
   }
 }
-

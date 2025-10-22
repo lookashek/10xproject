@@ -3,6 +3,7 @@
 ## Przegląd
 
 Zaimplementowano pełną funkcjonalność ustawień konta dla użytkowników, obejmującą:
+
 - ✅ Zmianę hasła z weryfikacją obecnego hasła
 - ✅ Trwałe usuwanie konta użytkownika wraz z wszystkimi danymi
 
@@ -15,6 +16,7 @@ Zaimplementowano pełną funkcjonalność ustawień konta dla użytkowników, ob
 **Opis:** Umożliwia zalogowanemu użytkownikowi zmianę hasła.
 
 **Request Body:**
+
 ```json
 {
   "currentPassword": "string",
@@ -23,6 +25,7 @@ Zaimplementowano pełną funkcjonalność ustawień konta dla użytkowników, ob
 ```
 
 **Walidacja:**
+
 - Obecne hasło jest wymagane i weryfikowane przez ponowne logowanie
 - Nowe hasło musi spełniać wymagania:
   - Minimum 8 znaków
@@ -30,12 +33,14 @@ Zaimplementowano pełną funkcjonalność ustawień konta dla użytkowników, ob
   - Przynajmniej jedna cyfra
 
 **Odpowiedzi:**
+
 - `200 OK` - Hasło zostało zmienione
 - `400 Bad Request` - Błąd walidacji
 - `401 Unauthorized` - Nieprawidłowe obecne hasło lub brak autoryzacji
 - `500 Internal Server Error` - Błąd serwera
 
 **Bezpieczeństwo:**
+
 - Wymaga autoryzacji (middleware sprawdza `locals.user`)
 - Weryfikuje obecne hasło przed zmianą (protection against session hijacking)
 - Używa Supabase Auth do bezpiecznej zmiany hasła
@@ -45,17 +50,20 @@ Zaimplementowano pełną funkcjonalność ustawień konta dla użytkowników, ob
 **Opis:** Trwale usuwa konto użytkownika i wszystkie powiązane dane.
 
 **Odpowiedzi:**
+
 - `200 OK` - Konto zostało usunięte
 - `401 Unauthorized` - Brak autoryzacji
 - `500 Internal Server Error` - Błąd serwera
 
 **Bezpieczeństwo:**
+
 - Wymaga autoryzacji (middleware sprawdza `locals.user`)
 - Używa funkcji RPC `delete_user_account()` z parametrem `security definer`
 - Automatycznie usuwa tylko konto zalogowanego użytkownika (auth.uid())
 - CASCADE DELETE usuwa wszystkie powiązane dane (fiszki, generacje, logi błędów)
 
 **Działanie:**
+
 1. Sprawdza autoryzację użytkownika
 2. Wywołuje funkcję RPC `delete_user_account()`
 3. Automatycznie wylogowuje użytkownika (`signOut()`)
@@ -66,6 +74,7 @@ Zaimplementowano pełną funkcjonalność ustawień konta dla użytkowników, ob
 #### 1. `ChangePasswordForm.tsx`
 
 Formularz do zmiany hasła z następującymi funkcjami:
+
 - Walidacja hasła w czasie rzeczywistym (wizualne wskaźniki)
 - Pokazywanie/ukrywanie hasła (ikony Eye/EyeOff)
 - Sprawdzanie zgodności nowego hasła i potwierdzenia
@@ -75,6 +84,7 @@ Formularz do zmiany hasła z następującymi funkcjami:
 #### 2. `DeleteAccountSection.tsx`
 
 Sekcja usuwania konta z następującymi funkcjami:
+
 - Dialog potwierdzenia z wyjaśnieniem konsekwencji
 - Wymagane wpisanie "DELETE" dla potwierdzenia
 - Lista danych które zostaną usunięte
@@ -94,6 +104,7 @@ security definer
 ```
 
 **Cechy:**
+
 - `security definer` - wykonuje się z uprawnieniami właściciela funkcji
 - Automatycznie używa `auth.uid()` dla bezpieczeństwa
 - Usuwa użytkownika z `auth.users` co triggeru CASCADE DELETE
@@ -105,6 +116,7 @@ security definer
 ### Testy manualne
 
 1. **Zmiana hasła:**
+
    ```
    1. Zaloguj się do aplikacji
    2. Przejdź do /settings
@@ -136,19 +148,19 @@ Sugerowane testy E2E w Playwright:
 
 ```typescript
 // e2e/settings.spec.ts
-test('should change password successfully', async ({ page }) => {
+test("should change password successfully", async ({ page }) => {
   // Test zmiany hasła
 });
 
-test('should require correct current password', async ({ page }) => {
+test("should require correct current password", async ({ page }) => {
   // Test błędnego obecnego hasła
 });
 
-test('should validate new password requirements', async ({ page }) => {
+test("should validate new password requirements", async ({ page }) => {
   // Test walidacji nowego hasła
 });
 
-test('should delete account with confirmation', async ({ page }) => {
+test("should delete account with confirmation", async ({ page }) => {
   // Test usuwania konta
 });
 ```
@@ -184,17 +196,19 @@ test('should delete account with confirmation', async ({ page }) => {
 ### Zmienne środowiskowe
 
 Wymagane zmienne (już skonfigurowane):
+
 ```env
 SUPABASE_URL=your-supabase-url
 SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
 
-**Uwaga:** Endpoint usuwania konta NIE wymaga `SUPABASE_SERVICE_ROLE_KEY` 
+**Uwaga:** Endpoint usuwania konta NIE wymaga `SUPABASE_SERVICE_ROLE_KEY`
 ponieważ używa bezpiecznej funkcji RPC zamiast Admin API.
 
 ### Migracje Supabase
 
 Aby zastosować migrację:
+
 ```bash
 # Jeśli używasz Supabase CLI lokalnie
 supabase db push
@@ -224,4 +238,3 @@ supabase db push
 - [ ] Rate limiting na poziomie aplikacji
 - [ ] Testy E2E dla wszystkich scenariuszy
 - [ ] Możliwość reaktywacji konta (soft delete) - opcjonalnie
-

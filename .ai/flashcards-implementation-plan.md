@@ -11,6 +11,7 @@ System zarządzania fiszkami (flashcards) składa się z 5 endpointów REST API 
 - **DELETE /api/flashcards/{id}** - Usuwanie fiszki
 
 Fiszki mogą pochodzić z trzech źródeł:
+
 - `ai-full` - wygenerowane przez AI i zaakceptowane bez edycji
 - `ai-edited` - wygenerowane przez AI i edytowane przed zaakceptowaniem
 - `manual` - utworzone ręcznie przez użytkownika
@@ -25,6 +26,7 @@ Fiszki mogą pochodzić z trzech źródeł:
 **Struktura URL:** `/api/flashcards?page={page}&limit={limit}&source={source}&search={search}`
 
 **Parametry:**
+
 - **Opcjonalne:**
   - `page` (number) - numer strony, default: 1
   - `limit` (number) - liczba elementów na stronę, default: 50, max: 100
@@ -41,6 +43,7 @@ Fiszki mogą pochodzić z trzech źródeł:
 **Struktura URL:** `/api/flashcards/{id}`
 
 **Parametry:**
+
 - **Wymagane:**
   - `id` (number) - identyfikator fiszki (BIGINT)
 
@@ -56,6 +59,7 @@ Fiszki mogą pochodzić z trzech źródeł:
 **Parametry:** Brak
 
 **Request Body (single flashcard):**
+
 ```json
 {
   "front": "string (max 200 chars)",
@@ -66,6 +70,7 @@ Fiszki mogą pochodzić z trzech źródeł:
 ```
 
 **Request Body (batch flashcards):**
+
 ```json
 {
   "flashcards": [
@@ -87,10 +92,12 @@ Fiszki mogą pochodzić z trzech źródeł:
 **Struktura URL:** `/api/flashcards/{id}`
 
 **Parametry:**
+
 - **Wymagane:**
   - `id` (number) - identyfikator fiszki (BIGINT)
 
 **Request Body:**
+
 ```json
 {
   "front": "string (max 200 chars, optional)",
@@ -108,6 +115,7 @@ Fiszki mogą pochodzić z trzech źródeł:
 **Struktura URL:** `/api/flashcards/{id}`
 
 **Parametry:**
+
 - **Wymagane:**
   - `id` (number) - identyfikator fiszki (BIGINT)
 
@@ -120,12 +128,14 @@ Fiszki mogą pochodzić z trzech źródeł:
 ### 3.1 Typy DTO (z types.ts)
 
 **FlashcardDTO** - obiekt zwracany przez API
+
 ```typescript
-type FlashcardDTO = Omit<FlashcardEntity, 'user_id'>;
+type FlashcardDTO = Omit<FlashcardEntity, "user_id">;
 // Pola: id, front, back, source, generation_id, created_at, updated_at
 ```
 
 **FlashcardCreateCommand** - dane do utworzenia pojedynczej fiszki
+
 ```typescript
 type FlashcardCreateCommand = {
   front: string;
@@ -136,6 +146,7 @@ type FlashcardCreateCommand = {
 ```
 
 **FlashcardBatchCreateCommand** - dane do batch create
+
 ```typescript
 type FlashcardBatchCreateCommand = {
   flashcards: FlashcardCreateCommand[];
@@ -143,6 +154,7 @@ type FlashcardBatchCreateCommand = {
 ```
 
 **FlashcardUpdateCommand** - dane do aktualizacji
+
 ```typescript
 type FlashcardUpdateCommand = {
   front?: string;
@@ -151,6 +163,7 @@ type FlashcardUpdateCommand = {
 ```
 
 **FlashcardListQuery** - parametry zapytania dla listy
+
 ```typescript
 type FlashcardListQuery = {
   page?: number;
@@ -161,6 +174,7 @@ type FlashcardListQuery = {
 ```
 
 **FlashcardListResponse** - odpowiedź z listą i paginacją
+
 ```typescript
 type FlashcardListResponse = PaginatedResponse<FlashcardDTO>;
 ```
@@ -168,13 +182,15 @@ type FlashcardListResponse = PaginatedResponse<FlashcardDTO>;
 ### 3.2 Typy wewnętrzne (database operations)
 
 **FlashcardInsert** - insert do bazy danych (zawiera user_id)
+
 ```typescript
-type FlashcardInsert = TablesInsert<'flashcards'>;
+type FlashcardInsert = TablesInsert<"flashcards">;
 ```
 
 **FlashcardUpdate** - update w bazie danych
+
 ```typescript
-type FlashcardUpdate = TablesUpdate<'flashcards'>;
+type FlashcardUpdate = TablesUpdate<"flashcards">;
 ```
 
 ---
@@ -182,6 +198,7 @@ type FlashcardUpdate = TablesUpdate<'flashcards'>;
 ## 4. Szczegóły odpowiedzi
 
 ### 4.1 GET /api/flashcards (200 OK)
+
 ```json
 {
   "data": [
@@ -205,6 +222,7 @@ type FlashcardUpdate = TablesUpdate<'flashcards'>;
 ```
 
 ### 4.2 GET /api/flashcards/{id} (200 OK)
+
 ```json
 {
   "id": 123,
@@ -218,6 +236,7 @@ type FlashcardUpdate = TablesUpdate<'flashcards'>;
 ```
 
 ### 4.3 POST /api/flashcards (201 Created)
+
 ```json
 {
   "data": [
@@ -235,6 +254,7 @@ type FlashcardUpdate = TablesUpdate<'flashcards'>;
 ```
 
 ### 4.4 PUT /api/flashcards/{id} (200 OK)
+
 ```json
 {
   "id": 123,
@@ -248,6 +268,7 @@ type FlashcardUpdate = TablesUpdate<'flashcards'>;
 ```
 
 ### 4.5 DELETE /api/flashcards/{id} (204 No Content)
+
 Brak body w odpowiedzi.
 
 ---
@@ -255,6 +276,7 @@ Brak body w odpowiedzi.
 ## 5. Przepływ danych
 
 ### 5.1 GET /api/flashcards (Lista)
+
 ```
 1. Walidacja query params (Zod schema)
 2. Parsowanie i sanityzacja parametrów (page, limit, source, search)
@@ -273,6 +295,7 @@ Brak body w odpowiedzi.
 ```
 
 ### 5.2 GET /api/flashcards/{id} (Szczegóły)
+
 ```
 1. Walidacja i parsowanie id z URL
 2. Pobranie user_id z context.locals
@@ -284,6 +307,7 @@ Brak body w odpowiedzi.
 ```
 
 ### 5.3 POST /api/flashcards (Tworzenie)
+
 ```
 1. Walidacja request body (Zod):
    - Sprawdź czy single (ma front, back) czy batch (ma flashcards[])
@@ -304,6 +328,7 @@ Brak body w odpowiedzi.
 ```
 
 ### 5.4 PUT /api/flashcards/{id} (Aktualizacja)
+
 ```
 1. Walidacja id z URL
 2. Walidacja request body (front i/lub back)
@@ -320,6 +345,7 @@ Brak body w odpowiedzi.
 ```
 
 ### 5.5 DELETE /api/flashcards/{id} (Usuwanie)
+
 ```
 1. Walidacja id z URL
 2. Pobranie user_id z context.locals
@@ -333,12 +359,14 @@ Brak body w odpowiedzi.
 ## 6. Względy bezpieczeństwa
 
 ### 6.1 Uwierzytelnianie i autoryzacja (MVP)
+
 - **RLS DISABLED dla MVP** - uproszczenie developmentu
 - user_id jest hardcoded jako test user (z migracji 20251006180100_create_test_user.sql)
 - W przyszłości: aktywować RLS i używać auth.uid() z Supabase Auth
 - Middleware sprawdza context.locals.supabase
 
 ### 6.2 Walidacja danych wejściowych
+
 - **Zod schemas** dla wszystkich inputów:
   - Typy danych (string, number, enum)
   - Limity długości (front max 200, back max 500)
@@ -350,24 +378,29 @@ Brak body w odpowiedzi.
   - Normalizacja białych znaków
 
 ### 6.3 SQL Injection
+
 - Używamy Supabase client z parametryzowanymi zapytaniami
 - NIGDY nie konkatenujemy user input do SQL
 
 ### 6.4 Unique Constraint
+
 - Database constraint: `UNIQUE(user_id, front, back)`
 - Zapobiega duplikatom na poziomie DB
 - Obsługa konfliktu zwraca 409 Conflict
 
 ### 6.5 Rate Limiting (opisane w spec, nie zaimplementowane w MVP)
+
 - Future: 100 requests/min dla flashcard endpoints
 - Middleware rate limiting based on user_id lub IP
 
 ### 6.6 Security Headers
+
 W Astro middleware dodać headers:
+
 ```typescript
-response.headers.set('X-Content-Type-Options', 'nosniff');
-response.headers.set('X-Frame-Options', 'DENY');
-response.headers.set('X-XSS-Protection', '1; mode=block');
+response.headers.set("X-Content-Type-Options", "nosniff");
+response.headers.set("X-Frame-Options", "DENY");
+response.headers.set("X-XSS-Protection", "1; mode=block");
 ```
 
 ---
@@ -377,12 +410,15 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 ### 7.1 Kody błędów i scenariusze
 
 #### 400 Bad Request
+
 **Kiedy:**
+
 - Nieprawidłowe query parameters (page < 1, limit > 100, invalid source value)
 - Nieprawidłowy request body (brak wymaganych pól, złe typy)
 - Invalid JSON w body
 
 **Response:**
+
 ```json
 {
   "error": {
@@ -399,11 +435,14 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 ```
 
 #### 404 Not Found
+
 **Kiedy:**
+
 - Fiszka o podanym ID nie istnieje
 - Fiszka istnieje ale należy do innego użytkownika (RLS w przyszłości)
 
 **Response:**
+
 ```json
 {
   "error": {
@@ -414,11 +453,14 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 ```
 
 #### 409 Conflict
+
 **Kiedy:**
+
 - Próba utworzenia fiszki z identycznym front i back (duplikat)
 - Próba aktualizacji która stworzyłaby duplikat
 
 **Response:**
+
 ```json
 {
   "error": {
@@ -432,7 +474,9 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 ```
 
 #### 422 Unprocessable Entity
+
 **Kiedy:**
+
 - front > 200 znaków
 - back > 500 znaków
 - source nie jest jednym z: ai-full, ai-edited, manual
@@ -440,6 +484,7 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 - generation_id nie istnieje w generations table
 
 **Response:**
+
 ```json
 {
   "error": {
@@ -456,12 +501,15 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 ```
 
 #### 500 Internal Server Error
+
 **Kiedy:**
+
 - Błąd połączenia z bazą danych
 - Nieoczekiwany błąd w aplikacji
 - Błąd transakcji (batch insert z update generations)
 
 **Response:**
+
 ```json
 {
   "error": {
@@ -475,7 +523,7 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 
 ```
 1. Zod Validation Error → 400 Bad Request
-2. NotFoundError (custom) → 404 Not Found  
+2. NotFoundError (custom) → 404 Not Found
 3. ConflictError (custom) → 409 Conflict
 4. UnprocessableEntityError (custom) → 422 Unprocessable Entity
 5. Database unique constraint violation → 409 Conflict
@@ -484,6 +532,7 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 ```
 
 ### 7.3 Logowanie błędów
+
 - Wszystkie błędy 500 logowane do console.error
 - Błędy zawierają stack trace w dev, usunięty w production
 - Nie logujemy błędów walidacji (400, 422) - to oczekiwane błędy
@@ -494,35 +543,41 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 ## 8. Rozważania dotyczące wydajności
 
 ### 8.1 Indeksy bazodanowe (już w migracji)
+
 - B-Tree index na `(user_id, created_at DESC)` - szybkie sortowanie i paginacja
 - Unique index na `(user_id, front, back)` - szybkie sprawdzanie duplikatów
 - Opcjonalnie: GIN trigram index na `front` i `back` dla full-text search
 
 ### 8.2 Paginacja
+
 - Limit domyślny: 50 items
 - Max limit: 100 items
-- Offset-based pagination (page * limit)
+- Offset-based pagination (page \* limit)
 - W przyszłości: cursor-based pagination dla lepszej wydajności z dużymi datasetami
 
 ### 8.3 Query optimization
-- SELECT tylko potrzebne kolumny (nie SELECT *)
+
+- SELECT tylko potrzebne kolumny (nie SELECT \*)
 - COUNT query osobno (możliwe cache w przyszłości)
 - Batch operations w transakcjach (atomic + szybsze)
 
 ### 8.4 Potencjalne wąskie gardła
+
 - Search query z ILIKE może być wolny dla dużych tabel
   - Rozwiązanie: pg_trgm + GIN index
 - Batch insert z update generations - transakcja może być długa
   - Rozwiązanie: limit batch size (max 50 flashcards?)
-- Count(*) dla pagination może być wolny
+- Count(\*) dla pagination może być wolny
   - Rozwiązanie: cache total count lub estimated count
 
 ### 8.5 Caching (future)
-- Cache count(*) results (invalidate on insert/delete)
+
+- Cache count(\*) results (invalidate on insert/delete)
 - Cache frequently accessed flashcards
 - Use Supabase Realtime for invalidation
 
 ### 8.6 Connection pooling
+
 - Supabase ma wbudowany connection pooling
 - Używamy `context.locals.supabase` - reuse connection w request lifecycle
 
@@ -531,6 +586,7 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 ## 9. Etapy wdrożenia
 
 ### Krok 1: Utworzenie schematów walidacji Zod
+
 **Plik:** `src/lib/validation/flashcard.schemas.ts`
 
 1. Zaimportować `z` z `zod`
@@ -555,17 +611,20 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
    - id: `z.coerce.number().int().positive()`
 
 ### Krok 2: Utworzenie serwisu flashcardService
+
 **Plik:** `src/lib/services/flashcardService.ts`
 
 1. Zaimportować typy: SupabaseClient, FlashcardDTO, FlashcardCreateCommand, etc.
 2. Utworzyć `listFlashcards()`:
+
    ```typescript
    async function listFlashcards(
      supabase: SupabaseClient,
      userId: string,
      query: FlashcardListQuery
-   ): Promise<FlashcardListResponse>
+   ): Promise<FlashcardListResponse>;
    ```
+
    - Buduj query z where user_id
    - Dodaj filter source (jeśli podany)
    - Dodaj search ILIKE (jeśli podany): `.or('front.ilike.%'+search+'%,back.ilike.%'+search+'%')`
@@ -575,18 +634,17 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
    - Return data + pagination
 
 3. Utworzyć `getFlashcardById()`:
+
    ```typescript
-   async function getFlashcardById(
-     supabase: SupabaseClient,
-     userId: string,
-     id: number
-   ): Promise<FlashcardDTO>
+   async function getFlashcardById(supabase: SupabaseClient, userId: string, id: number): Promise<FlashcardDTO>;
    ```
+
    - SELECT where id AND user_id
    - Throw NotFoundError jeśli brak
    - Return flashcard
 
 4. Utworzyć `checkDuplicate()`:
+
    ```typescript
    async function checkDuplicate(
      supabase: SupabaseClient,
@@ -594,34 +652,39 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
      front: string,
      back: string,
      excludeId?: number
-   ): Promise<boolean>
+   ): Promise<boolean>;
    ```
+
    - SELECT id WHERE user_id AND front AND back
    - Jeśli excludeId podany: AND id != excludeId
    - Return true jeśli znaleziono
 
 5. Utworzyć `createFlashcard()`:
+
    ```typescript
    async function createFlashcard(
      supabase: SupabaseClient,
      userId: string,
      command: FlashcardCreateCommand
-   ): Promise<FlashcardDTO>
+   ): Promise<FlashcardDTO>;
    ```
+
    - Sanityzuj input (trim już w Zod)
    - Sprawdź duplikaty
    - INSERT flashcard z user_id
    - Return created flashcard
 
 6. Utworzyć `createFlashcardsBatch()`:
+
    ```typescript
    async function createFlashcardsBatch(
      supabase: SupabaseClient,
      userId: string,
      commands: FlashcardCreateCommand[],
      generationId?: number
-   ): Promise<FlashcardDTO[]>
+   ): Promise<FlashcardDTO[]>;
    ```
+
    - Sprawdź duplikaty dla każdej
    - Rozpocznij transakcję (Supabase .rpc() lub multiple operations)
    - Batch INSERT flashcards
@@ -630,14 +693,16 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
    - Return created flashcards
 
 7. Utworzyć `updateFlashcard()`:
+
    ```typescript
    async function updateFlashcard(
      supabase: SupabaseClient,
      userId: string,
      id: number,
      command: FlashcardUpdateCommand
-   ): Promise<FlashcardDTO>
+   ): Promise<FlashcardDTO>;
    ```
+
    - Pobierz istniejącą fiszkę
    - Sprawdź czy update nie tworzy duplikatu
    - Określ czy source zmienia się na 'ai-edited'
@@ -645,13 +710,11 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
    - Return updated flashcard
 
 8. Utworzyć `deleteFlashcard()`:
+
    ```typescript
-   async function deleteFlashcard(
-     supabase: SupabaseClient,
-     userId: string,
-     id: number
-   ): Promise<void>
+   async function deleteFlashcard(supabase: SupabaseClient, userId: string, id: number): Promise<void>;
    ```
+
    - Sprawdź czy fiszka istnieje (getById)
    - DELETE where id AND user_id
    - Return void
@@ -659,13 +722,14 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 9. Eksportuj wszystkie funkcje
 
 ### Krok 3: Utworzenie endpoint GET /api/flashcards
+
 **Plik:** `src/pages/api/flashcards/index.ts`
 
 1. Zaimportować dependencies
 2. Dodać `export const prerender = false`
 3. Utworzyć handler `GET()`:
    ```typescript
-   export async function GET(context: APIContext): Promise<Response>
+   export async function GET(context: APIContext): Promise<Response>;
    ```
 4. W try-catch:
    - Pobierz supabase z context.locals
@@ -677,11 +741,12 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 6. Return odpowiednie error responses
 
 ### Krok 4: Utworzenie endpoint POST /api/flashcards
+
 **W tym samym pliku:** `src/pages/api/flashcards/index.ts`
 
 1. Utworzyć handler `POST()`:
    ```typescript
-   export async function POST(context: APIContext): Promise<Response>
+   export async function POST(context: APIContext): Promise<Response>;
    ```
 2. W try-catch:
    - Parsuj request body (await request.json())
@@ -694,12 +759,13 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 3. Obsłuż błędy (validation, conflict, etc.)
 
 ### Krok 5: Utworzenie endpoint GET /api/flashcards/[id].ts
+
 **Plik:** `src/pages/api/flashcards/[id].ts`
 
 1. Dodać `export const prerender = false`
 2. Utworzyć handler `GET()`:
    ```typescript
-   export async function GET(context: APIContext): Promise<Response>
+   export async function GET(context: APIContext): Promise<Response>;
    ```
 3. W try-catch:
    - Pobierz id z context.params.id
@@ -710,11 +776,12 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 4. Obsłuż NotFoundError → 404
 
 ### Krok 6: Utworzenie endpoint PUT /api/flashcards/[id].ts
+
 **W tym samym pliku:** `src/pages/api/flashcards/[id].ts`
 
 1. Utworzyć handler `PUT()`:
    ```typescript
-   export async function PUT(context: APIContext): Promise<Response>
+   export async function PUT(context: APIContext): Promise<Response>;
    ```
 2. W try-catch:
    - Pobierz i waliduj id
@@ -725,11 +792,12 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 3. Obsłuż błędy (NotFound, Conflict, Validation)
 
 ### Krok 7: Utworzenie endpoint DELETE /api/flashcards/[id].ts
+
 **W tym samym pliku:** `src/pages/api/flashcards/[id].ts`
 
 1. Utworzyć handler `DELETE()`:
    ```typescript
-   export async function DELETE(context: APIContext): Promise<Response>
+   export async function DELETE(context: APIContext): Promise<Response>;
    ```
 2. W try-catch:
    - Pobierz i waliduj id
@@ -739,6 +807,7 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 3. Obsłuż NotFoundError → 404
 
 ### Krok 8: Dodanie funkcji pomocniczych do utils
+
 **Rozszerzyć:** `src/lib/utils/errors.ts` (jeśli potrzebne nowe error classes)
 
 1. Sprawdź czy istnieją:
@@ -750,6 +819,7 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 3. Upewnij się że mają odpowiednie statusy HTTP
 
 ### Krok 9: Testowanie endpointów
+
 **Narzędzia:** Thunder Client, Postman, lub curl
 
 1. Test GET /api/flashcards
@@ -781,6 +851,7 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
    - Verify deletion
 
 ### Krok 10: Obsługa edge cases i cleanup
+
 1. Dodać error handling dla database connection issues
 2. Dodać logging dla błędów 500
 3. Weryfikować że wszystkie responses mają odpowiednie headers (Content-Type)
@@ -789,11 +860,13 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 6. Dodać komentarze JSDoc do funkcji serwisu
 
 ### Krok 11: Integracja z generationService (jeśli potrzebne)
+
 1. Sprawdzić czy createFlashcardsBatch poprawnie updateuje generation statistics
 2. Weryfikować że accepted_unedited_count i accepted_edited_count są poprawnie liczone
 3. Test batch create z różnymi source values (ai-full vs ai-edited)
 
 ### Krok 12: Dokumentacja i finalizacja
+
 1. Upewnić się że wszystkie funkcje mają TypeScript types
 2. Sprawdzić linter errors i naprawić
 3. Dodać przykłady użycia w komentarzach (jeśli potrzebne)
@@ -822,16 +895,19 @@ response.headers.set('X-XSS-Protection', '1; mode=block');
 ## 11. Przykładowe requesty (dla testowania)
 
 ### GET /api/flashcards
+
 ```bash
 curl "http://localhost:4321/api/flashcards?page=1&limit=20&source=manual"
 ```
 
 ### GET /api/flashcards/{id}
+
 ```bash
 curl "http://localhost:4321/api/flashcards/123"
 ```
 
 ### POST /api/flashcards (single)
+
 ```bash
 curl -X POST "http://localhost:4321/api/flashcards" \
   -H "Content-Type: application/json" \
@@ -843,6 +919,7 @@ curl -X POST "http://localhost:4321/api/flashcards" \
 ```
 
 ### POST /api/flashcards (batch)
+
 ```bash
 curl -X POST "http://localhost:4321/api/flashcards" \
   -H "Content-Type: application/json" \
@@ -859,6 +936,7 @@ curl -X POST "http://localhost:4321/api/flashcards" \
 ```
 
 ### PUT /api/flashcards/{id}
+
 ```bash
 curl -X PUT "http://localhost:4321/api/flashcards/123" \
   -H "Content-Type: application/json" \
@@ -869,6 +947,7 @@ curl -X PUT "http://localhost:4321/api/flashcards/123" \
 ```
 
 ### DELETE /api/flashcards/{id}
+
 ```bash
 curl -X DELETE "http://localhost:4321/api/flashcards/123"
 ```
@@ -878,12 +957,14 @@ curl -X DELETE "http://localhost:4321/api/flashcards/123"
 ## 12. Uwagi końcowe
 
 ### MVP Considerations
+
 - RLS jest wyłączony - używamy hardcoded test user_id
 - Brak rate limiting w MVP
 - Brak cachowania
 - Offset-based pagination (wystarczające dla małych zbiorów)
 
 ### Future Enhancements
+
 - Aktywacja RLS i prawdziwa autentykacja
 - Rate limiting middleware
 - Cursor-based pagination dla dużych zbiorów
@@ -894,9 +975,9 @@ curl -X DELETE "http://localhost:4321/api/flashcards/123"
 - Tags i categories
 
 ### Performance Targets
+
 - GET /api/flashcards: < 200ms dla 1000 fiszek
 - POST /api/flashcards: < 100ms single, < 500ms batch (50 items)
 - GET /api/flashcards/{id}: < 50ms
 - PUT /api/flashcards/{id}: < 100ms
 - DELETE /api/flashcards/{id}: < 100ms
-

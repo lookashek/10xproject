@@ -16,21 +16,25 @@ Aby testy E2E działały poprawnie w GitHub Actions, musisz ustawić następują
 Musisz dodać następujące sekrety:
 
 #### 1. `PUBLIC_SUPABASE_URL`
+
 - **Nazwa:** `PUBLIC_SUPABASE_URL`
 - **Wartość:** URL twojego projektu Supabase (np. `https://xxxxx.supabase.co`)
 - **Typ:** Secret (zalecane) lub Variable
 
 #### 2. `PUBLIC_SUPABASE_KEY`
+
 - **Nazwa:** `PUBLIC_SUPABASE_KEY`
 - **Wartość:** Twój publiczny klucz anon Supabase
 - **Typ:** Secret (zalecane)
 
 #### 3. `E2E_USERNAME`
+
 - **Nazwa:** `E2E_USERNAME`
 - **Wartość:** Email testowego użytkownika (np. `test@example.com`)
 - **Typ:** Secret lub Variable
 
 #### 4. `E2E_PASSWORD`
+
 - **Nazwa:** `E2E_PASSWORD`
 - **Wartość:** Hasło testowego użytkownika
 - **Typ:** Secret (obowiązkowo!)
@@ -46,6 +50,7 @@ Musisz dodać następujące sekrety:
 ### ✅ Weryfikacja
 
 Po dodaniu sekretów:
+
 1. Utwórz nowy Pull Request
 2. Sprawdź logi w zakładce **Actions**
 3. W kroku "Debug - Sprawdź zmienne środowiskowe" zobaczysz:
@@ -78,5 +83,3 @@ Jeśli testy E2E nie działają:
 
 - [GitHub Actions - Encrypted secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
 - [Supabase - Getting your project keys](https://supabase.com/docs/guides/api/api-keys)
-
-

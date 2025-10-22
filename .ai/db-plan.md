@@ -1,6 +1,7 @@
 ## 1. Tabele
 
 ### 1.1 flashcards
+
 - id: **BIGSERIAL**, PRIMARY KEY
 - user_id: **UUID**, NOT NULL, REFERENCES `auth.users(id)` ON DELETE CASCADE
 - generation_id: **BIGINT**, NULL, REFERENCES `generations(id)` ON DELETE SET NULL
@@ -12,6 +13,7 @@
 - CONSTRAINT: `flashcards_unique_user_front_back` UNIQUE(user_id, front, back)
 
 ### 1.2 generations
+
 - id: **BIGSERIAL**, PRIMARY KEY
 - user_id: **UUID**, NOT NULL, REFERENCES `auth.users(id)` ON DELETE CASCADE
 - model: **TEXT**, NOT NULL
@@ -26,6 +28,7 @@
 - UNIQUE(user_id, source_text_hash)
 
 ### 1.3 generation_error_logs
+
 - id: **BIGSERIAL**, PRIMARY KEY
 - user_id: **UUID**, NOT NULL, REFERENCES `auth.users(id)` ON DELETE CASCADE
 - model: **TEXT**, NULL
@@ -37,12 +40,14 @@
 - UNIQUE(user_id, source_text_hash)
 
 ## 2. Relacje
+
 - `auth.users.id` (1) → (N) `flashcards.user_id`
 - `auth.users.id` (1) → (N) `generations.user_id`
 - `auth.users.id` (1) → (N) `generation_error_logs.user_id`
 - `generations.id` (1) → (N) `flashcards.generation_id`
 
 ## 3. Indeksy
+
 - B-Tree `(user_id, created_at DESC)` na **flashcards**, **generations**, **generation_error_logs** (listowanie danych użytkownika)
 - `flashcards_unique_user_front_back` (unikalny)
 - Unikalne `(user_id, source_text_hash)` na **generations** oraz **generation_error_logs**
@@ -53,6 +58,7 @@
   ```
 
 ## 4. Zasady PostgreSQL (RLS)
+
 ```sql
 -- Aktywacja RLS
 aLTER TABLE flashcards ENABLE ROW LEVEL SECURITY;
@@ -73,5 +79,5 @@ CREATE POLICY generation_error_is_owner ON generation_error_logs
 ```
 
 ## 5. Dodatkowe uwagi
-1. **Triggery**: `BEFORE INSERT OR UPDATE` aktualizują `updated_at`; przy INSERT kopiują `created_at`.
 
+1. **Triggery**: `BEFORE INSERT OR UPDATE` aktualizują `updated_at`; przy INSERT kopiują `created_at`.

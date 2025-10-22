@@ -168,5 +168,3 @@ class Middleware,DashboardHeader,ApiFlashcards,ApiGenerations updated
 ```
 
 </mermaid_diagram>
-
-

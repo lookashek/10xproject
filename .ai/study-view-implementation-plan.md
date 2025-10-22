@@ -3,6 +3,7 @@
 ## 1. Przegląd
 
 Widok Sesji Nauki (`/study`) to pełnoekranowy widok umożliwiający użytkownikom efektywną naukę fiszek z wykorzystaniem algorytmu SM-2 (Supermemo 2) dla spaced repetition. Głównym celem widoku jest:
+
 - Prezentacja fiszek w sposób promujący efektywną naukę (minimal UI, distraction-free)
 - Implementacja algorytmu powtórek SM-2 działającego lokalnie w przeglądarce
 - Śledzenie postępów nauki użytkownika (liczba przejrzanych fiszek, progress bar)
@@ -11,6 +12,7 @@ Widok Sesji Nauki (`/study`) to pełnoekranowy widok umożliwiający użytkownik
 - Zapisywanie stanu nauki w localStorage (MVP - bez backendu)
 
 Widok charakteryzuje się:
+
 - **Pełnoekranowym interfejsem** bez głównej nawigacji i header (focus mode)
 - **Minimalnym UI** - tylko niezbędne elementy (progress, fiszka, przyciski oceny)
 - **Smooth animations** - flip effect dla fiszki, transitions między kartami
@@ -20,12 +22,14 @@ Widok charakteryzuje się:
 ## 2. Routing widoku
 
 ### Główny widok sesji nauki
+
 - **Ścieżka**: `/study`
 - **Plik**: `src/pages/study.astro`
 - **Typ**: Chroniony widok (wymaga uwierzytelnienia w przyszłości)
 - **Query params**: Brak w MVP (w przyszłości: `?due=true` dla fiszek do powtórki)
 
 ### Nawigacja
+
 - Wejście: Z dashboard przez kafelek "Sesja nauki" lub bezpośredni link `/study`
 - Wyjście: Przycisk "Zakończ sesję" w header → przekierowanie do `/dashboard`
 - Po zakończeniu sesji: Automatyczne przekierowanie do `/dashboard` z podsumowaniem
@@ -57,6 +61,7 @@ study.astro (Astro page)
 ```
 
 ### Dodatkowe komponenty pomocnicze
+
 - **StudySessionSkeleton** - loading UI podczas inicjalizacji
 - **CompletionSummary** - podsumowanie sesji (liczba fiszek, czas nauki)
 - **KeyboardListener** - global keyboard event handler
@@ -68,6 +73,7 @@ study.astro (Astro page)
 **Opis**: Główny kontener widoku sesji nauki. Odpowiada za zarządzanie stanem sesji, inicjalizację algorytmu SM-2, obsługę keyboard shortcuts oraz orchestration pomiędzy wszystkimi podkomponentami.
 
 **Główne elementy**:
+
 - `StudySessionHeader` - zawsze widoczny na górze
 - Warunkowe renderowanie głównego contentu:
   - `LoadingState` podczas pobierania fiszek i inicjalizacji
@@ -77,6 +83,7 @@ study.astro (Astro page)
 - Global keyboard event listeners
 
 **Obsługiwane interakcje**:
+
 - Inicjalne załadowanie fiszek z API
 - Filtrowanie fiszek ready for review (według algorytmu SM-2)
 - Obsługa keyboard shortcuts:
@@ -90,12 +97,14 @@ study.astro (Astro page)
 - Zakończenie sesji (manual lub automatyczne)
 
 **Obsługiwana walidacja**:
+
 - Sprawdzenie czy są dostępne fiszki do nauki
 - Walidacja localStorage data (schema validation)
 - Obsługa błędów API podczas ładowania fiszek
 - Zabezpieczenie przed multiple concurrent key presses
 
 **Typy**:
+
 - `StudySessionViewProps` (props)
 - `StudySessionState` (stan sesji)
 - `FlashcardWithProgress` (fiszka + SM-2 metadata)
@@ -103,6 +112,7 @@ study.astro (Astro page)
 - `ErrorState` (stan błędu)
 
 **Propsy**:
+
 ```typescript
 type StudySessionViewProps = {
   // Brak propsów - wszystkie dane ładowane dynamicznie
@@ -114,6 +124,7 @@ type StudySessionViewProps = {
 **Opis**: Kompaktowy header widoczny na górze ekranu przez cały czas trwania sesji. Zawiera progress bar, statystyki i przycisk wyjścia.
 
 **Główne elementy**:
+
 - Container z klasami `fixed top-0 left-0 right-0 z-50` (always on top)
 - `StudyProgressBar` - wizualny progress (fiszka X z Y)
 - Statystyki w formie ikon z licznikami:
@@ -122,16 +133,20 @@ type StudySessionViewProps = {
 - `ExitButton` - przycisk "Zakończ sesję"
 
 **Obsługiwane interakcje**:
+
 - Kliknięcie "Zakończ sesję" → wywołanie callback `onExit`
 - Pokazanie confirmation dialog jeśli sesja w trakcie
 
 **Obsługiwana walidacja**:
+
 - Brak - komponent prezentacyjny
 
 **Typy**:
+
 - `StudySessionHeaderProps` (props)
 
 **Propsy**:
+
 ```typescript
 type StudySessionHeaderProps = {
   currentIndex: number; // 0-based
@@ -147,20 +162,25 @@ type StudySessionHeaderProps = {
 **Opis**: Wizualny pasek postępu pokazujący ile fiszek zostało przejrzanych w stosunku do całkowitej liczby.
 
 **Główne elementy**:
+
 - Progress bar (shadcn/ui Progress lub custom)
 - Tekst w formacie "Fiszka {current} z {total}"
 - Procent postępu wyliczony jako `(current / total) * 100`
 
 **Obsługiwane interakcje**:
+
 - Brak - tylko wizualizacja
 
 **Obsługiwana walidacja**:
+
 - Obsługa edge case gdy total = 0
 
 **Typy**:
+
 - `StudyProgressBarProps` (props)
 
 **Propsy**:
+
 ```typescript
 type StudyProgressBarProps = {
   current: number; // 1-based dla UI
@@ -173,6 +193,7 @@ type StudyProgressBarProps = {
 **Opis**: Centralna, duża karta wyświetlająca przód lub tył fiszki. Wspiera flip animation i jest głównym focus point całego widoku.
 
 **Główne elementy**:
+
 - Container z klasami centrującymi i maksymalizującymi rozmiar
 - `CardFront` - przód fiszki (pytanie)
 - `CardBack` - tył fiszki (odpowiedź)
@@ -180,19 +201,23 @@ type StudyProgressBarProps = {
 - Semantic HTML: użycie `<article>` dla accessibility
 
 **Obsługiwane interakcje**:
+
 - Automatyczna animacja flip po zmianie `isFlipped` state
 - Kliknięcie na kartę → flip (opcjonalnie, głównie keyboard)
 
 **Obsługiwana walidacja**:
+
 - Sanityzacja HTML w treści fiszki (XSS prevention)
 - Obsługa bardzo długich tekstów (scroll jeśli needed)
 - Responsive font size (większa czcionka dla krótkich tekstów)
 
 **Typy**:
+
 - `StudyCardProps` (props)
 - `FlashcardDTO` (dane fiszki)
 
 **Propsy**:
+
 ```typescript
 type StudyCardProps = {
   flashcard: FlashcardDTO;
@@ -206,22 +231,27 @@ type StudyCardProps = {
 **Opis**: Przycisk wyświetlany gdy pokazany jest tylko przód fiszki. Zachęca użytkownika do sprawdzenia odpowiedzi.
 
 **Główne elementy**:
+
 - Duży, wyraźny przycisk (shadcn/ui Button variant="default" size="lg")
 - Tekst: "Pokaż odpowiedź" lub "Odkryj" + ikona
 - Keyboard hint: "(Spacja)"
 - Animacja pulse/glow dla zwrócenia uwagi
 
 **Obsługiwane interakcje**:
+
 - Kliknięcie → wywołanie `onFlip` callback
 - Keyboard: Spacja → to samo
 
 **Obsługiwana walidacja**:
+
 - Brak
 
 **Typy**:
+
 - `FlipButtonProps` (props)
 
 **Propsy**:
+
 ```typescript
 type FlipButtonProps = {
   onFlip: () => void;
@@ -233,6 +263,7 @@ type FlipButtonProps = {
 **Opis**: Sekcja z 4 przyciskami oceny widoczna dopiero po pokazaniu odpowiedzi. Umożliwia użytkownikowi ocenę jak dobrze zapamiętał fiszkę.
 
 **Główne elementy**:
+
 - Grid lub flex container z 4 przyciskami:
   1. **Again** (Powtórz) - czerwony, quality=0
   2. **Hard** (Trudne) - pomarańczowy, quality=1
@@ -246,19 +277,23 @@ type FlipButtonProps = {
 - Responsive layout: 4 kolumny desktop, 2×2 grid mobile
 
 **Obsługiwane interakcje**:
+
 - Kliknięcie przycisku → wywołanie `onRate(quality)`
 - Keyboard shortcuts 1-4 → to samo
 - Disabled gdy fiszka nie jest flipped
 
 **Obsługiwana walidacja**:
+
 - Przyciski disabled jeśli `!isFlipped`
 - Zabezpieczenie przed double-click (disable po pierwszym kliknięciu)
 
 **Typy**:
+
 - `StudyControlsProps` (props)
 - `SM2Quality` (0-3)
 
 **Propsy**:
+
 ```typescript
 type StudyControlsProps = {
   isFlipped: boolean;
@@ -272,6 +307,7 @@ type StudyControlsProps = {
 **Opis**: Komponent wyświetlany gdy użytkownik nie ma żadnych fiszek do nauki. Zachęca do dodania fiszek.
 
 **Główne elementy**:
+
 - Wycentrowany container
 - Ikona (BookOpen lub GraduationCap z lucide-react)
 - Nagłówek: "Brak fiszek do nauki"
@@ -281,12 +317,15 @@ type StudyControlsProps = {
   - "Generuj fiszki" → link do `/generate`
 
 **Obsługiwane interakcje**:
+
 - Kliknięcie przycisków → nawigacja do odpowiednich widoków
 
 **Obsługiwana walidacja**:
+
 - Brak
 
 **Typy**:
+
 - Brak propsów
 
 **Propsy**: Brak
@@ -296,6 +335,7 @@ type StudyControlsProps = {
 **Opis**: Ekran gratulacyjny wyświetlany po zakończeniu sesji nauki. Pokazuje statystyki i umożliwia powrót do dashboard lub rozpoczęcie nowej sesji.
 
 **Główne elementy**:
+
 - Wycentrowany container
 - Ikona sukcesu (Trophy, Star lub CheckCircle)
 - Nagłówek: "Świetna robota!"
@@ -308,18 +348,22 @@ type StudyControlsProps = {
   - "Rozpocznij nową sesję" → reset state i restart
 
 **Obsługiwane interakcje**:
+
 - Kliknięcie "Powrót do panelu" → nawigacja do dashboard
 - Kliknięcie "Rozpocznij nową sesję" → wywołanie `onRestart` callback
 - Auto-redirect po 10 sekundach (z countdown)
 
 **Obsługiwana walidacja**:
+
 - Formatowanie czasu (mm:ss)
 
 **Typy**:
+
 - `CompletedStateProps` (props)
 - `SessionStats` (statystyki sesji)
 
 **Propsy**:
+
 ```typescript
 type CompletedStateProps = {
   stats: SessionStats;
@@ -333,18 +377,22 @@ type CompletedStateProps = {
 **Opis**: Skeleton UI wyświetlany podczas ładowania fiszek z API i inicjalizacji algorytmu SM-2.
 
 **Główne elementy**:
+
 - Pełnoekranowy container
 - Spinner lub skeleton card
 - Tekst: "Przygotowuję sesję nauki..."
 - Progress indicator (opcjonalnie)
 
 **Obsługiwane interakcje**:
+
 - Brak - statyczny loading state
 
 **Obsługiwana walidacja**:
+
 - Brak
 
 **Typy**:
+
 - Brak propsów
 
 **Propsy**: Brak
@@ -376,9 +424,9 @@ export type RatingLabel = {
   quality: SM2Quality;
   label: string;
   description: string;
-  color: 'red' | 'orange' | 'green' | 'blue';
+  color: "red" | "orange" | "green" | "blue";
   icon: string; // nazwa ikony z lucide-react
-  keyboardShortcut: '1' | '2' | '3' | '4';
+  keyboardShortcut: "1" | "2" | "3" | "4";
 };
 
 /**
@@ -387,19 +435,19 @@ export type RatingLabel = {
 export type SM2ReviewData = {
   /** ID fiszki */
   flashcard_id: number;
-  
+
   /** Współczynnik łatwości (E-Factor), zakres 1.3 - 2.5 */
   easiness: number;
-  
+
   /** Interwał powtórek w dniach */
   interval: number;
-  
+
   /** Liczba prawidłowych powtórzeń z rzędu */
   repetitions: number;
-  
+
   /** Data następnej zaplanowanej powtórki (ISO string) */
   next_review: string;
-  
+
   /** Data ostatniej powtórki (ISO string) */
   last_reviewed: string | null;
 };
@@ -416,11 +464,11 @@ export type FlashcardWithProgress = {
 /**
  * Stan sesji nauki
  */
-export type StudySessionState = 
-  | { type: 'initializing' }
-  | { type: 'empty' } // brak fiszek
-  | { type: 'active'; currentCard: FlashcardWithProgress; isFlipped: boolean }
-  | { type: 'completed'; stats: SessionStats };
+export type StudySessionState =
+  | { type: "initializing" }
+  | { type: "empty" } // brak fiszek
+  | { type: "active"; currentCard: FlashcardWithProgress; isFlipped: boolean }
+  | { type: "completed"; stats: SessionStats };
 
 /**
  * Statystyki sesji nauki
@@ -428,21 +476,21 @@ export type StudySessionState =
 export type SessionStats = {
   /** Całkowita liczba przejrzanych fiszek */
   totalReviewed: number;
-  
+
   /** Czas trwania sesji w sekundach */
   durationSeconds: number;
-  
+
   /** Breakdown ocen */
   ratings: {
     again: number; // quality 0
-    hard: number;  // quality 1
-    good: number;  // quality 2
-    easy: number;  // quality 3
+    hard: number; // quality 1
+    good: number; // quality 2
+    easy: number; // quality 3
   };
-  
+
   /** Data rozpoczęcia sesji (ISO string) */
   startedAt: string;
-  
+
   /** Data zakończenia sesji (ISO string) */
   completedAt: string;
 };
@@ -513,10 +561,10 @@ export type CompletedStateProps = {
 export type StudyProgressStorage = {
   /** Mapa flashcard_id → SM2ReviewData */
   reviews: Record<number, SM2ReviewData>;
-  
+
   /** Timestamp ostatniej aktualizacji */
   lastUpdated: string;
-  
+
   /** Wersja schema (dla migracji w przyszłości) */
   version: number;
 };
@@ -527,7 +575,7 @@ export type StudyProgressStorage = {
 Utworzyć plik `src/lib/algorithms/sm2.ts`:
 
 ```typescript
-import type { SM2Quality, SM2ReviewData } from '@/types';
+import type { SM2Quality, SM2ReviewData } from "@/types";
 
 /**
  * Parametry algorytmu SM-2
@@ -535,10 +583,10 @@ import type { SM2Quality, SM2ReviewData } from '@/types';
 export type SM2Params = {
   /** Minimalny E-Factor (default: 1.3) */
   minEasiness: number;
-  
+
   /** Maksymalny E-Factor (default: 2.5) */
   maxEasiness: number;
-  
+
   /** Początkowy E-Factor dla nowych fiszek (default: 2.5) */
   initialEasiness: number;
 };
@@ -549,13 +597,13 @@ export type SM2Params = {
 export type SM2Result = {
   /** Nowy E-Factor */
   easiness: number;
-  
+
   /** Nowy interwał w dniach */
   interval: number;
-  
+
   /** Nowa liczba repetitions */
   repetitions: number;
-  
+
   /** Data następnej powtórki (ISO string) */
   nextReview: string;
 };
@@ -570,22 +618,17 @@ export type SM2Result = {
 **Cel**: Główny hook zarządzający całą logiką sesji nauki - ładowanie fiszek, algorytm SM-2, kolejkowanie kart, tracking postępów.
 
 **Implementacja**:
+
 ```typescript
-import { useState, useEffect, useCallback } from 'react';
-import type { 
-  StudySessionState, 
-  FlashcardWithProgress, 
-  SM2Quality,
-  SessionStats,
-  ErrorState 
-} from '@/types';
-import { fetchFlashcards } from '@/lib/api/flashcards';
-import { sm2Algorithm } from '@/lib/algorithms/sm2';
-import { studyProgressStorage } from '@/lib/storage/studyProgressStorage';
+import { useState, useEffect, useCallback } from "react";
+import type { StudySessionState, FlashcardWithProgress, SM2Quality, SessionStats, ErrorState } from "@/types";
+import { fetchFlashcards } from "@/lib/api/flashcards";
+import { sm2Algorithm } from "@/lib/algorithms/sm2";
+import { studyProgressStorage } from "@/lib/storage/studyProgressStorage";
 
 export function useStudySession() {
-  const [sessionState, setSessionState] = useState<StudySessionState>({ 
-    type: 'initializing' 
+  const [sessionState, setSessionState] = useState<StudySessionState>({
+    type: "initializing",
   });
   const [cardsQueue, setCardsQueue] = useState<FlashcardWithProgress[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -605,7 +648,7 @@ export function useStudySession() {
       const flashcards = response.data;
 
       if (flashcards.length === 0) {
-        setSessionState({ type: 'empty' });
+        setSessionState({ type: "empty" });
         return;
       }
 
@@ -613,11 +656,10 @@ export function useStudySession() {
       const progressData = studyProgressStorage.load();
 
       // 3. Stwórz FlashcardWithProgress dla każdej fiszki
-      const cardsWithProgress = flashcards.map(fc => {
-        const sm2Data = progressData.reviews[fc.id] || 
-          sm2Algorithm.initializeCard(fc.id);
+      const cardsWithProgress = flashcards.map((fc) => {
+        const sm2Data = progressData.reviews[fc.id] || sm2Algorithm.initializeCard(fc.id);
         const isDue = sm2Algorithm.isDue(sm2Data);
-        
+
         return { flashcard: fc, sm2Data, isDue };
       });
 
@@ -626,98 +668,98 @@ export function useStudySession() {
 
       setCardsQueue(sortedCards);
       setCurrentIndex(0);
-      setSessionState({ 
-        type: 'active', 
+      setSessionState({
+        type: "active",
         currentCard: sortedCards[0],
-        isFlipped: false 
+        isFlipped: false,
       });
-      
+
       // Inicjalizacja stats
       setSessionStats({
         totalReviewed: 0,
         durationSeconds: 0,
         ratings: { again: 0, hard: 0, good: 0, easy: 0 },
         startedAt: new Date().toISOString(),
-        completedAt: ''
+        completedAt: "",
       });
-
     } catch (err) {
-      setError({ 
-        message: 'Nie udało się załadować fiszek',
-        code: 'INTERNAL_SERVER_ERROR' 
+      setError({
+        message: "Nie udało się załadować fiszek",
+        code: "INTERNAL_SERVER_ERROR",
       });
-      setSessionState({ type: 'empty' });
+      setSessionState({ type: "empty" });
     }
   };
 
   // Flip karty
   const flipCard = useCallback(() => {
-    if (sessionState.type === 'active') {
+    if (sessionState.type === "active") {
       setIsFlipped(true);
       setSessionState({ ...sessionState, isFlipped: true });
     }
   }, [sessionState]);
 
   // Ocena fiszki
-  const rateCard = useCallback((quality: SM2Quality) => {
-    if (sessionState.type !== 'active' || !isFlipped) return;
+  const rateCard = useCallback(
+    (quality: SM2Quality) => {
+      if (sessionState.type !== "active" || !isFlipped) return;
 
-    const currentCard = cardsQueue[currentIndex];
-    
-    // 1. Uruchom algorytm SM-2
-    const sm2Result = sm2Algorithm.review(currentCard.sm2Data, quality);
-    
-    // 2. Zapisz do localStorage
-    studyProgressStorage.updateCard(currentCard.flashcard.id, sm2Result);
-    
-    // 3. Update stats
-    updateSessionStats(quality);
-    
-    // 4. Przejdź do następnej karty
-    const nextIndex = currentIndex + 1;
-    
-    if (nextIndex >= cardsQueue.length) {
-      // Sesja zakończona
-      completeSession();
-    } else {
-      setCurrentIndex(nextIndex);
-      setIsFlipped(false);
-      setSessionState({
-        type: 'active',
-        currentCard: cardsQueue[nextIndex],
-        isFlipped: false
-      });
-    }
-  }, [sessionState, cardsQueue, currentIndex, isFlipped]);
+      const currentCard = cardsQueue[currentIndex];
+
+      // 1. Uruchom algorytm SM-2
+      const sm2Result = sm2Algorithm.review(currentCard.sm2Data, quality);
+
+      // 2. Zapisz do localStorage
+      studyProgressStorage.updateCard(currentCard.flashcard.id, sm2Result);
+
+      // 3. Update stats
+      updateSessionStats(quality);
+
+      // 4. Przejdź do następnej karty
+      const nextIndex = currentIndex + 1;
+
+      if (nextIndex >= cardsQueue.length) {
+        // Sesja zakończona
+        completeSession();
+      } else {
+        setCurrentIndex(nextIndex);
+        setIsFlipped(false);
+        setSessionState({
+          type: "active",
+          currentCard: cardsQueue[nextIndex],
+          isFlipped: false,
+        });
+      }
+    },
+    [sessionState, cardsQueue, currentIndex, isFlipped]
+  );
 
   // Zakończenie sesji
   const completeSession = () => {
     const finalStats = {
       ...sessionStats!,
       completedAt: new Date().toISOString(),
-      durationSeconds: Math.floor(
-        (Date.now() - new Date(sessionStats!.startedAt).getTime()) / 1000
-      )
+      durationSeconds: Math.floor((Date.now() - new Date(sessionStats!.startedAt).getTime()) / 1000),
     };
-    
+
     setSessionStats(finalStats);
-    setSessionState({ type: 'completed', stats: finalStats });
+    setSessionState({ type: "completed", stats: finalStats });
   };
 
   // Update stats helper
   const updateSessionStats = (quality: SM2Quality) => {
-    setSessionStats(prev => {
+    setSessionStats((prev) => {
       if (!prev) return prev;
-      
-      const ratingKey = ['again', 'hard', 'good', 'easy'][quality] as keyof SessionStats['ratings'];
-      
+
+      const ratingKey = ["again", "hard", "good", "easy"][quality] as keyof SessionStats["ratings"];
+
       return {
         ...prev,
         totalReviewed: prev.totalReviewed + 1,
         ratings: {
           ...prev.ratings,
-          [ratingKey]: prev.ratings[ratingKey] + 1
-        }
+          [ratingKey]: prev.ratings[ratingKey] + 1,
+        },
       };
     });
   };
@@ -730,7 +772,7 @@ export function useStudySession() {
 
   // Restart sesji
   const restartSession = useCallback(() => {
-    setSessionState({ type: 'initializing' });
+    setSessionState({ type: "initializing" });
     setCurrentIndex(0);
     setIsFlipped(false);
     initializeSession();
@@ -747,12 +789,13 @@ export function useStudySession() {
     rateCard,
     exitSession,
     restartSession,
-    error
+    error,
   };
 }
 ```
 
 **Eksportowane wartości**:
+
 - `sessionState: StudySessionState` - aktualny stan sesji
 - `currentIndex: number` - indeks aktualnej karty
 - `totalCards: number` - całkowita liczba kart w kolejce
@@ -772,9 +815,10 @@ export function useStudySession() {
 **Cel**: Obsługa keyboard shortcuts dla widoku study session (Spacja, 1-4, Escape).
 
 **Implementacja**:
+
 ```typescript
-import { useEffect } from 'react';
-import type { SM2Quality } from '@/types';
+import { useEffect } from "react";
+import type { SM2Quality } from "@/types";
 
 export function useKeyboardShortcuts(
   isActive: boolean,
@@ -788,58 +832,57 @@ export function useKeyboardShortcuts(
 
     const handleKeyPress = (event: KeyboardEvent) => {
       // Ignoruj jeśli user pisze w input
-      if (event.target instanceof HTMLInputElement || 
-          event.target instanceof HTMLTextAreaElement) {
+      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
         return;
       }
 
       switch (event.key) {
-        case ' ':
+        case " ":
           event.preventDefault();
           if (!isFlipped) {
             onFlip();
           }
           break;
-        
-        case '1':
+
+        case "1":
           event.preventDefault();
           if (isFlipped) {
             onRate(0); // Again
           }
           break;
-        
-        case '2':
+
+        case "2":
           event.preventDefault();
           if (isFlipped) {
             onRate(1); // Hard
           }
           break;
-        
-        case '3':
+
+        case "3":
           event.preventDefault();
           if (isFlipped) {
             onRate(2); // Good
           }
           break;
-        
-        case '4':
+
+        case "4":
           event.preventDefault();
           if (isFlipped) {
             onRate(3); // Easy
           }
           break;
-        
-        case 'Escape':
+
+        case "Escape":
           event.preventDefault();
           onExit();
           break;
       }
     };
 
-    window.addEventListener('keydown', handleKeyPress);
-    
+    window.addEventListener("keydown", handleKeyPress);
+
     return () => {
-      window.removeEventListener('keydown', handleKeyPress);
+      window.removeEventListener("keydown", handleKeyPress);
     };
   }, [isActive, isFlipped, onFlip, onRate, onExit]);
 }
@@ -848,13 +891,16 @@ export function useKeyboardShortcuts(
 ### 6.3. Stan lokalny w komponentach
 
 **StudySessionView**:
+
 - Wykorzystuje hook `useStudySession` (cały stan sesji)
 - Wykorzystuje hook `useKeyboardShortcuts` (keyboard events)
 
 **CompletedState**:
+
 - `countdown: number` - countdown do auto-redirect (10s)
 
 **StudyCard**:
+
 - Opcjonalnie: `animationState: 'idle' | 'flipping'` dla kontroli animacji
 
 ## 7. Integracja API
@@ -864,24 +910,25 @@ export function useKeyboardShortcuts(
 **Lokalizacja**: `src/lib/api/flashcards.ts` (już istnieje)
 
 **Wykorzystywana funkcja**:
+
 ```typescript
 // Już zaimplementowana
-export async function fetchFlashcards(
-  query: FlashcardListQuery = {}
-): Promise<FlashcardListResponse>
+export async function fetchFlashcards(query: FlashcardListQuery = {}): Promise<FlashcardListResponse>;
 ```
 
 **Wywołanie w study session**:
+
 ```typescript
 // W useStudySession hook
-const response = await fetchFlashcards({ 
-  limit: 100 // pobranie wszystkich fiszek (max 100 w MVP)
+const response = await fetchFlashcards({
+  limit: 100, // pobranie wszystkich fiszek (max 100 w MVP)
 });
 ```
 
 ### 7.2. Typy żądań i odpowiedzi
 
 **Pobieranie fiszek**:
+
 - **Request**: `GET /api/flashcards?limit=100`
   - Query params: `{ limit: 100 }`
 - **Response**: `FlashcardListResponse`
@@ -893,12 +940,14 @@ const response = await fetchFlashcards({
   ```
 
 **W przyszłości (poza MVP)**:
+
 - **Request**: `GET /api/study/session` - endpoint zwracający tylko due flashcards
 - **Request**: `POST /api/study/review` - endpoint do zapisywania review history
 
 ### 7.3. Brak zapisywania na backend w MVP
 
 W MVP wszystkie dane SM-2 są przechowywane lokalnie w localStorage:
+
 - Klucz: `study_progress_{user_id}` (hardcoded user_id dla MVP)
 - Wartość: JSON z `StudyProgressStorage`
 - Automatyczny save po każdej ocenie fiszki
@@ -911,10 +960,11 @@ W MVP wszystkie dane SM-2 są przechowywane lokalnie w localStorage:
 **Lokalizacja**: `src/lib/storage/studyProgressStorage.ts`
 
 **Implementacja**:
-```typescript
-import type { StudyProgressStorage, SM2ReviewData } from '@/types';
 
-const STORAGE_KEY = 'study_progress_test_user'; // MVP: hardcoded user
+```typescript
+import type { StudyProgressStorage, SM2ReviewData } from "@/types";
+
+const STORAGE_KEY = "study_progress_test_user"; // MVP: hardcoded user
 const STORAGE_VERSION = 1;
 
 class StudyProgressStorageService {
@@ -924,22 +974,22 @@ class StudyProgressStorageService {
   load(): StudyProgressStorage {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      
+
       if (!raw) {
         return this.createEmpty();
       }
-      
+
       const data = JSON.parse(raw) as StudyProgressStorage;
-      
+
       // Walidacja schema version
       if (data.version !== STORAGE_VERSION) {
-        console.warn('Storage version mismatch, resetting');
+        console.warn("Storage version mismatch, resetting");
         return this.createEmpty();
       }
-      
+
       return data;
     } catch (error) {
-      console.error('Failed to load study progress:', error);
+      console.error("Failed to load study progress:", error);
       return this.createEmpty();
     }
   }
@@ -951,27 +1001,27 @@ class StudyProgressStorageService {
     try {
       const updated = {
         ...data,
-        lastUpdated: new Date().toISOString()
+        lastUpdated: new Date().toISOString(),
       };
-      
+
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
     } catch (error) {
-      console.error('Failed to save study progress:', error);
+      console.error("Failed to save study progress:", error);
     }
   }
 
   /**
    * Update pojedynczej karty
    */
-  updateCard(flashcardId: number, sm2Data: Omit<SM2ReviewData, 'flashcard_id'>): void {
+  updateCard(flashcardId: number, sm2Data: Omit<SM2ReviewData, "flashcard_id">): void {
     const storage = this.load();
-    
+
     storage.reviews[flashcardId] = {
       ...sm2Data,
       flashcard_id: flashcardId,
-      last_reviewed: new Date().toISOString()
+      last_reviewed: new Date().toISOString(),
     };
-    
+
     this.save(storage);
   }
 
@@ -997,7 +1047,7 @@ class StudyProgressStorageService {
     return {
       reviews: {},
       lastUpdated: new Date().toISOString(),
-      version: STORAGE_VERSION
+      version: STORAGE_VERSION,
     };
   }
 }
@@ -1012,13 +1062,14 @@ export const studyProgressStorage = new StudyProgressStorageService();
 **Lokalizacja**: `src/lib/algorithms/sm2.ts`
 
 **Implementacja**:
+
 ```typescript
-import type { SM2Quality, SM2ReviewData, SM2Result, SM2Params } from '@/types';
+import type { SM2Quality, SM2ReviewData, SM2Result, SM2Params } from "@/types";
 
 const DEFAULT_PARAMS: SM2Params = {
   minEasiness: 1.3,
   maxEasiness: 2.5,
-  initialEasiness: 2.5
+  initialEasiness: 2.5,
 };
 
 class SM2Algorithm {
@@ -1038,7 +1089,7 @@ class SM2Algorithm {
       interval: 0,
       repetitions: 0,
       next_review: new Date().toISOString(), // od razu dostępna
-      last_reviewed: null
+      last_reviewed: null,
     };
   }
 
@@ -1048,14 +1099,14 @@ class SM2Algorithm {
   review(current: SM2ReviewData, quality: SM2Quality): SM2ReviewData {
     // 1. Oblicz nowy E-Factor
     let newEasiness = current.easiness + (0.1 - (3 - quality) * (0.08 + (3 - quality) * 0.02));
-    
+
     // Clamp E-Factor
     newEasiness = Math.max(this.params.minEasiness, Math.min(this.params.maxEasiness, newEasiness));
-    
+
     // 2. Oblicz nowy interval i repetitions
     let newInterval: number;
     let newRepetitions: number;
-    
+
     if (quality < 2) {
       // Quality 0 lub 1: reset (Again/Hard)
       newInterval = 0;
@@ -1063,7 +1114,7 @@ class SM2Algorithm {
     } else {
       // Quality 2 lub 3: (Good/Easy)
       newRepetitions = current.repetitions + 1;
-      
+
       if (newRepetitions === 1) {
         newInterval = 1; // 1 dzień
       } else if (newRepetitions === 2) {
@@ -1071,24 +1122,24 @@ class SM2Algorithm {
       } else {
         newInterval = Math.round(current.interval * newEasiness);
       }
-      
+
       // Quality 3 (Easy): bonus interval
       if (quality === 3) {
         newInterval = Math.round(newInterval * 1.3);
       }
     }
-    
+
     // 3. Oblicz next_review date
     const nextReviewDate = new Date();
     nextReviewDate.setDate(nextReviewDate.getDate() + newInterval);
-    
+
     return {
       flashcard_id: current.flashcard_id,
       easiness: newEasiness,
       interval: newInterval,
       repetitions: newRepetitions,
       next_review: nextReviewDate.toISOString(),
-      last_reviewed: new Date().toISOString()
+      last_reviewed: new Date().toISOString(),
     };
   }
 
@@ -1108,24 +1159,22 @@ class SM2Algorithm {
     return cards.sort((a, b) => {
       const aDue = this.isDue(a.sm2Data);
       const bDue = this.isDue(b.sm2Data);
-      
+
       // 1. Due cards first
       if (aDue && !bDue) return -1;
       if (!aDue && bDue) return 1;
-      
+
       // 2. Among due cards: starsze pierwsze (earliest next_review)
       if (aDue && bDue) {
-        return new Date(a.sm2Data.next_review).getTime() - 
-               new Date(b.sm2Data.next_review).getTime();
+        return new Date(a.sm2Data.next_review).getTime() - new Date(b.sm2Data.next_review).getTime();
       }
-      
+
       // 3. Nowe karty (repetitions = 0) przed learned
       if (a.sm2Data.repetitions === 0 && b.sm2Data.repetitions > 0) return -1;
       if (a.sm2Data.repetitions > 0 && b.sm2Data.repetitions === 0) return 1;
-      
+
       // 4. Reszta: closest next_review first
-      return new Date(a.sm2Data.next_review).getTime() - 
-             new Date(b.sm2Data.next_review).getTime();
+      return new Date(a.sm2Data.next_review).getTime() - new Date(b.sm2Data.next_review).getTime();
     });
   }
 }
@@ -1140,6 +1189,7 @@ export const sm2Algorithm = new SM2Algorithm();
 **Trigger**: Użytkownik klika kafelek "Sesja nauki" w dashboard lub wchodzi na `/study`
 
 **Flow**:
+
 1. Renderowanie `study.astro` page
 2. Mount `StudySessionView` component
 3. Hook `useStudySession` uruchamia `initializeSession()`
@@ -1152,6 +1202,7 @@ export const sm2Algorithm = new SM2Algorithm();
 10. Renderowanie `ActiveSession` z `StudyCard` pokazującym przód pierwszej fiszki
 
 **Walidacja**:
+
 - Jeśli brak fiszek → wyświetlenie `EmptyState`
 - Jeśli błąd API → wyświetlenie error toast + `EmptyState`
 
@@ -1160,6 +1211,7 @@ export const sm2Algorithm = new SM2Algorithm();
 **Trigger**: Użytkownik klika przycisk "Pokaż odpowiedź" lub naciska Spację
 
 **Flow**:
+
 1. Użytkownik klika `FlipButton` lub naciska Spację
 2. Event handler wywołuje `flipCard()` z hooka
 3. State `isFlipped` zmienia się na `true`
@@ -1170,6 +1222,7 @@ export const sm2Algorithm = new SM2Algorithm();
 8. Keyboard hints dla 1-4 stają się widoczne
 
 **Walidacja**:
+
 - Flip możliwy tylko gdy `isFlipped = false`
 - Podczas animacji flip blokada ponownego flip
 
@@ -1178,6 +1231,7 @@ export const sm2Algorithm = new SM2Algorithm();
 **Trigger**: Użytkownik klika jeden z przycisków oceny (Again/Hard/Good/Easy) lub naciska 1-4
 
 **Flow**:
+
 1. Użytkownik klika przycisk lub naciska klawisz (1-4)
 2. Event handler wywołuje `rateCard(quality)` z hooka
 3. Walidacja: możliwe tylko gdy `isFlipped = true`
@@ -1199,6 +1253,7 @@ export const sm2Algorithm = new SM2Algorithm();
      - Przejście do `CompletedState`
 
 **Walidacja**:
+
 - Rating możliwy tylko gdy `isFlipped = true`
 - Zabezpieczenie przed double-click (disable przyciski podczas transition)
 
@@ -1207,6 +1262,7 @@ export const sm2Algorithm = new SM2Algorithm();
 **Trigger**: Użytkownik klika "Zakończ sesję" w header, naciska Escape, lub przejrzał wszystkie karty
 
 **Flow - manual exit**:
+
 1. Użytkownik klika "Zakończ sesję" lub naciska Escape
 2. Pokazanie confirmation dialog:
    - Tytuł: "Czy na pewno chcesz zakończyć sesję?"
@@ -1217,6 +1273,7 @@ export const sm2Algorithm = new SM2Algorithm();
    - Opcjonalnie: toast "Sesja zakończona"
 
 **Flow - auto completion**:
+
 1. Po ocenie ostatniej karty automatycznie:
 2. Obliczenie finalnych stats (duration, breakdown)
 3. Przejście do `CompletedState`
@@ -1225,6 +1282,7 @@ export const sm2Algorithm = new SM2Algorithm();
 6. Opcje: "Powrót do panelu" lub "Rozpocznij nową sesję"
 
 **Walidacja**:
+
 - Confirmation dialog tylko jeśli sesja w trakcie (min. 1 karta przejrzana)
 
 ### 10.5. Rozpoczęcie nowej sesji
@@ -1232,6 +1290,7 @@ export const sm2Algorithm = new SM2Algorithm();
 **Trigger**: Użytkownik klika "Rozpocznij nową sesję" w `CompletedState`
 
 **Flow**:
+
 1. Użytkownik klika przycisk
 2. Wywołanie `restartSession()` z hooka
 3. Reset state sesji
@@ -1240,6 +1299,7 @@ export const sm2Algorithm = new SM2Algorithm();
 6. Rozpoczęcie od początku
 
 **Walidacja**:
+
 - Brak - zawsze możliwe z `CompletedState`
 
 ## 11. Warunki i walidacja
@@ -1249,18 +1309,21 @@ export const sm2Algorithm = new SM2Algorithm();
 **Komponenty**: `StudySessionView`, hook `useStudySession`
 
 **Warunki**:
+
 - Musi istnieć przynajmniej 1 fiszka w bazie
 - Fiszki muszą być poprawnie załadowane z API
 
 **Implementacja**:
+
 ```typescript
 if (flashcards.length === 0) {
-  setSessionState({ type: 'empty' });
+  setSessionState({ type: "empty" });
   return;
 }
 ```
 
 **Wpływ na UI**:
+
 - Jeśli 0 fiszek → wyświetlenie `EmptyState` z CTA do dodania fiszek
 
 ### 11.2. Walidacja localStorage data
@@ -1268,19 +1331,21 @@ if (flashcards.length === 0) {
 **Komponenty**: `studyProgressStorage`
 
 **Warunki**:
+
 - Schema version musi się zgadzać
 - JSON musi być valid
 - Struktura danych musi być zgodna z `StudyProgressStorage` type
 
 **Implementacja**:
+
 ```typescript
 try {
   const data = JSON.parse(raw) as StudyProgressStorage;
-  
+
   if (data.version !== STORAGE_VERSION) {
     return this.createEmpty(); // reset
   }
-  
+
   return data;
 } catch {
   return this.createEmpty(); // corrupted data
@@ -1288,6 +1353,7 @@ try {
 ```
 
 **Wpływ na UI**:
+
 - Jeśli invalid → silent reset do pustego storage (user zaczyna od nowa)
 - Brak error message (graceful degradation)
 
@@ -1296,28 +1362,30 @@ try {
 **Komponenty**: `useKeyboardShortcuts` hook
 
 **Warunki**:
+
 - Shortcuts aktywne tylko gdy sesja jest active
 - Rating shortcuts (1-4) aktywne tylko gdy `isFlipped = true`
 - Flip shortcut (Spacja) aktywny tylko gdy `isFlipped = false`
 - Ignoruj shortcuts gdy focus w input/textarea
 
 **Implementacja**:
+
 ```typescript
-if (event.target instanceof HTMLInputElement || 
-    event.target instanceof HTMLTextAreaElement) {
+if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
   return; // ignoruj
 }
 
-if (event.key === ' ' && !isFlipped) {
+if (event.key === " " && !isFlipped) {
   onFlip();
 }
 
-if (['1','2','3','4'].includes(event.key) && isFlipped) {
+if (["1", "2", "3", "4"].includes(event.key) && isFlipped) {
   onRate(quality);
 }
 ```
 
 **Wpływ na UI**:
+
 - Buttons disabled odpowiednio do stanu
 - Keyboard hints pokazują tylko dostępne akcje
 
@@ -1326,20 +1394,20 @@ if (['1','2','3','4'].includes(event.key) && isFlipped) {
 **Komponenty**: `SM2Algorithm`
 
 **Warunki**:
+
 - E-Factor musi być w zakresie 1.3 - 2.5
 - Interval musi być >= 0
 - Repetitions musi być >= 0
 - next_review musi być valid date
 
 **Implementacja**:
+
 ```typescript
-newEasiness = Math.max(
-  this.params.minEasiness, 
-  Math.min(this.params.maxEasiness, newEasiness)
-);
+newEasiness = Math.max(this.params.minEasiness, Math.min(this.params.maxEasiness, newEasiness));
 ```
 
 **Wpływ na UI**:
+
 - Brak bezpośredniego wpływu (internal logic)
 - Zapewnia poprawność algorytmu
 
@@ -1348,12 +1416,14 @@ newEasiness = Math.max(
 **Komponenty**: `StudyControls`
 
 **Warunki**:
+
 - Rating buttons disabled podczas transition do następnej karty
 - Zapobiega double-click
 
 **Implementacja**:
+
 ```typescript
-<StudyControls 
+<StudyControls
   isFlipped={isFlipped}
   onRate={rateCard}
   isProcessing={isTransitioning} // disable buttons
@@ -1361,6 +1431,7 @@ newEasiness = Math.max(
 ```
 
 **Wpływ na UI**:
+
 - Buttons disabled + loading spinner podczas transition
 - Prevents race conditions
 
@@ -1371,17 +1442,18 @@ newEasiness = Math.max(
 **Scenariusz**: Request do `/api/flashcards` kończy się błędem (network error, 500, etc.)
 
 **Obsługa**:
+
 1. Hook `useStudySession` wyłapuje błąd w try-catch
 2. Ustawienie `error` state z komunikatem
 3. Przejście do `empty` state
 4. Wyświetlenie error toast:
    ```tsx
-   toast.error('Nie udało się załadować fiszek', {
+   toast.error("Nie udało się załadować fiszek", {
      description: error.message,
      action: {
-       label: 'Spróbuj ponownie',
-       onClick: () => initializeSession()
-     }
+       label: "Spróbuj ponownie",
+       onClick: () => initializeSession(),
+     },
    });
    ```
 5. Wyświetlenie `EmptyState` z komunikatem błędu i przyciskiem retry
@@ -1393,13 +1465,14 @@ newEasiness = Math.max(
 **Scenariusz**: localStorage pełny, disabled, lub błąd permission
 
 **Obsługa**:
+
 1. `studyProgressStorage.save()` wyłapuje błąd
 2. Log error do console
 3. Kontynuacja sesji BEZ zapisywania postępu
 4. Wyświetlenie warning toast:
    ```tsx
-   toast.warning('Nie można zapisać postępu', {
-     description: 'Twój postęp nie zostanie zachowany po zamknięciu przeglądarki.'
+   toast.warning("Nie można zapisać postępu", {
+     description: "Twój postęp nie zostanie zachowany po zamknięciu przeglądarki.",
    });
    ```
 5. Sesja działa normalnie (in-memory state)
@@ -1411,6 +1484,7 @@ newEasiness = Math.max(
 **Scenariusz**: JSON parse error lub invalid schema w localStorage
 
 **Obsługa**:
+
 1. `studyProgressStorage.load()` wyłapuje błąd
 2. Log warning do console
 3. Silent reset do pustego storage
@@ -1424,6 +1498,7 @@ newEasiness = Math.max(
 **Scenariusz**: User nie ma żadnych fiszek w bazie
 
 **Obsługa**:
+
 1. Po załadowaniu API sprawdzenie `flashcards.length === 0`
 2. Ustawienie `sessionState = 'empty'`
 3. Renderowanie `EmptyState` z CTA:
@@ -1438,16 +1513,19 @@ newEasiness = Math.max(
 **Scenariusz**: User przypadkowo naciska shortcut gdy nie powinien (np. Spacja w niewłaściwym momencie)
 
 **Obsługa**:
+
 1. W `useKeyboardShortcuts` sprawdzanie warunków:
+
    ```typescript
    // Ignoruj gdy focus w input
    if (event.target instanceof HTMLInputElement) return;
-   
+
    // Flip tylko gdy !isFlipped
-   if (event.key === ' ' && !isFlipped) {
+   if (event.key === " " && !isFlipped) {
      onFlip();
    }
    ```
+
 2. `preventDefault()` tylko dla handled keys
 3. Inne keys propagują normalnie
 
@@ -1458,22 +1536,25 @@ newEasiness = Math.max(
 **Scenariusz**: API response trwa bardzo długo (> 30s)
 
 **Obsługa**:
+
 1. Dodanie timeout do fetch w API client:
+
    ```typescript
    const controller = new AbortController();
    const timeoutId = setTimeout(() => controller.abort(), 30000);
-   
+
    try {
      const response = await fetch(url, { signal: controller.signal });
      clearTimeout(timeoutId);
      return response;
    } catch (err) {
-     if (err.name === 'AbortError') {
-       throw new Error('Request timeout - sprawdź połączenie z internetem');
+     if (err.name === "AbortError") {
+       throw new Error("Request timeout - sprawdź połączenie z internetem");
      }
      throw err;
    }
    ```
+
 2. Wyświetlenie error toast z retry button
 
 **Wpływ**: User ma feedback o problemie i może spróbować ponownie
@@ -1483,6 +1564,7 @@ newEasiness = Math.max(
 ### 13.1. Semantic HTML
 
 **Wymagania**:
+
 - `<main>` dla głównego contentu sesji
 - `<article>` dla StudyCard
 - `<button>` dla wszystkich interaktywnych elementów
@@ -1490,17 +1572,17 @@ newEasiness = Math.max(
 - Proper heading hierarchy: h1 dla empty state, h2 dla stats
 
 **Implementacja**:
+
 ```tsx
 <main role="main" aria-label="Sesja nauki">
-  <article aria-label="Fiszka do nauki">
-    {/* card content */}
-  </article>
+  <article aria-label="Fiszka do nauki">{/* card content */}</article>
 </main>
 ```
 
 ### 13.2. ARIA attributes
 
 **Wymagania**:
+
 - `aria-live="polite"` dla progress updates (screen reader announcements)
 - `aria-label` dla przycisków z ikonami
 - `aria-disabled` dla disabled rating buttons
@@ -1508,13 +1590,14 @@ newEasiness = Math.max(
 - `role="status"` dla completion message
 
 **Implementacja**:
+
 ```tsx
 <div aria-live="polite" aria-atomic="true" className="sr-only">
   Fiszka {currentIndex + 1} z {totalCards}
 </div>
 
-<button 
-  aria-label="Ocena: Again - nie pamiętam" 
+<button
+  aria-label="Ocena: Again - nie pamiętam"
   aria-disabled={!isFlipped}
   disabled={!isFlipped}
 >
@@ -1525,6 +1608,7 @@ newEasiness = Math.max(
 ### 13.3. Keyboard navigation
 
 **Wymagania**:
+
 - Wszystkie interakcje dostępne z klawiatury
 - Logiczny tab order
 - Focus visible styles
@@ -1532,6 +1616,7 @@ newEasiness = Math.max(
 - Spacja/Enter dla akcji
 
 **Implementacja**:
+
 - Custom hook `useKeyboardShortcuts` obsługuje wszystko
 - Focus styles w Tailwind: `focus:ring-2 focus:ring-offset-2`
 - Tab order: header exit button → flip button → rating buttons (gdy visible)
@@ -1539,33 +1624,43 @@ newEasiness = Math.max(
 ### 13.4. Screen reader support
 
 **Wymagania**:
+
 - Opisowe labels dla wszystkich controls
 - Live regions dla dynamic updates
 - Skip links (opcjonalnie)
 - Announcements po ważnych akcjach
 
 **Implementacja**:
-```tsx
-{/* Screen reader announcement po flip */}
-{isFlipped && (
-  <div className="sr-only" aria-live="polite">
-    Odpowiedź: {flashcard.back}
-  </div>
-)}
 
-{/* Screen reader announcement po rating */}
+```tsx
+{
+  /* Screen reader announcement po flip */
+}
+{
+  isFlipped && (
+    <div className="sr-only" aria-live="polite">
+      Odpowiedź: {flashcard.back}
+    </div>
+  );
+}
+
+{
+  /* Screen reader announcement po rating */
+}
 <div className="sr-only" aria-live="polite" aria-atomic="true">
   {lastRating && `Fiszka oceniona jako ${lastRating}. Następna fiszka.`}
-</div>
+</div>;
 ```
 
 ### 13.5. Reduced motion support
 
 **Wymagania**:
+
 - Respektowanie `prefers-reduced-motion`
 - Brak animacji lub uproszczone dla users z motion sensitivity
 
 **Implementacja**:
+
 ```css
 @media (prefers-reduced-motion: reduce) {
   .study-card {
@@ -1580,11 +1675,13 @@ newEasiness = Math.max(
 ### Krok 1: Przygotowanie typów i algorytmu SM-2
 
 **1.1. Dodać typy do `src/types.ts`**
+
 - Dodać sekcję "STUDY SESSION VIEW MODELS" z wszystkimi typami z sekcji 5.1
 - `SM2Quality`, `SM2ReviewData`, `FlashcardWithProgress`, `StudySessionState`, `SessionStats`
 - Wszystkie Props types dla komponentów
 
 **1.2. Utworzyć algorytm SM-2**
+
 - Utworzyć plik `src/lib/algorithms/sm2.ts`
 - Zaimplementować klasę `SM2Algorithm` z metodami:
   - `initializeCard()` - tworzenie nowych review data
@@ -1594,6 +1691,7 @@ newEasiness = Math.max(
 - Dodać testy jednostkowe (opcjonalnie)
 
 **1.3. Utworzyć localStorage service**
+
 - Utworzyć plik `src/lib/storage/studyProgressStorage.ts`
 - Zaimplementować `StudyProgressStorageService`:
   - `load()` - ładowanie z localStorage
@@ -1606,6 +1704,7 @@ newEasiness = Math.max(
 ### Krok 2: Utworzenie custom hooks
 
 **2.1. useStudySession hook**
+
 - Utworzyć plik `src/lib/hooks/useStudySession.ts`
 - Implementacja głównej logiki sesji:
   - State management (sessionState, cardsQueue, currentIndex)
@@ -1619,6 +1718,7 @@ newEasiness = Math.max(
 - Integracja z SM-2 algorithm
 
 **2.2. useKeyboardShortcuts hook**
+
 - Utworzyć plik `src/lib/hooks/useKeyboardShortcuts.ts`
 - Obsługa keyboard events:
   - Spacja → flip
@@ -1628,27 +1728,31 @@ newEasiness = Math.max(
 - Cleanup event listeners
 
 **2.3. Update index exports**
+
 - Dodać do `src/lib/hooks/index.ts`:
   ```typescript
-  export { useStudySession } from './useStudySession';
-  export { useKeyboardShortcuts } from './useKeyboardShortcuts';
+  export { useStudySession } from "./useStudySession";
+  export { useKeyboardShortcuts } from "./useKeyboardShortcuts";
   ```
 
 ### Krok 3: Utworzenie komponentów prezentacyjnych (bottom-up)
 
 **3.1. StudyProgressBar**
+
 - Utworzyć `src/components/study/StudyProgressBar.tsx`
 - Progress bar (shadcn/ui Progress)
 - Tekst "Fiszka X z Y"
 - Procent calculation
 
 **3.2. StudySessionHeader**
+
 - Utworzyć `src/components/study/StudySessionHeader.tsx`
 - Fixed header z progress bar
 - Stats (remaining, reviewed)
 - Exit button z confirmation
 
 **3.3. StudyCard**
+
 - Utworzyć `src/components/study/StudyCard.tsx`
 - Centralna duża karta
 - Front/Back conditional rendering
@@ -1657,12 +1761,14 @@ newEasiness = Math.max(
 - Sanityzacja content
 
 **3.4. FlipButton**
+
 - Utworzyć `src/components/study/FlipButton.tsx`
 - Duży wyraźny przycisk
 - Keyboard hint (Spacja)
 - Pulse animation
 
 **3.5. StudyControls**
+
 - Utworzyć `src/components/study/StudyControls.tsx`
 - Grid z 4 rating buttons:
   - Again (red, X icon, key 1)
@@ -1674,18 +1780,21 @@ newEasiness = Math.max(
 - Responsive layout
 
 **3.6. LoadingState**
+
 - Utworzyć `src/components/study/LoadingState.tsx`
 - Skeleton card
 - Loading spinner
 - "Przygotowuję sesję nauki..."
 
 **3.7. EmptyState**
+
 - Utworzyć `src/components/study/EmptyState.tsx`
 - Ikona + tekst
 - CTA buttons: "Dodaj fiszkę", "Generuj fiszki"
 - Links do `/flashcards` i `/generate`
 
 **3.8. CompletedState**
+
 - Utworzyć `src/components/study/CompletedState.tsx`
 - Gratulacje header
 - Statystyki sesji (total reviewed, duration, breakdown)
@@ -1695,11 +1804,13 @@ newEasiness = Math.max(
 ### Krok 4: Utworzenie głównego widoku
 
 **4.1. StudySessionView (Active Session)**
+
 - Utworzyć `src/components/study/ActiveSession.tsx` (podkomponent)
 - Layout z StudyCard + FlipButton/StudyControls
 - Conditional rendering based on isFlipped
 
 **4.2. StudySessionView (Main)**
+
 - Utworzyć `src/components/study/StudySessionView.tsx`
 - Integracja z hookami:
   - `useStudySession()`
@@ -1712,18 +1823,20 @@ newEasiness = Math.max(
 - Error handling z toast notifications
 
 **4.3. Index exports**
+
 - Utworzyć `src/components/study/index.ts`:
   ```typescript
-  export { StudySessionView } from './StudySessionView';
-  export { StudySessionHeader } from './StudySessionHeader';
-  export { StudyCard } from './StudyCard';
-  export { StudyControls } from './StudyControls';
+  export { StudySessionView } from "./StudySessionView";
+  export { StudySessionHeader } from "./StudySessionHeader";
+  export { StudyCard } from "./StudyCard";
+  export { StudyControls } from "./StudyControls";
   // ... etc
   ```
 
 ### Krok 5: Utworzenie Astro page
 
 **5.1. Study page**
+
 - Utworzyć `src/pages/study.astro`
 - Layout bez głównej nawigacji (fullscreen mode)
   - Opcja 1: Nowy MinimalLayout bez header/sidebar
@@ -1732,10 +1845,11 @@ newEasiness = Math.max(
 - Metadata: title, description
 
 **Przykład**:
+
 ```astro
 ---
-import MinimalLayout from '@/layouts/MinimalLayout.astro';
-import { StudySessionView } from '@/components/study';
+import MinimalLayout from "@/layouts/MinimalLayout.astro";
+import { StudySessionView } from "@/components/study";
 ---
 
 <MinimalLayout title="Sesja nauki - 10x Cards">
@@ -1746,21 +1860,25 @@ import { StudySessionView } from '@/components/study';
 ### Krok 6: Styling i animacje
 
 **6.1. Flip animation dla StudyCard**
+
 - CSS 3D transforms lub smooth fade
 - Respektowanie `prefers-reduced-motion`
 - Smooth timing function
 
 **6.2. Transition animations**
+
 - Fade in dla nowej karty
 - Slide animation dla rating buttons (opcjonalnie)
 - Progress bar smooth updates
 
 **6.3. Responsive design**
+
 - Mobile: card zajmuje większość ekranu
 - Desktop: większe paddingi, centered layout
 - Rating buttons: 4 kolumny desktop, 2×2 grid mobile
 
 **6.4. Focus states i hover effects**
+
 - Wyraźne focus rings (Tailwind: `focus-visible:ring-2`)
 - Hover effects na przyciskach
 - Active states
@@ -1768,6 +1886,7 @@ import { StudySessionView } from '@/components/study';
 ### Krok 7: Integracja z nawigacją
 
 **7.1. Dodać link w Dashboard**
+
 - Update `src/components/dashboard/MenuGrid.tsx`
 - Dodać kafelek "Sesja nauki":
   - Ikona: `GraduationCap` lub `BookOpen` (lucide-react)
@@ -1777,6 +1896,7 @@ import { StudySessionView } from '@/components/study';
   - Variant: może być primary (highlight)
 
 **7.2. Nawigacja powrotna**
+
 - Exit button w StudySessionHeader → `/dashboard`
 - CompletedState buttons → `/dashboard`
 - Breadcrumbs (opcjonalnie)
@@ -1784,20 +1904,24 @@ import { StudySessionView } from '@/components/study';
 ### Krok 8: Obsługa błędów i edge cases
 
 **8.1. Error boundaries**
+
 - Dodać React Error Boundary dla StudySessionView (opcjonalnie)
 - Fallback UI przy crash
 
 **8.2. Toast notifications**
+
 - Integracja z ToasterProvider
 - Error toasts dla API failures
 - Warning toast dla localStorage issues
 - Success toast po completed session (opcjonalnie)
 
 **8.3. Confirmation dialogs**
+
 - Exit confirmation gdy sesja w trakcie
 - Użycie shadcn/ui AlertDialog
 
 **8.4. Edge cases testing**
+
 - Brak fiszek
 - 1 fiszka (edge case dla next/prev)
 - Bardzo długie teksty w fiszkach
@@ -1808,23 +1932,27 @@ import { StudySessionView } from '@/components/study';
 ### Krok 9: Dostępność (a11y)
 
 **9.1. Semantic HTML**
+
 - `<main>` dla contentu
 - `<article>` dla StudyCard
 - `<button>` dla wszystkich controls
 - Proper headings
 
 **9.2. ARIA attributes**
+
 - `aria-live` dla progress updates
 - `aria-label` dla icon buttons
 - `aria-disabled` dla disabled states
 - `role="status"` dla announcements
 
 **9.3. Screen reader testing**
+
 - Testy z NVDA/JAWS (Windows) lub VoiceOver (Mac)
 - Live region announcements
 - Opisowe labels
 
 **9.4. Keyboard testing**
+
 - Kompletna nawigacja bez myszy
 - Tab order
 - Focus trap w dialogs
@@ -1833,6 +1961,7 @@ import { StudySessionView } from '@/components/study';
 ### Krok 10: Testowanie
 
 **10.1. Manual testing**
+
 - Pełny flow: dashboard → study → rate cards → complete → dashboard
 - Wszystkie keyboard shortcuts (Spacja, 1-4, Escape)
 - Exit z confirmation
@@ -1841,20 +1970,24 @@ import { StudySessionView } from '@/components/study';
 - Error scenarios
 
 **10.2. Cross-browser testing**
+
 - Chrome, Firefox, Safari, Edge
 - Mobile browsers (iOS Safari, Chrome Android)
 
 **10.3. Responsive testing**
+
 - Mobile (320px, 375px, 414px)
 - Tablet (768px, 1024px)
 - Desktop (1280px, 1920px)
 
 **10.4. Performance testing**
+
 - Sprawdzenie performance z 100 fiszkami
 - Smooth animations (60fps)
 - localStorage save speed
 
 **10.5. Accessibility audit**
+
 - Lighthouse accessibility score
 - axe DevTools scan
 - Manual keyboard testing
@@ -1863,11 +1996,13 @@ import { StudySessionView } from '@/components/study';
 ### Krok 11: localStorage persistence testing
 
 **11.1. Podstawowe scenariusze**
+
 - Ocena fiszek → refresh page → sprawdź czy SM-2 data zachowane
 - Wypełnienie całej sesji → restart → sprawdź intervals
 - Clear browser data → graceful reset
 
 **11.2. Edge cases**
+
 - localStorage full (quota exceeded)
 - localStorage disabled
 - Corrupted JSON
@@ -1876,24 +2011,28 @@ import { StudySessionView } from '@/components/study';
 ### Krok 12: Optymalizacja i polish
 
 **12.1. Performance optimizations**
+
 - React.memo dla StudyCard (zapobiega re-render podczas stats update)
 - useMemo dla sorted cards
 - useCallback dla event handlers
 - Lazy loading animations (opcjonalnie)
 
 **12.2. UX improvements**
+
 - Smooth scroll do top przy card transition
 - Preload następnej karty (opcjonalnie)
 - Haptic feedback na mobile (opcjonalnie)
 - Sound effects (opcjonalnie, z mute toggle)
 
 **12.3. Code quality**
+
 - Linter fixes
 - TypeScript strict mode compliance
 - JSDoc comments
 - Code review
 
 **12.4. Documentation**
+
 - README dla komponentów study
 - Instrukcja użycia algorytmu SM-2
 - Komentarze w kodzie
@@ -1901,6 +2040,7 @@ import { StudySessionView } from '@/components/study';
 ### Krok 13: Finalizacja i deployment
 
 **13.1. Final checks**
+
 - Wszystkie TODOs resolved
 - No console errors/warnings
 - Build succeeds
@@ -1908,11 +2048,13 @@ import { StudySessionView } from '@/components/study';
 - Linter passes
 
 **13.2. User testing**
+
 - Beta test z kilkoma userami
 - Zbieranie feedbacku
 - Iteracja na podstawie feedbacku
 
 **13.3. Monitoring setup**
+
 - Analytics events (session started, completed, cards reviewed)
 - Error tracking (Sentry lub podobne)
 - Performance monitoring
@@ -1924,19 +2066,23 @@ import { StudySessionView } from '@/components/study';
 Plan implementacji widoku Sesji Nauki obejmuje:
 
 **Komponenty**:
+
 - **1 strona Astro**: `/study`
 - **9 komponentów React**: StudySessionView, StudySessionHeader, StudyProgressBar, StudyCard, FlipButton, StudyControls, LoadingState, EmptyState, CompletedState
 - **1 helper component**: ActiveSession (podkomponent)
 
 **Logika biznesowa**:
+
 - **2 custom hooki**: useStudySession, useKeyboardShortcuts
 - **1 algorytm**: SM-2 implementation
 - **1 storage service**: studyProgressStorage (localStorage)
 
 **Typy**:
+
 - **11+ nowych typów**: SM2Quality, SM2ReviewData, FlashcardWithProgress, StudySessionState, SessionStats, + wszystkie Props types
 
 **Funkcjonalności**:
+
 - Pełnoekranowy distraction-free mode
 - Algorytm SM-2 dla spaced repetition
 - 4 poziomy oceny (Again, Hard, Good, Easy)
@@ -1949,6 +2095,7 @@ Plan implementacji widoku Sesji Nauki obejmuje:
 **Szacowany czas implementacji**: 3-4 dni robocze dla doświadczonego frontend developera, włączając testowanie, optymalizację i polish.
 
 **Priorytet funkcji dla MVP**:
+
 1. ✅ Core study flow (flip, rate, next)
 2. ✅ SM-2 algorithm (uproszczony)
 3. ✅ localStorage persistence
@@ -1957,4 +2104,3 @@ Plan implementacji widoku Sesji Nauki obejmuje:
 6. 🔄 Advanced animations (nice-to-have)
 7. 🔄 Sound effects (future enhancement)
 8. 🔄 Backend sync (post-MVP)
-

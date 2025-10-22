@@ -5,10 +5,12 @@
 Aby testy E2E działały w CI/CD, musisz skonfigurować następujące secrets w repozytorium GitHub:
 
 ### 1. Supabase
+
 - `PUBLIC_SUPABASE_URL` - URL twojej instancji Supabase (np. `https://xxxxx.supabase.co`)
 - `PUBLIC_SUPABASE_ANON_KEY` - Publiczny klucz Supabase anon key
 
 ### 2. Użytkownik testowy E2E
+
 - `E2E_USERNAME` - Email użytkownika testowego (np. `e2e-test@example.com`)
 - `E2E_PASSWORD` - Hasło użytkownika testowego
 
@@ -30,6 +32,7 @@ Aby testy E2E działały w CI/CD, musisz skonfigurować następujące secrets w 
 ## Sprawdzanie testów
 
 Po skonfigurowaniu secrets:
+
 1. Utwórz Pull Request do brancha `master`
 2. GitHub Actions automatycznie uruchomi wszystkie testy, w tym E2E
 3. Wyniki testów znajdziesz w zakładce `Actions`
@@ -52,6 +55,7 @@ npm run e2e
 ## Struktura testów
 
 Testy E2E znajdują się w folderze `e2e/`:
+
 - `auth.spec.ts` - testy autoryzacji
 - `flashcards.spec.ts` - testy zarządzania fiszkami (5 testów)
 - `home.spec.ts` - testy strony głównej
@@ -60,9 +64,9 @@ Testy E2E znajdują się w folderze `e2e/`:
 ## Konfiguracja Playwright
 
 Konfiguracja znajduje się w `playwright.config.ts`:
+
 - Automatyczne uruchamianie dev servera (`webServer`)
 - Retry w CI: 2 próby
 - Artifacts: trace, screenshot, video (tylko przy błędach)
 - Timeout: 30s na test
 - Viewport: 1366x768 (Desktop)
-

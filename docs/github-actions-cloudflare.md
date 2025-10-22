@@ -16,12 +16,14 @@ Aby deployment na Cloudflare Pages działał poprawnie w GitHub Actions, musisz 
 Musisz dodać następujące sekrety:
 
 #### 1. `CLOUDFLARE_API_TOKEN`
+
 - **Nazwa:** `CLOUDFLARE_API_TOKEN`
 - **Wartość:** API Token z Cloudflare
 - **Typ:** Secret (obowiązkowo!)
 - **Uprawnienia:** Token musi mieć uprawnienia do **Cloudflare Pages**
 
 **Jak utworzyć token:**
+
 1. Zaloguj się do [Cloudflare Dashboard](https://dash.cloudflare.com)
 2. Przejdź do **My Profile** → **API Tokens**
 3. Kliknij **Create Token**
@@ -30,16 +32,19 @@ Musisz dodać następujące sekrety:
 5. Skopiuj token (będzie pokazany tylko raz!)
 
 #### 2. `CLOUDFLARE_ACCOUNT_ID`
+
 - **Nazwa:** `CLOUDFLARE_ACCOUNT_ID`
 - **Wartość:** Twój Account ID z Cloudflare
 - **Typ:** Secret lub Variable
 
 **Jak znaleźć Account ID:**
+
 1. Zaloguj się do [Cloudflare Dashboard](https://dash.cloudflare.com)
 2. Przejdź do **Workers & Pages**
 3. Account ID znajduje się w prawym panelu lub w URL
 
 #### 3. `CLOUDFLARE_PROJECT_NAME`
+
 - **Nazwa:** `CLOUDFLARE_PROJECT_NAME`
 - **Wartość:** Nazwa twojego projektu w Cloudflare Pages
 - **Typ:** Secret lub Variable
@@ -47,6 +52,7 @@ Musisz dodać następujące sekrety:
 **Uwaga:** Nazwa projektu musi już istnieć w Cloudflare Pages. Utwórz projekt przed pierwszym deploymentem.
 
 #### 4. `PUBLIC_SUPABASE_URL` i `PUBLIC_SUPABASE_KEY`
+
 - Te sekrety powinny być już ustawione dla testów E2E
 - Są również używane podczas budowania aplikacji
 
@@ -81,6 +87,7 @@ Workflow wykonuje następujące kroki **sekwencyjnie**:
 ### ✅ Weryfikacja
 
 Po uruchomieniu deploymentu:
+
 1. Sprawdź logi w zakładce **Actions**
 2. W kroku "Deploy to Cloudflare Pages" zobaczysz:
    - URL aplikacji
@@ -124,6 +131,7 @@ W ustawieniach projektu w Cloudflare Pages:
 ### 🌐 Zmienne środowiskowe
 
 Projekt automatycznie wykrywa środowisko Cloudflare:
+
 - Używa adaptera `@astrojs/cloudflare` gdy `CLOUDFLARE=1` lub `CF_PAGES=1`
 - Używa adaptera `@astrojs/node` dla lokalnego developmentu i testów E2E
 
@@ -147,4 +155,3 @@ Projekt automatycznie wykrywa środowisko Cloudflare:
 - Regularnie rotuj API tokeny (np. co 90 dni)
 - Używaj Environment protection rules w GitHub dla produkcji
 - Włącz branch protection dla głównych gałęzi
-

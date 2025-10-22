@@ -107,7 +107,7 @@ describe("Button", () => {
 
     const btn = await screen.findByRole("button", { name: /kliknij/i });
     expect(btn).toBeInTheDocument();
-    
+
     await user.click(btn);
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
@@ -137,7 +137,7 @@ import { sm2Algorithm } from "../sm2";
 describe("SM2Algorithm", () => {
   it("inicjalizuje nową fiszkę", () => {
     const result = sm2Algorithm.initializeCard(1);
-    
+
     expect(result).toMatchObject({
       flashcard_id: 1,
       easiness: 2.5,
@@ -247,6 +247,7 @@ Aktualne pokrycie testami jednostkowymi:
 - **Validation Schemas** (flashcard, generation): 100%
 
 Raport coverage dostępny po uruchomieniu:
+
 ```bash
 npm run test:coverage
 # Raport HTML: coverage/index.html
@@ -269,17 +270,17 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '22'
+          node-version: "22"
       - run: npm ci
       - run: npm run test:coverage
-      
+
   e2e:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '22'
+          node-version: "22"
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run e2e
@@ -319,4 +320,3 @@ npx playwright show-trace trace.zip
 - [Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
 - [Playwright Documentation](https://playwright.dev/)
 - [jest-dom matchers](https://github.com/testing-library/jest-dom)
-

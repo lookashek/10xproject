@@ -84,10 +84,10 @@ interface OpenRouterConfig {
 ```typescript
 const service = new OpenRouterService({
   apiKey: import.meta.env.OPENROUTER_API_KEY,
-  defaultModel: 'anthropic/claude-3.5-sonnet',
+  defaultModel: "anthropic/claude-3.5-sonnet",
   requestTimeout: 60000,
-  httpReferer: 'https://10xproject.app',
-  appTitle: '10x Flashcards'
+  httpReferer: "https://10xproject.app",
+  appTitle: "10x Flashcards",
 });
 ```
 
@@ -159,9 +159,9 @@ interface OpenRouterCompletionRequest<T> {
    * Jeśli podany, odpowiedź będzie walidowana względem tego schematu
    */
   responseSchema?: {
-    name: string;           // Nazwa schematu (np. 'flashcards_array')
+    name: string; // Nazwa schematu (np. 'flashcards_array')
     schema: z.ZodSchema<T>; // Schemat Zod do walidacji
-    jsonSchema: object;     // JSON Schema do przekazania do API
+    jsonSchema: object; // JSON Schema do przekazania do API
   };
 
   /**
@@ -232,10 +232,10 @@ interface OpenRouterCompletionResponse<T> {
    * Metadane z OpenRouter (opcjonalne)
    */
   metadata?: {
-    model: string;          // Użyty model
-    tokensPrompt?: number;  // Liczba tokenów w prompcie
+    model: string; // Użyty model
+    tokensPrompt?: number; // Liczba tokenów w prompcie
     tokensCompletion?: number; // Liczba tokenów w odpowiedzi
-    tokensTotal?: number;   // Całkowita liczba tokenów
+    tokensTotal?: number; // Całkowita liczba tokenów
   };
 }
 ```
@@ -244,13 +244,13 @@ interface OpenRouterCompletionResponse<T> {
 
 ```typescript
 const response = await service.generateCompletion({
-  systemMessage: 'You are a helpful assistant.',
-  userMessage: 'Explain TypeScript in one sentence.',
-  model: 'anthropic/claude-3.5-sonnet',
+  systemMessage: "You are a helpful assistant.",
+  userMessage: "Explain TypeScript in one sentence.",
+  model: "anthropic/claude-3.5-sonnet",
   modelParams: {
     temperature: 0.5,
-    maxTokens: 100
-  }
+    maxTokens: 100,
+  },
 });
 
 console.log(response.data); // string z odpowiedzią
@@ -263,17 +263,17 @@ console.log(response.durationMs); // 2340
 // 1. Definicja schematu Zod
 const flashcardSchema = z.object({
   front: z.string().min(1).max(200),
-  back: z.string().min(1).max(500)
+  back: z.string().min(1).max(500),
 });
 
 const flashcardsArraySchema = z.array(flashcardSchema).min(1);
 
 // 2. Konwersja Zod do JSON Schema
-import { zodToJsonSchema } from 'zod-to-json-schema';
+import { zodToJsonSchema } from "zod-to-json-schema";
 
 const jsonSchema = zodToJsonSchema(flashcardsArraySchema, {
-  name: 'flashcards_array',
-  $refStrategy: 'none'
+  name: "flashcards_array",
+  $refStrategy: "none",
 });
 
 // 3. Wywołanie API z response_format
@@ -292,27 +292,27 @@ Return your response as a JSON array of flashcards with this structure:
 Constraints:
 - "front" must be 1-200 characters
 - "back" must be 1-500 characters`,
-  
+
   userMessage: `Please analyze the following text and generate flashcards:
 
 ${sourceText}`,
-  
-  model: 'anthropic/claude-3.5-sonnet',
-  
+
+  model: "anthropic/claude-3.5-sonnet",
+
   modelParams: {
     temperature: 0.7,
-    maxTokens: 2000
+    maxTokens: 2000,
   },
-  
+
   responseSchema: {
-    name: 'flashcards_array',
+    name: "flashcards_array",
     schema: flashcardsArraySchema,
-    jsonSchema: jsonSchema
-  }
+    jsonSchema: jsonSchema,
+  },
 });
 
 // Odpowiedź jest już sparsowana i zwalidowana
-const flashcards: Array<{front: string; back: string}> = response.data;
+const flashcards: Array<{ front: string; back: string }> = response.data;
 ```
 
 ### 3.2. Metoda pomocnicza: `testConnection()`
@@ -330,7 +330,7 @@ async testConnection(): Promise<boolean>
 ```typescript
 const isConnected = await service.testConnection();
 if (!isConnected) {
-  console.error('Failed to connect to OpenRouter API');
+  console.error("Failed to connect to OpenRouter API");
 }
 ```
 
@@ -721,7 +721,7 @@ export class OpenRouterError extends Error {
     public details?: any
   ) {
     super(message);
-    this.name = 'OpenRouterError';
+    this.name = "OpenRouterError";
   }
 }
 ```
@@ -730,18 +730,18 @@ export class OpenRouterError extends Error {
 
 ```typescript
 type OpenRouterErrorCode =
-  | 'CONFIG_ERROR'        // Błąd konfiguracji (brak klucza API)
-  | 'TIMEOUT'             // Przekroczenie czasu żądania
-  | 'NETWORK_ERROR'       // Błąd połączenia sieciowego
-  | 'BAD_REQUEST'         // Nieprawidłowe żądanie (400)
-  | 'UNAUTHORIZED'        // Nieprawidłowy klucz API (401)
-  | 'INSUFFICIENT_CREDITS' // Brak kredytów w OpenRouter (402)
-  | 'RATE_LIMIT'          // Przekroczenie limitu (429)
-  | 'SERVICE_UNAVAILABLE' // Serwis niedostępny (5xx)
-  | 'INVALID_RESPONSE'    // Nieprawidłowa struktura odpowiedzi
-  | 'PARSE_ERROR'         // Błąd parsowania JSON
-  | 'VALIDATION_ERROR'    // Błąd walidacji schematu
-  | 'API_ERROR';          // Ogólny błąd API
+  | "CONFIG_ERROR" // Błąd konfiguracji (brak klucza API)
+  | "TIMEOUT" // Przekroczenie czasu żądania
+  | "NETWORK_ERROR" // Błąd połączenia sieciowego
+  | "BAD_REQUEST" // Nieprawidłowe żądanie (400)
+  | "UNAUTHORIZED" // Nieprawidłowy klucz API (401)
+  | "INSUFFICIENT_CREDITS" // Brak kredytów w OpenRouter (402)
+  | "RATE_LIMIT" // Przekroczenie limitu (429)
+  | "SERVICE_UNAVAILABLE" // Serwis niedostępny (5xx)
+  | "INVALID_RESPONSE" // Nieprawidłowa struktura odpowiedzi
+  | "PARSE_ERROR" // Błąd parsowania JSON
+  | "VALIDATION_ERROR" // Błąd walidacji schematu
+  | "API_ERROR"; // Ogólny błąd API
 ```
 
 ### 5.3. Scenariusze błędów:
@@ -751,11 +751,7 @@ type OpenRouterErrorCode =
 ```typescript
 // W konstruktorze
 if (!config.apiKey) {
-  throw new OpenRouterError(
-    'OpenRouter API key is required',
-    'CONFIG_ERROR',
-    500
-  );
+  throw new OpenRouterError("OpenRouter API key is required", "CONFIG_ERROR", 500);
 }
 ```
 
@@ -770,12 +766,8 @@ try {
   clearTimeout(timeoutId);
   // ...
 } catch (error) {
-  if (error instanceof Error && error.name === 'AbortError') {
-    throw new OpenRouterError(
-      'Request timed out',
-      'TIMEOUT',
-      503
-    );
+  if (error instanceof Error && error.name === "AbortError") {
+    throw new OpenRouterError("Request timed out", "TIMEOUT", 503);
   }
   throw error;
 }
@@ -787,17 +779,12 @@ try {
 const validationResult = schema.safeParse(parsedContent);
 
 if (!validationResult.success) {
-  console.error('Validation errors:', validationResult.error.errors);
-  
-  throw new OpenRouterError(
-    'Response failed schema validation',
-    'VALIDATION_ERROR',
-    500,
-    {
-      errors: validationResult.error.errors,
-      receivedData: parsedContent
-    }
-  );
+  console.error("Validation errors:", validationResult.error.errors);
+
+  throw new OpenRouterError("Response failed schema validation", "VALIDATION_ERROR", 500, {
+    errors: validationResult.error.errors,
+    receivedData: parsedContent,
+  });
 }
 ```
 
@@ -834,13 +821,13 @@ private logError(error: OpenRouterError, context: any): void {
 ```typescript
 // ✅ POPRAWNIE - w API route
 // src/pages/api/generations.ts
-import { OpenRouterService } from '../../lib/services/openRouterService';
+import { OpenRouterService } from "../../lib/services/openRouterService";
 
 export async function POST({ request, locals }) {
   const service = new OpenRouterService({
-    apiKey: import.meta.env.OPENROUTER_API_KEY
+    apiKey: import.meta.env.OPENROUTER_API_KEY,
   });
-  
+
   // ... użyj serwisu
 }
 ```
@@ -848,11 +835,11 @@ export async function POST({ request, locals }) {
 ```typescript
 // ❌ NIEPOPRAWNIE - w komponencie React
 // src/components/MyComponent.tsx
-import { OpenRouterService } from '../lib/services/openRouterService';
+import { OpenRouterService } from "../lib/services/openRouterService";
 
 export function MyComponent() {
   const service = new OpenRouterService({
-    apiKey: import.meta.env.OPENROUTER_API_KEY // Klucz wyeksponowany!
+    apiKey: import.meta.env.OPENROUTER_API_KEY, // Klucz wyeksponowany!
   });
   // ...
 }
@@ -872,10 +859,10 @@ if (!validationResult.success) {
   return new Response(
     JSON.stringify({
       error: {
-        code: 'VALIDATION_ERROR',
-        message: 'Invalid request data',
-        details: validationResult.error.errors
-      }
+        code: "VALIDATION_ERROR",
+        message: "Invalid request data",
+        details: validationResult.error.errors,
+      },
     }),
     { status: 400 }
   );
@@ -919,22 +906,18 @@ function checkRateLimit(userId: string, maxRequests: number = 10, windowMs: numb
 ```typescript
 // W schemacie Zod
 const flashcardSchema = z.object({
-  front: z.string()
+  front: z
+    .string()
     .trim()
     .min(1)
     .max(200)
-    .refine(
-      (val) => !/<script>/i.test(val),
-      'Flashcard content cannot contain script tags'
-    ),
-  back: z.string()
+    .refine((val) => !/<script>/i.test(val), "Flashcard content cannot contain script tags"),
+  back: z
+    .string()
     .trim()
     .min(1)
     .max(500)
-    .refine(
-      (val) => !/<script>/i.test(val),
-      'Flashcard content cannot contain script tags'
-    )
+    .refine((val) => !/<script>/i.test(val), "Flashcard content cannot contain script tags"),
 });
 ```
 
@@ -942,7 +925,8 @@ const flashcardSchema = z.object({
 
 **Problem:** Tekst źródłowy użytkownika może zawierać wrażliwe informacje.
 
-**Rozwiązanie:** 
+**Rozwiązanie:**
+
 - Nie loguj pełnej zawartości `userMessage` w produkcji
 - Rozważ użycie modeli z data privacy (OpenRouter oferuje takie opcje)
 
@@ -953,7 +937,7 @@ if (import.meta.env.PROD) {
   console.log(`[OpenRouter] Request sent, message length: ${userMessage.length}`);
 } else {
   // W dev można logować więcej
-  console.log('[OpenRouter] Request:', { systemMessage, userMessage });
+  console.log("[OpenRouter] Request:", { systemMessage, userMessage });
 }
 ```
 
@@ -977,7 +961,7 @@ npm install zod-to-json-schema
 **Plik:** `src/lib/services/openRouterService.types.ts`
 
 ```typescript
-import type { z } from 'zod';
+import type { z } from "zod";
 
 /**
  * Konfiguracja usługi OpenRouter
@@ -1045,18 +1029,18 @@ export interface OpenRouterCompletionResponse<T> {
  * Kody błędów OpenRouter
  */
 export type OpenRouterErrorCode =
-  | 'CONFIG_ERROR'
-  | 'TIMEOUT'
-  | 'NETWORK_ERROR'
-  | 'BAD_REQUEST'
-  | 'UNAUTHORIZED'
-  | 'INSUFFICIENT_CREDITS'
-  | 'RATE_LIMIT'
-  | 'SERVICE_UNAVAILABLE'
-  | 'INVALID_RESPONSE'
-  | 'PARSE_ERROR'
-  | 'VALIDATION_ERROR'
-  | 'API_ERROR';
+  | "CONFIG_ERROR"
+  | "TIMEOUT"
+  | "NETWORK_ERROR"
+  | "BAD_REQUEST"
+  | "UNAUTHORIZED"
+  | "INSUFFICIENT_CREDITS"
+  | "RATE_LIMIT"
+  | "SERVICE_UNAVAILABLE"
+  | "INVALID_RESPONSE"
+  | "PARSE_ERROR"
+  | "VALIDATION_ERROR"
+  | "API_ERROR";
 ```
 
 ---
@@ -1066,7 +1050,7 @@ export type OpenRouterErrorCode =
 **Plik:** `src/lib/services/openRouterService.errors.ts`
 
 ```typescript
-import type { OpenRouterErrorCode } from './openRouterService.types';
+import type { OpenRouterErrorCode } from "./openRouterService.types";
 
 /**
  * Niestandardowa klasa błędu dla OpenRouter
@@ -1079,14 +1063,14 @@ export class OpenRouterError extends Error {
     public details?: any
   ) {
     super(message);
-    this.name = 'OpenRouterError';
+    this.name = "OpenRouterError";
   }
 
   /**
    * Sprawdza czy błąd jest możliwy do ponowienia
    */
   isRetryable(): boolean {
-    return ['TIMEOUT', 'NETWORK_ERROR', 'SERVICE_UNAVAILABLE'].includes(this.code);
+    return ["TIMEOUT", "NETWORK_ERROR", "SERVICE_UNAVAILABLE"].includes(this.code);
   }
 
   /**
@@ -1097,8 +1081,8 @@ export class OpenRouterError extends Error {
       error: {
         code: this.code,
         message: this.message,
-        details: this.details
-      }
+        details: this.details,
+      },
     };
   }
 }
@@ -1115,9 +1099,9 @@ import type {
   OpenRouterConfig,
   OpenRouterCompletionRequest,
   OpenRouterCompletionResponse,
-  ModelParameters
-} from './openRouterService.types';
-import { OpenRouterError } from './openRouterService.errors';
+  ModelParameters,
+} from "./openRouterService.types";
+import { OpenRouterError } from "./openRouterService.errors";
 
 /**
  * Usługa do komunikacji z OpenRouter.ai API
@@ -1132,21 +1116,17 @@ export class OpenRouterService {
 
   constructor(config: OpenRouterConfig) {
     // Walidacja konfiguracji
-    if (!config.apiKey || config.apiKey.trim() === '') {
-      throw new OpenRouterError(
-        'OpenRouter API key is required',
-        'CONFIG_ERROR',
-        500
-      );
+    if (!config.apiKey || config.apiKey.trim() === "") {
+      throw new OpenRouterError("OpenRouter API key is required", "CONFIG_ERROR", 500);
     }
 
     // Inicjalizacja pól
     this.apiKey = config.apiKey;
-    this.apiUrl = config.apiUrl ?? 'https://openrouter.ai/api/v1/chat/completions';
-    this.defaultModel = config.defaultModel ?? 'anthropic/claude-3.5-sonnet';
+    this.apiUrl = config.apiUrl ?? "https://openrouter.ai/api/v1/chat/completions";
+    this.defaultModel = config.defaultModel ?? "anthropic/claude-3.5-sonnet";
     this.requestTimeout = config.requestTimeout ?? 60000;
-    this.httpReferer = config.httpReferer ?? 'https://10xproject.app';
-    this.appTitle = config.appTitle ?? '10x Flashcards';
+    this.httpReferer = config.httpReferer ?? "https://10xproject.app";
+    this.appTitle = config.appTitle ?? "10x Flashcards";
   }
 
   /**
@@ -1173,10 +1153,7 @@ export class OpenRouterService {
       const responseData = await response.json();
 
       // Wyciągnij i waliduj dane
-      const data = await this.parseAndValidateResponse<T>(
-        responseData,
-        request.responseSchema?.schema
-      );
+      const data = await this.parseAndValidateResponse<T>(responseData, request.responseSchema?.schema);
 
       // Oblicz czas trwania
       const durationMs = Date.now() - startTime;
@@ -1187,19 +1164,14 @@ export class OpenRouterService {
       return {
         data,
         durationMs,
-        metadata
+        metadata,
       };
-
     } catch (error) {
       clearTimeout(timeoutId);
 
       // Obsłuż timeout
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw new OpenRouterError(
-          'Request timed out',
-          'TIMEOUT',
-          503
-        );
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new OpenRouterError("Request timed out", "TIMEOUT", 503);
       }
 
       // Przepuść OpenRouterError
@@ -1208,11 +1180,7 @@ export class OpenRouterService {
       }
 
       // Obsłuż błędy sieciowe
-      throw new OpenRouterError(
-        'Network error occurred',
-        'NETWORK_ERROR',
-        503
-      );
+      throw new OpenRouterError("Network error occurred", "NETWORK_ERROR", 503);
     }
   }
 
@@ -1222,15 +1190,15 @@ export class OpenRouterService {
   async testConnection(): Promise<boolean> {
     try {
       await this.generateCompletion({
-        systemMessage: 'You are a helpful assistant.',
+        systemMessage: "You are a helpful assistant.",
         userMessage: 'Say "OK"',
         modelParams: {
-          maxTokens: 10
-        }
+          maxTokens: 10,
+        },
       });
       return true;
     } catch (error) {
-      console.error('[OpenRouterService] Connection test failed:', error);
+      console.error("[OpenRouterService] Connection test failed:", error);
       return false;
     }
   }
@@ -1238,21 +1206,19 @@ export class OpenRouterService {
   /**
    * Buduje ciało żądania HTTP
    */
-  private buildRequestBody<T>(
-    request: OpenRouterCompletionRequest<T>
-  ): object {
+  private buildRequestBody<T>(request: OpenRouterCompletionRequest<T>): object {
     const body: any = {
       model: request.model ?? this.defaultModel,
       messages: [
         {
-          role: 'system',
-          content: request.systemMessage
+          role: "system",
+          content: request.systemMessage,
         },
         {
-          role: 'user',
-          content: request.userMessage
-        }
-      ]
+          role: "user",
+          content: request.userMessage,
+        },
+      ],
     };
 
     // Dodaj parametry modelu
@@ -1263,12 +1229,12 @@ export class OpenRouterService {
     // Dodaj response_format jeśli podano schemat
     if (request.responseSchema) {
       body.response_format = {
-        type: 'json_schema',
+        type: "json_schema",
         json_schema: {
           name: request.responseSchema.name,
           strict: true,
-          schema: request.responseSchema.jsonSchema
-        }
+          schema: request.responseSchema.jsonSchema,
+        },
       };
     }
 
@@ -1301,26 +1267,23 @@ export class OpenRouterService {
    */
   private buildHeaders(): Record<string, string> {
     return {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.apiKey}`,
-      'HTTP-Referer': this.httpReferer,
-      'X-Title': this.appTitle
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${this.apiKey}`,
+      "HTTP-Referer": this.httpReferer,
+      "X-Title": this.appTitle,
     };
   }
 
   /**
    * Wykonuje żądanie HTTP
    */
-  private async executeRequest(
-    body: object,
-    abortSignal: AbortSignal
-  ): Promise<Response> {
+  private async executeRequest(body: object, abortSignal: AbortSignal): Promise<Response> {
     try {
       const response = await fetch(this.apiUrl, {
-        method: 'POST',
+        method: "POST",
         headers: this.buildHeaders(),
         body: JSON.stringify(body),
-        signal: abortSignal
+        signal: abortSignal,
       });
 
       // Obsłuż błędy HTTP
@@ -1329,44 +1292,28 @@ export class OpenRouterService {
       }
 
       return response;
-
     } catch (error) {
-      if (error instanceof Error && error.name === 'AbortError') {
-        throw new OpenRouterError(
-          'Request timed out',
-          'TIMEOUT',
-          503
-        );
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new OpenRouterError("Request timed out", "TIMEOUT", 503);
       }
 
       if (error instanceof OpenRouterError) {
         throw error;
       }
 
-      throw new OpenRouterError(
-        'Network error',
-        'NETWORK_ERROR',
-        503
-      );
+      throw new OpenRouterError("Network error", "NETWORK_ERROR", 503);
     }
   }
 
   /**
    * Parsuje i waliduje odpowiedź
    */
-  private async parseAndValidateResponse<T>(
-    responseData: any,
-    schema?: any
-  ): Promise<T> {
+  private async parseAndValidateResponse<T>(responseData: any, schema?: any): Promise<T> {
     // Wyciągnij treść z odpowiedzi OpenRouter
     const content = responseData.choices?.[0]?.message?.content;
 
     if (!content) {
-      throw new OpenRouterError(
-        'Invalid response structure from OpenRouter',
-        'INVALID_RESPONSE',
-        500
-      );
+      throw new OpenRouterError("Invalid response structure from OpenRouter", "INVALID_RESPONSE", 500);
     }
 
     // Jeśli brak schematu, zwróć surową treść
@@ -1379,28 +1326,18 @@ export class OpenRouterService {
     try {
       parsedContent = JSON.parse(content);
     } catch (error) {
-      throw new OpenRouterError(
-        'Failed to parse JSON from response',
-        'PARSE_ERROR',
-        500,
-        { rawContent: content }
-      );
+      throw new OpenRouterError("Failed to parse JSON from response", "PARSE_ERROR", 500, { rawContent: content });
     }
 
     // Waliduj względem schematu Zod
     const validationResult = schema.safeParse(parsedContent);
 
     if (!validationResult.success) {
-      console.error('[OpenRouterService] Validation errors:', validationResult.error.errors);
-      throw new OpenRouterError(
-        'Response failed schema validation',
-        'VALIDATION_ERROR',
-        500,
-        {
-          errors: validationResult.error.errors,
-          receivedData: parsedContent
-        }
-      );
+      console.error("[OpenRouterService] Validation errors:", validationResult.error.errors);
+      throw new OpenRouterError("Response failed schema validation", "VALIDATION_ERROR", 500, {
+        errors: validationResult.error.errors,
+        receivedData: parsedContent,
+      });
     }
 
     return validationResult.data;
@@ -1418,68 +1355,43 @@ export class OpenRouterService {
       // Ignoruj błąd parsowania
     }
 
-    const errorMessage = errorData.error?.message || 'Unknown error';
+    const errorMessage = errorData.error?.message || "Unknown error";
 
     switch (response.status) {
       case 400:
-        throw new OpenRouterError(
-          `Bad request: ${errorMessage}`,
-          'BAD_REQUEST',
-          400,
-          errorData
-        );
+        throw new OpenRouterError(`Bad request: ${errorMessage}`, "BAD_REQUEST", 400, errorData);
 
       case 401:
-        throw new OpenRouterError(
-          'Invalid API key',
-          'UNAUTHORIZED',
-          401
-        );
+        throw new OpenRouterError("Invalid API key", "UNAUTHORIZED", 401);
 
       case 402:
-        throw new OpenRouterError(
-          'Insufficient credits in OpenRouter account',
-          'INSUFFICIENT_CREDITS',
-          402
-        );
+        throw new OpenRouterError("Insufficient credits in OpenRouter account", "INSUFFICIENT_CREDITS", 402);
 
       case 429:
-        throw new OpenRouterError(
-          'Rate limit exceeded',
-          'RATE_LIMIT',
-          429,
-          { retryAfter: response.headers.get('Retry-After') }
-        );
+        throw new OpenRouterError("Rate limit exceeded", "RATE_LIMIT", 429, {
+          retryAfter: response.headers.get("Retry-After"),
+        });
 
       case 500:
       case 502:
       case 503:
       case 504:
-        throw new OpenRouterError(
-          'OpenRouter service temporarily unavailable',
-          'SERVICE_UNAVAILABLE',
-          503
-        );
+        throw new OpenRouterError("OpenRouter service temporarily unavailable", "SERVICE_UNAVAILABLE", 503);
 
       default:
-        throw new OpenRouterError(
-          `API error: ${errorMessage}`,
-          'API_ERROR',
-          response.status,
-          errorData
-        );
+        throw new OpenRouterError(`API error: ${errorMessage}`, "API_ERROR", response.status, errorData);
     }
   }
 
   /**
    * Wyciąga metadane z odpowiedzi
    */
-  private extractMetadata(data: any): OpenRouterCompletionResponse<any>['metadata'] {
+  private extractMetadata(data: any): OpenRouterCompletionResponse<any>["metadata"] {
     return {
       model: data.model,
       tokensPrompt: data.usage?.prompt_tokens,
       tokensCompletion: data.usage?.completion_tokens,
-      tokensTotal: data.usage?.total_tokens
+      tokensTotal: data.usage?.total_tokens,
     };
   }
 }
@@ -1499,16 +1411,16 @@ Zastąp zawartość pliku nową implementacją używającą `OpenRouterService`:
  * Integrates with OpenRouter.ai API via OpenRouterService
  */
 
-import type { ProposedFlashcard } from '../../types';
-import { proposedFlashcardsArraySchema } from '../validation/generation.schemas';
-import { OpenRouterService } from './openRouterService';
-import { OpenRouterError } from './openRouterService.errors';
-import { zodToJsonSchema } from 'zod-to-json-schema';
+import type { ProposedFlashcard } from "../../types";
+import { proposedFlashcardsArraySchema } from "../validation/generation.schemas";
+import { OpenRouterService } from "./openRouterService";
+import { OpenRouterError } from "./openRouterService.errors";
+import { zodToJsonSchema } from "zod-to-json-schema";
 
 /**
  * Default configuration
  */
-const DEFAULT_MODEL = 'anthropic/claude-3.5-sonnet';
+const DEFAULT_MODEL = "anthropic/claude-3.5-sonnet";
 const REQUEST_TIMEOUT = 60000; // 60 seconds
 
 /**
@@ -1556,7 +1468,7 @@ export class LLMServiceError extends Error {
     public statusCode?: number
   ) {
     super(message);
-    this.name = 'LLMServiceError';
+    this.name = "LLMServiceError";
   }
 }
 
@@ -1564,11 +1476,7 @@ export class LLMServiceError extends Error {
  * Converts OpenRouterError to LLMServiceError
  */
 function convertError(error: OpenRouterError): LLMServiceError {
-  return new LLMServiceError(
-    error.message,
-    error.code,
-    error.statusCode
-  );
+  return new LLMServiceError(error.message, error.code, error.statusCode);
 }
 
 /**
@@ -1585,23 +1493,19 @@ export async function generateFlashcards(
   const apiKey = import.meta.env.OPENROUTER_API_KEY;
 
   if (!apiKey) {
-    throw new LLMServiceError(
-      'OpenRouter API key not configured',
-      'CONFIG_ERROR',
-      500
-    );
+    throw new LLMServiceError("OpenRouter API key not configured", "CONFIG_ERROR", 500);
   }
 
   const service = new OpenRouterService({
     apiKey,
     defaultModel: model,
-    requestTimeout: REQUEST_TIMEOUT
+    requestTimeout: REQUEST_TIMEOUT,
   });
 
   // Prepare response schema
   const jsonSchema = zodToJsonSchema(proposedFlashcardsArraySchema, {
-    name: 'flashcards_array',
-    $refStrategy: 'none'
+    name: "flashcards_array",
+    $refStrategy: "none",
   });
 
   try {
@@ -1612,35 +1516,30 @@ export async function generateFlashcards(
       model,
       modelParams: {
         temperature: 0.7,
-        maxTokens: 2000
+        maxTokens: 2000,
       },
       responseSchema: {
-        name: 'flashcards_array',
+        name: "flashcards_array",
         schema: proposedFlashcardsArraySchema,
-        jsonSchema: jsonSchema
-      }
+        jsonSchema: jsonSchema,
+      },
     });
 
     // Transform to ProposedFlashcard format
     const flashcards: ProposedFlashcard[] = response.data.map((fc: any) => ({
       front: fc.front,
       back: fc.back,
-      source: 'ai-full' as const
+      source: "ai-full" as const,
     }));
 
     if (flashcards.length === 0) {
-      throw new LLMServiceError(
-        'No flashcards generated',
-        'VALIDATION_ERROR',
-        500
-      );
+      throw new LLMServiceError("No flashcards generated", "VALIDATION_ERROR", 500);
     }
 
     return {
       flashcards,
-      duration: response.durationMs
+      duration: response.durationMs,
     };
-
   } catch (error) {
     if (error instanceof OpenRouterError) {
       throw convertError(error);
@@ -1650,11 +1549,7 @@ export async function generateFlashcards(
       throw error;
     }
 
-    throw new LLMServiceError(
-      'Unexpected error during flashcard generation',
-      'INTERNAL_ERROR',
-      500
-    );
+    throw new LLMServiceError("Unexpected error during flashcard generation", "INTERNAL_ERROR", 500);
   }
 }
 ```
@@ -1667,22 +1562,22 @@ export async function generateFlashcards(
 
 ```typescript
 // Eksport wszystkich serwisów
-export { OpenRouterService } from './openRouterService';
-export { OpenRouterError } from './openRouterService.errors';
+export { OpenRouterService } from "./openRouterService";
+export { OpenRouterError } from "./openRouterService.errors";
 export type {
   OpenRouterConfig,
   OpenRouterCompletionRequest,
   OpenRouterCompletionResponse,
   ModelParameters,
   ResponseSchema,
-  OpenRouterErrorCode
-} from './openRouterService.types';
+  OpenRouterErrorCode,
+} from "./openRouterService.types";
 
-export { generateFlashcards, LLMServiceError } from './llmService';
-export * from './flashcardService';
-export * from './generationService';
-export * from './hashService';
-export * from './errorLogService';
+export { generateFlashcards, LLMServiceError } from "./llmService";
+export * from "./flashcardService";
+export * from "./generationService";
+export * from "./hashService";
+export * from "./errorLogService";
 ```
 
 ---
@@ -1694,27 +1589,27 @@ export * from './errorLogService';
 Jeśli projekt używa testów:
 
 ```typescript
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { OpenRouterService } from '../openRouterService';
-import { OpenRouterError } from '../openRouterService.errors';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { OpenRouterService } from "../openRouterService";
+import { OpenRouterError } from "../openRouterService.errors";
 
-describe('OpenRouterService', () => {
+describe("OpenRouterService", () => {
   let service: OpenRouterService;
 
   beforeEach(() => {
     service = new OpenRouterService({
-      apiKey: 'test-api-key',
-      defaultModel: 'test-model'
+      apiKey: "test-api-key",
+      defaultModel: "test-model",
     });
   });
 
-  it('should throw error when API key is missing', () => {
+  it("should throw error when API key is missing", () => {
     expect(() => {
-      new OpenRouterService({ apiKey: '' });
+      new OpenRouterService({ apiKey: "" });
     }).toThrow(OpenRouterError);
   });
 
-  it('should build request body correctly', () => {
+  it("should build request body correctly", () => {
     // Test prywatnej metody przez publiczną
     // ...
   });
@@ -1731,7 +1626,7 @@ describe('OpenRouterService', () => {
 
 Dodaj sekcję o OpenRouter:
 
-```markdown
+````markdown
 ## OpenRouter Integration
 
 This project uses OpenRouter.ai as the LLM provider. OpenRouter provides access to multiple AI models through a single API.
@@ -1743,6 +1638,7 @@ Set the `OPENROUTER_API_KEY` environment variable in your `.env` file:
 ```env
 OPENROUTER_API_KEY=your-openrouter-api-key
 ```
+````
 
 ### Supported Models
 
@@ -1755,23 +1651,24 @@ OPENROUTER_API_KEY=your-openrouter-api-key
 The `OpenRouterService` is used internally by `llmService.generateFlashcards()`. You can also use it directly for other LLM tasks:
 
 ```typescript
-import { OpenRouterService } from './lib/services/openRouterService';
+import { OpenRouterService } from "./lib/services/openRouterService";
 
 const service = new OpenRouterService({
-  apiKey: import.meta.env.OPENROUTER_API_KEY
+  apiKey: import.meta.env.OPENROUTER_API_KEY,
 });
 
 const response = await service.generateCompletion({
-  systemMessage: 'You are a helpful assistant.',
-  userMessage: 'Explain TypeScript.',
+  systemMessage: "You are a helpful assistant.",
+  userMessage: "Explain TypeScript.",
   modelParams: {
-    temperature: 0.5
-  }
+    temperature: 0.5,
+  },
 });
 ```
 
 For structured responses, use the `responseSchema` parameter with a Zod schema.
-```
+
+````
 
 ---
 
@@ -1781,7 +1678,7 @@ For structured responses, use the `responseSchema` parameter with a Zod schema.
 
 ```bash
 npm run build
-```
+````
 
 2. **Uruchom serwer deweloperski:**
 
@@ -1821,8 +1718,8 @@ private metrics = {
 private updateMetrics(response: OpenRouterCompletionResponse<any>): void {
   this.metrics.totalRequests++;
   this.metrics.totalTokens += response.metadata?.tokensTotal ?? 0;
-  this.metrics.averageDuration = 
-    (this.metrics.averageDuration * (this.metrics.totalRequests - 1) + response.durationMs) / 
+  this.metrics.averageDuration =
+    (this.metrics.averageDuration * (this.metrics.totalRequests - 1) + response.durationMs) /
     this.metrics.totalRequests;
 }
 
@@ -1885,7 +1782,7 @@ Ten przewodnik implementacji dostarcza kompleksowy plan wdrożenia usługi OpenR
 ✅ **Strukturalnych odpowiedzi** - wykorzystanie `response_format` z JSON Schema  
 ✅ **Walidacji** - użycie Zod do walidacji odpowiedzi  
 ✅ **Testowalności** - separacja logiki, dependency injection  
-✅ **Maintainability** - czysty kod zgodny z zasadami projektu  
+✅ **Maintainability** - czysty kod zgodny z zasadami projektu
 
 Implementacja jest gotowa do użycia w środowisku produkcyjnym i może być łatwo rozszerzona o dodatkowe funkcjonalności, takie jak:
 
@@ -1896,4 +1793,3 @@ Implementacja jest gotowa do użycia w środowisku produkcyjnym i może być ła
 - Embedding models
 
 Powodzenia w implementacji! 🚀
-

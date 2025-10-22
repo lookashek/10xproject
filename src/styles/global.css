@@ -117,12 +117,12 @@
   body {
     @apply bg-background text-foreground;
   }
-  
+
   /* Smooth transitions dla dark mode */
   html {
     transition: background-color 0.2s ease-in-out;
   }
-  
+
   * {
     transition-property: color, background-color, border-color;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -134,15 +134,15 @@
   .perspective-1000 {
     perspective: 1000px;
   }
-  
+
   .transform-style-3d {
     transform-style: preserve-3d;
   }
-  
+
   .backface-hidden {
     backface-visibility: hidden;
   }
-  
+
   .rotate-y-180 {
     transform: rotateY(180deg);
   }
@@ -175,7 +175,8 @@
 
   /* Pulse animation dla FlipButton */
   @keyframes pulse-subtle {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
       transform: scale(1);
     }

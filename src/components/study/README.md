@@ -23,6 +23,7 @@ StudySessionView (main container)
 ## Accessibility Features
 
 ### Semantic HTML
+
 - `<main>` - główny content sesji
 - `<article>` - StudyCard
 - `<button>` - wszystkie interaktywne elementy
@@ -30,6 +31,7 @@ StudySessionView (main container)
 - Proper heading hierarchy (h1, h2, h3)
 
 ### ARIA Attributes
+
 - `aria-label` - opisowe labels dla wszystkich interaktywnych elementów
 - `aria-live="polite"` - announcements dla screen readers
 - `aria-atomic="true"` - kompletne announcements
@@ -38,7 +40,9 @@ StudySessionView (main container)
 - `role="status"` - dla completion message
 
 ### Keyboard Navigation
+
 **Shortcuts:**
+
 - `Spacja` - Flip karty (pokazanie odpowiedzi)
 - `1` - Ocena "Again" (nie pamiętam)
 - `2` - Ocena "Hard" (trudne)
@@ -47,16 +51,19 @@ StudySessionView (main container)
 - `Escape` - Wyjście z sesji (z confirmation)
 
 **Tab Order:**
+
 1. Exit button (header)
 2. Flip button (gdy visible)
 3. Rating buttons (gdy visible, 1-4)
 
 **Focus Management:**
+
 - `focus-visible:ring-2` - wyraźne focus rings
 - `focus-visible:ring-offset-2` - offset dla lepszej widoczności
 - Kolorowe focus rings odpowiadające wariantom przycisków
 
 ### Screen Reader Support
+
 - Live regions dla dynamic updates (progress, transitions)
 - Opisowe announcements po każdej akcji
 - Hidden visual elements (`sr-only`) z kontekstem
@@ -64,6 +71,7 @@ StudySessionView (main container)
 - Keyboard hints visible dla wszystkich userów
 
 ### Reduced Motion Support
+
 ```css
 @media (prefers-reduced-motion: reduce) {
   /* Wszystkie animacje wyłączone lub znacząco uproszczone */
@@ -75,6 +83,7 @@ StudySessionView (main container)
 ## Testing Checklist
 
 ### Manual Keyboard Testing
+
 - [ ] Tab przez wszystkie interaktywne elementy
 - [ ] Spacja działa dla flip
 - [ ] 1-4 działają dla oceny (tylko gdy isFlipped)
@@ -83,6 +92,7 @@ StudySessionView (main container)
 - [ ] Focus visible na wszystkich elementach
 
 ### Screen Reader Testing (NVDA/JAWS/VoiceOver)
+
 - [ ] All landmarks announced properly
 - [ ] Button labels clear and descriptive
 - [ ] Live regions announce updates
@@ -90,6 +100,7 @@ StudySessionView (main container)
 - [ ] Progress updates announced
 
 ### Lighthouse Accessibility Score
+
 - Target: **100/100**
 - Required checks:
   - All images have alt text (N/A - brak images)
@@ -99,6 +110,7 @@ StudySessionView (main container)
   - Valid ARIA attributes
 
 ### Browser Compatibility
+
 - [ ] Chrome (latest)
 - [ ] Firefox (latest)
 - [ ] Safari (latest)
@@ -109,6 +121,7 @@ StudySessionView (main container)
 ## Performance
 
 ### Optimizations
+
 - `React.memo` dla StudyCard (prevent re-renders)
 - `useCallback` dla event handlers
 - `useMemo` dla sorted cards
@@ -116,6 +129,7 @@ StudySessionView (main container)
 - localStorage batch updates
 
 ### Expected Performance
+
 - Initial load: < 2s
 - Flip transition: 300ms
 - Card transition: 300ms
@@ -147,4 +161,3 @@ StudySessionView (main container)
 - [ ] Dark mode optimizations
 - [ ] Batch study sessions
 - [ ] Study reminders
-

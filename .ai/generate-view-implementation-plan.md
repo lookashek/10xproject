@@ -5,6 +5,7 @@
 Widok Generowania Fiszek umożliwia użytkownikom automatyczne tworzenie fiszek edukacyjnych przy użyciu AI. Użytkownik wkleja tekst źródłowy (1000-10000 znaków), który jest następnie przetwarzany przez model językowy LLM, generujący propozycje fiszek. Użytkownik może przeglądać, edytować, akceptować lub odrzucać wygenerowane propozycje przed zapisaniem ich do bazy danych.
 
 Kluczowe funkcjonalności widoku:
+
 - Formularz z textarea do wprowadzania tekstu źródłowego
 - Real-time walidacja długości tekstu z wizualnym licznikiem znaków
 - Generowanie propozycji fiszek przez AI z informacją o postępie
@@ -24,6 +25,7 @@ Kluczowe funkcjonalności widoku:
 **Middleware**: Widok chroniony przez middleware sprawdzające obecność tokenu JWT. W przypadku braku tokenu użytkownik zostanie przekierowany do `/login`.
 
 **Nawigacja**:
+
 - Dostępny z dashboard przez kafelek "Generuj fiszki"
 - Logo w headerze umożliwia powrót do `/dashboard`
 - Po zapisaniu fiszek użytkownik pozostaje na tej samej stronie z wyczyszczonym formularzem
@@ -62,6 +64,7 @@ generate.astro (Astro page)
 ```
 
 **Podział odpowiedzialności**:
+
 - `generate.astro` - Strona Astro, wrapper dla komponentu React
 - `GenerateView` - Główny kontener React zarządzający stanem całego widoku
 - `GenerateForm` - Formularz do wprowadzania tekstu źródłowego
@@ -76,30 +79,34 @@ generate.astro (Astro page)
 **Opis**: Główny komponent React zarządzający całym przepływem widoku generowania fiszek. Odpowiada za orkiestrację stanu aplikacji, wywołania API oraz koordynację podkomponentów.
 
 **Główne elementy HTML i komponenty**:
+
 ```tsx
 <div className="container mx-auto px-4 py-8 max-w-4xl">
   <header>
     <h1>Generuj fiszki AI</h1>
     <p>Opis...</p>
   </header>
-  
+
   <GenerateForm />
-  
+
   {isLoading && <LoadingIndicator />}
-  
+
   {proposalData && <ProposalSection />}
 </div>
 ```
 
 **Obsługiwane zdarzenia**:
+
 - `handleGenerate(sourceText: string)` - Wywołanie API generowania, obsługa loading state
 - `handleSaveSelected()` - Zapisywanie zaznaczonych i edytowanych fiszek
 - `handleReset()` - Reset stanu po pomyślnym zapisaniu lub cancel
 
 **Warunki walidacji**:
+
 - Brak - komponent orchestrator, walidację wykonują podkomponenty
 
 **Typy wymagane**:
+
 - `GenerateViewState` - stan widoku
 - `GenerationData` - dane wygenerowane z API
 - Typy z API: `GenerationCreateResponse`, `ProposedFlashcard`
@@ -111,6 +118,7 @@ generate.astro (Astro page)
 **Opis**: Formularz do wprowadzania tekstu źródłowego. Zawiera textarea z walidacją długości tekstu (1000-10000 znaków), licznik znaków w czasie rzeczywistym oraz przycisk generowania.
 
 **Główne elementy HTML i komponenty**:
+
 ```tsx
 <form onSubmit={handleSubmit} className="space-y-4">
   <div>
@@ -128,24 +136,15 @@ generate.astro (Astro page)
       aria-describedby="char-counter char-error"
       aria-invalid={!isValid}
     />
-    <CharacterCounter 
-      current={charCount} 
-      min={1000} 
-      max={10000}
-      isValid={isValid}
-    />
+    <CharacterCounter current={charCount} min={1000} max={10000} isValid={isValid} />
     {validationError && (
       <p id="char-error" className="text-sm text-destructive">
         {validationError}
       </p>
     )}
   </div>
-  
-  <Button 
-    type="submit" 
-    disabled={!isValid || isLoading}
-    className="w-full"
-  >
+
+  <Button type="submit" disabled={!isValid || isLoading} className="w-full">
     {isLoading ? (
       <>
         <Loader2 className="animate-spin" />
@@ -162,21 +161,25 @@ generate.astro (Astro page)
 ```
 
 **Obsługiwane zdarzenia**:
+
 - `handleChange(e)` - Update stanu textarea, walidacja real-time
 - `handleSubmit(e)` - Wywołanie callback `onGenerate` z walidowanym tekstem
 - `handleKeyDown(e)` - Obsługa Ctrl+Enter dla szybkiego submitu
 
 **Warunki walidacji**:
+
 - **Długość tekstu**: min 1000, max 10000 znaków
 - **Tekst niepusty**: po trim() musi mieć zawartość
 - **Disable przycisku**: gdy tekst nieprawidłowy lub trwa ładowanie
 - **Wizualna informacja**: licznik znaków zmienia kolor na czerwony gdy invalid
 
 **Typy wymagane**:
+
 - `GenerateFormProps` - propsy komponentu
 - `GenerateFormState` - lokalny stan (sourceText, isValid, charCount)
 
 **Propsy**:
+
 ```typescript
 interface GenerateFormProps {
   onGenerate: (sourceText: string) => Promise<void>;
@@ -189,12 +192,10 @@ interface GenerateFormProps {
 **Opis**: Komponent wyświetlający licznik znaków w czasie rzeczywistym z wizualną informacją o poprawności długości tekstu.
 
 **Główne elementy HTML i komponenty**:
+
 ```tsx
-<div 
-  className={cn(
-    "flex justify-between text-sm",
-    isValid ? "text-muted-foreground" : "text-destructive"
-  )}
+<div
+  className={cn("flex justify-between text-sm", isValid ? "text-muted-foreground" : "text-destructive")}
   role="status"
   aria-live="polite"
   aria-atomic="true"
@@ -205,7 +206,7 @@ interface GenerateFormProps {
     {isValid && "Długość poprawna"}
   </span>
   <span className="font-mono">
-    {current.toLocaleString('pl-PL')} / {max.toLocaleString('pl-PL')}
+    {current.toLocaleString("pl-PL")} / {max.toLocaleString("pl-PL")}
   </span>
 </div>
 ```
@@ -215,6 +216,7 @@ interface GenerateFormProps {
 **Warunki walidacji**: Brak (otrzymuje stan walidacji z rodzica)
 
 **Typy wymagane**:
+
 ```typescript
 interface CharacterCounterProps {
   current: number;
@@ -231,14 +233,13 @@ interface CharacterCounterProps {
 **Opis**: Komponent wyświetlany podczas generowania fiszek przez AI. Pokazuje spinner i tekst informujący o trwającej operacji.
 
 **Główne elementy HTML i komponenty**:
+
 ```tsx
 <div className="flex flex-col items-center justify-center py-12 space-y-4">
   <Loader2 className="h-12 w-12 animate-spin text-primary" />
   <div className="text-center space-y-2">
     <p className="text-lg font-medium">Generowanie fiszek...</p>
-    <p className="text-sm text-muted-foreground">
-      To może potrwać kilka sekund
-    </p>
+    <p className="text-sm text-muted-foreground">To może potrwać kilka sekund</p>
   </div>
 </div>
 ```
@@ -249,7 +250,8 @@ interface CharacterCounterProps {
 
 **Typy wymagane**: Brak (lub opcjonalny `text?: string`)
 
-**Propsy**: 
+**Propsy**:
+
 ```typescript
 interface LoadingIndicatorProps {
   text?: string;
@@ -262,20 +264,15 @@ interface LoadingIndicatorProps {
 **Opis**: Sekcja zawierająca listę wygenerowanych propozycji wraz z kontrolkami do zaznaczania i zapisywania. Renderowana tylko po pomyślnym wygenerowaniu propozycji.
 
 **Główne elementy HTML i komponenty**:
+
 ```tsx
 <section className="space-y-6">
   <header>
     <h2 className="text-2xl font-semibold">Wygenerowane propozycje</h2>
-    <p className="text-muted-foreground">
-      Przejrzyj propozycje, edytuj jeśli potrzeba i wybierz, które chcesz zapisać
-    </p>
+    <p className="text-muted-foreground">Przejrzyj propozycje, edytuj jeśli potrzeba i wybierz, które chcesz zapisać</p>
   </header>
-  
-  <ProposalList
-    proposals={proposals}
-    generationId={generationId}
-    onSave={handleSave}
-  />
+
+  <ProposalList proposals={proposals} generationId={generationId} onSave={handleSave} />
 </section>
 ```
 
@@ -284,6 +281,7 @@ interface LoadingIndicatorProps {
 **Warunki walidacji**: Brak (komponent wrapper)
 
 **Typy wymagane**:
+
 ```typescript
 interface ProposalSectionProps {
   generationData: GenerationData;
@@ -298,23 +296,16 @@ interface ProposalSectionProps {
 **Opis**: Lista propozycji fiszek z kontrolkami do zaznaczania wszystkich/żadnych oraz przyciskiem zapisu. Zarządza stanem zaznaczenia i edycji każdej propozycji.
 
 **Główne elementy HTML i komponenty**:
+
 ```tsx
 <div className="space-y-4">
   {/* Kontrolki zaznaczania */}
   <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
     <div className="flex gap-2">
-      <Button 
-        variant="outline" 
-        size="sm"
-        onClick={handleSelectAll}
-      >
+      <Button variant="outline" size="sm" onClick={handleSelectAll}>
         Zaznacz wszystkie
       </Button>
-      <Button 
-        variant="outline" 
-        size="sm"
-        onClick={handleDeselectAll}
-      >
+      <Button variant="outline" size="sm" onClick={handleDeselectAll}>
         Odznacz wszystkie
       </Button>
     </div>
@@ -339,12 +330,7 @@ interface ProposalSectionProps {
 
   {/* Przycisk zapisu */}
   <div className="flex justify-end pt-4">
-    <Button
-      size="lg"
-      onClick={handleSave}
-      disabled={selectedCount === 0 || isSaving}
-      className="min-w-[200px]"
-    >
+    <Button size="lg" onClick={handleSave} disabled={selectedCount === 0 || isSaving} className="min-w-[200px]">
       {isSaving ? (
         <>
           <Loader2 className="animate-spin" />
@@ -362,6 +348,7 @@ interface ProposalSectionProps {
 ```
 
 **Obsługiwane zdarzenia**:
+
 - `handleSelectAll()` - Zaznaczenie wszystkich propozycji
 - `handleDeselectAll()` - Odznaczenie wszystkich propozycji
 - `handleToggleSelect(index)` - Toggle zaznaczenia pojedynczej propozycji
@@ -369,11 +356,13 @@ interface ProposalSectionProps {
 - `handleSave()` - Przygotowanie danych i wywołanie `onSave`
 
 **Warunki walidacji**:
+
 - **Minimum jedna zaznaczona**: Przycisk zapisu disabled gdy `selectedCount === 0`
 - **Walidacja edytowanych pól**: Każde edytowane pole musi spełniać kryteria (max 200/500 znaków)
 - **Określenie source**: Edytowana propozycja = "ai-edited", nieedytowana = "ai-full"
 
 **Typy wymagane**:
+
 ```typescript
 interface ProposalListProps {
   proposals: ProposedFlashcard[];
@@ -395,13 +384,9 @@ interface ProposalListState {
 **Opis**: Pojedyncza karta propozycji fiszki z możliwością zaznaczenia, inline edycji i wizualnym wskaźnikiem źródła (badge "AI").
 
 **Główne elementy HTML i komponenty**:
+
 ```tsx
-<Card 
-  className={cn(
-    "p-4 transition-all",
-    isSelected ? "border-primary bg-primary/5" : "border-border"
-  )}
->
+<Card className={cn("p-4 transition-all", isSelected ? "border-primary bg-primary/5" : "border-border")}>
   <div className="flex gap-3">
     {/* Checkbox */}
     <div className="pt-1">
@@ -440,10 +425,7 @@ interface ProposalListState {
           className={cn(!isSelected && "opacity-50")}
           aria-describedby={`front-counter-${index}`}
         />
-        <div 
-          id={`front-counter-${index}`}
-          className="text-xs text-muted-foreground text-right"
-        >
+        <div id={`front-counter-${index}`} className="text-xs text-muted-foreground text-right">
           {currentFront.length} / 200
         </div>
       </div>
@@ -463,10 +445,7 @@ interface ProposalListState {
           className={cn(!isSelected && "opacity-50")}
           aria-describedby={`back-counter-${index}`}
         />
-        <div 
-          id={`back-counter-${index}`}
-          className="text-xs text-muted-foreground text-right"
-        >
+        <div id={`back-counter-${index}`} className="text-xs text-muted-foreground text-right">
           {currentBack.length} / 500
         </div>
       </div>
@@ -476,24 +455,27 @@ interface ProposalListState {
 ```
 
 **Obsługiwane zdarzenia**:
+
 - `onToggleSelect(index, checked)` - Zmiana stanu zaznaczenia
 - `handleFrontChange(value)` - Edycja front, wywołanie `onEdit`
 - `handleBackChange(value)` - Edycja back, wywołanie `onEdit`
 
 **Warunki walidacji**:
+
 - **Max length front**: 200 znaków
 - **Max length back**: 500 znaków
 - **Disabled gdy niezaznaczone**: Input/Textarea disabled gdy `!isSelected`
 - **Wizualne liczniki**: Pokazują aktualną liczbę znaków / max
 
 **Typy wymagane**:
+
 ```typescript
 interface ProposalCardProps {
   proposal: ProposedFlashcard;
   index: number;
   isSelected: boolean;
   onToggleSelect: (index: number, checked: boolean) => void;
-  onEdit: (index: number, field: 'front' | 'back', value: string) => void;
+  onEdit: (index: number, field: "front" | "back", value: string) => void;
 }
 ```
 
@@ -509,20 +491,20 @@ Następujące typy są już zdefiniowane i mogą być używane bezpośrednio:
 // Command do generowania
 export type GenerationCreateCommand = {
   source_text: string;
-}
+};
 
 // Odpowiedź z API generowania
 export type GenerationCreateResponse = {
   generation: GenerationDTO;
   proposed_flashcards: ProposedFlashcard[];
-}
+};
 
 // Propozycja fiszki od AI
 export type ProposedFlashcard = {
   front: string;
   back: string;
   source: "ai-full";
-}
+};
 
 // Command do tworzenia pojedynczej fiszki
 export type FlashcardCreateCommand = {
@@ -530,15 +512,15 @@ export type FlashcardCreateCommand = {
   back: string;
   source: FlashcardSource; // 'ai-full' | 'ai-edited' | 'manual'
   generation_id?: number | null;
-}
+};
 
 // Command do batch creation
 export type FlashcardBatchCreateCommand = {
   flashcards: FlashcardCreateCommand[];
-}
+};
 
 // DTO generacji (odpowiedź z API)
-export type GenerationDTO = Omit<GenerationEntity, 'user_id'>;
+export type GenerationDTO = Omit<GenerationEntity, "user_id">;
 ```
 
 ### 5.2. Nowe typy ViewModel (do dodania)
@@ -546,22 +528,18 @@ export type GenerationDTO = Omit<GenerationEntity, 'user_id'>;
 Należy utworzyć plik `src/lib/viewModels/generateView.types.ts` z następującymi typami:
 
 ```typescript
-import type { 
-  ProposedFlashcard, 
-  GenerationDTO,
-  FlashcardCreateCommand 
-} from '../../types';
+import type { ProposedFlashcard, GenerationDTO, FlashcardCreateCommand } from "../../types";
 
 /**
  * Stan głównego widoku GenerateView
  */
 export interface GenerateViewState {
   // Faza widoku
-  phase: 'input' | 'loading' | 'reviewing' | 'saving';
-  
+  phase: "input" | "loading" | "reviewing" | "saving";
+
   // Dane wygenerowane z API (null przed generowaniem)
   generationData: GenerationData | null;
-  
+
   // Stan ładowania i błędów
   isLoading: boolean;
   error: GenerateViewError | null;
@@ -579,7 +557,7 @@ export interface GenerationData {
  * Struktura błędu w widoku
  */
 export interface GenerateViewError {
-  type: 'validation' | 'duplicate' | 'llm_error' | 'network' | 'server';
+  type: "validation" | "duplicate" | "llm_error" | "network" | "server";
   message: string;
   details?: {
     existingGenerationId?: number;
@@ -621,10 +599,10 @@ export interface GenerateFormProps {
 export interface ProposalListState {
   // Set indeksów zaznaczonych propozycji
   selectedIds: Set<number>;
-  
+
   // Mapa edytowanych pól (index -> zmiany)
   editedProposals: Map<number, ProposalEdit>;
-  
+
   // Stan zapisywania
   isSaving: boolean;
 }
@@ -633,8 +611,8 @@ export interface ProposalListState {
  * Edycja propozycji
  */
 export interface ProposalEdit {
-  front?: string;  // Jeśli undefined, bez zmian
-  back?: string;   // Jeśli undefined, bez zmian
+  front?: string; // Jeśli undefined, bez zmian
+  back?: string; // Jeśli undefined, bez zmian
 }
 
 /**
@@ -655,7 +633,7 @@ export interface ProposalCardProps {
   isSelected: boolean;
   editedValues?: ProposalEdit; // Aktualne edycje (jeśli są)
   onToggleSelect: (index: number, checked: boolean) => void;
-  onEdit: (index: number, field: 'front' | 'back', value: string) => void;
+  onEdit: (index: number, field: "front" | "back", value: string) => void;
 }
 
 /**
@@ -709,13 +687,13 @@ export interface ApiErrorResponse {
  * Kody błędów API
  */
 export type ApiErrorCode =
-  | 'VALIDATION_ERROR'
-  | 'NOT_FOUND'
-  | 'CONFLICT'
-  | 'UNPROCESSABLE_ENTITY'
-  | 'RATE_LIMIT_EXCEEDED'
-  | 'INTERNAL_SERVER_ERROR'
-  | 'SERVICE_UNAVAILABLE';
+  | "VALIDATION_ERROR"
+  | "NOT_FOUND"
+  | "CONFLICT"
+  | "UNPROCESSABLE_ENTITY"
+  | "RATE_LIMIT_EXCEEDED"
+  | "INTERNAL_SERVER_ERROR"
+  | "SERVICE_UNAVAILABLE";
 ```
 
 ## 6. Zarządzanie stanem
@@ -725,9 +703,10 @@ export type ApiErrorCode =
 **Lokalizacja**: `GenerateView` komponent (useState hooks)
 
 **Struktura stanu**:
+
 ```typescript
 const [viewState, setViewState] = useState<GenerateViewState>({
-  phase: 'input',
+  phase: "input",
   generationData: null,
   isLoading: false,
   error: null,
@@ -735,12 +714,14 @@ const [viewState, setViewState] = useState<GenerateViewState>({
 ```
 
 **Fazy widoku**:
+
 1. **'input'** - Użytkownik wprowadza tekst, formularz aktywny
 2. **'loading'** - Trwa generowanie przez AI, wyświetlany LoadingIndicator
 3. **'reviewing'** - Propozycje wyświetlone, użytkownik przegląda i edytuje
 4. **'saving'** - Trwa zapisywanie zaznaczonych fiszek do bazy
 
 **Przejścia między fazami**:
+
 ```
 input -> (submit) -> loading -> (success) -> reviewing -> (save) -> saving -> (success) -> input
                               -> (error) -> input
@@ -751,9 +732,10 @@ input -> (submit) -> loading -> (success) -> reviewing -> (save) -> saving -> (s
 **Lokalizacja**: `GenerateForm` komponent (useState)
 
 **Struktura**:
+
 ```typescript
 const [formState, setFormState] = useState<GenerateFormState>({
-  sourceText: initialValue || '',
+  sourceText: initialValue || "",
   charCount: initialValue?.length || 0,
   isValid: false,
   validationError: null,
@@ -761,30 +743,31 @@ const [formState, setFormState] = useState<GenerateFormState>({
 ```
 
 **Walidacja real-time**:
+
 ```typescript
 const validateText = (text: string): boolean => {
   const trimmed = text.trim();
   const length = trimmed.length;
-  
+
   if (length < 1000) {
-    setFormState(prev => ({
+    setFormState((prev) => ({
       ...prev,
       isValid: false,
       validationError: `Tekst musi mieć minimum 1000 znaków (aktualnie: ${length})`,
     }));
     return false;
   }
-  
+
   if (length > 10000) {
-    setFormState(prev => ({
+    setFormState((prev) => ({
       ...prev,
       isValid: false,
       validationError: `Tekst może mieć maksymalnie 10000 znaków (aktualnie: ${length})`,
     }));
     return false;
   }
-  
-  setFormState(prev => ({
+
+  setFormState((prev) => ({
     ...prev,
     isValid: true,
     validationError: null,
@@ -798,19 +781,19 @@ const validateText = (text: string): boolean => {
 **Lokalizacja**: `ProposalList` komponent (useState)
 
 **Struktura**:
+
 ```typescript
 const [selectedIds, setSelectedIds] = useState<Set<number>>(
   new Set(proposals.map((_, index) => index)) // Domyślnie wszystkie zaznaczone
 );
 
-const [editedProposals, setEditedProposals] = useState<Map<number, ProposalEdit>>(
-  new Map()
-);
+const [editedProposals, setEditedProposals] = useState<Map<number, ProposalEdit>>(new Map());
 
 const [isSaving, setIsSaving] = useState(false);
 ```
 
 **Operacje na stanie**:
+
 ```typescript
 // Zaznaczenie wszystkich
 const handleSelectAll = () => {
@@ -824,7 +807,7 @@ const handleDeselectAll = () => {
 
 // Toggle pojedynczej propozycji
 const handleToggleSelect = (index: number, checked: boolean) => {
-  setSelectedIds(prev => {
+  setSelectedIds((prev) => {
     const newSet = new Set(prev);
     if (checked) {
       newSet.add(index);
@@ -836,8 +819,8 @@ const handleToggleSelect = (index: number, checked: boolean) => {
 };
 
 // Edycja propozycji
-const handleEdit = (index: number, field: 'front' | 'back', value: string) => {
-  setEditedProposals(prev => {
+const handleEdit = (index: number, field: "front" | "back", value: string) => {
+  setEditedProposals((prev) => {
     const newMap = new Map(prev);
     const currentEdit = newMap.get(index) || {};
     newMap.set(index, {
@@ -856,16 +839,12 @@ Można wydzielić logikę do custom hooka dla lepszej organizacji:
 **Plik**: `src/lib/hooks/useGenerateFlashcards.ts`
 
 ```typescript
-import { useState, useCallback } from 'react';
-import type { 
-  GenerateViewState, 
-  GenerationData,
-  GenerateViewError 
-} from '../viewModels/generateView.types';
+import { useState, useCallback } from "react";
+import type { GenerateViewState, GenerationData, GenerateViewError } from "../viewModels/generateView.types";
 
 export function useGenerateFlashcards() {
   const [viewState, setViewState] = useState<GenerateViewState>({
-    phase: 'input',
+    phase: "input",
     generationData: null,
     isLoading: false,
     error: null,
@@ -883,7 +862,7 @@ export function useGenerateFlashcards() {
 
   const reset = useCallback(() => {
     setViewState({
-      phase: 'input',
+      phase: "input",
       generationData: null,
       isLoading: false,
       error: null,
@@ -906,19 +885,21 @@ export function useGenerateFlashcards() {
 **Cel**: Generowanie propozycji fiszek z tekstu źródłowego
 
 **Request**:
+
 ```typescript
 // Typ
 type GenerationCreateCommand = {
   source_text: string;
-}
+};
 
 // Przykład
 const request = {
-  source_text: "TypeScript is a strongly typed programming language..."
+  source_text: "TypeScript is a strongly typed programming language...",
 };
 ```
 
 **Response (201 Created)**:
+
 ```typescript
 // Typ
 type GenerationCreateResponse = {
@@ -958,6 +939,7 @@ type GenerationCreateResponse = {
 **Error Responses**:
 
 1. **400 Bad Request** - Nieprawidłowe dane wejściowe
+
 ```json
 {
   "error": {
@@ -971,6 +953,7 @@ type GenerationCreateResponse = {
 ```
 
 2. **409 Conflict** - Duplikat generacji (ten sam tekst już wygenerowany)
+
 ```json
 {
   "error": {
@@ -984,6 +967,7 @@ type GenerationCreateResponse = {
 ```
 
 3. **422 Unprocessable Entity** - Walidacja długości tekstu
+
 ```json
 {
   "error": {
@@ -999,6 +983,7 @@ type GenerationCreateResponse = {
 ```
 
 4. **500 Internal Server Error** - Błąd LLM
+
 ```json
 {
   "error": {
@@ -1009,6 +994,7 @@ type GenerationCreateResponse = {
 ```
 
 5. **503 Service Unavailable** - Niedostępność LLM API
+
 ```json
 {
   "error": {
@@ -1019,12 +1005,13 @@ type GenerationCreateResponse = {
 ```
 
 **Implementacja wywołania**:
+
 ```typescript
 async function generateFlashcards(sourceText: string): Promise<GenerationData> {
-  const response = await fetch('/api/generations', {
-    method: 'POST',
+  const response = await fetch("/api/generations", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ source_text: sourceText }),
   });
@@ -1035,7 +1022,7 @@ async function generateFlashcards(sourceText: string): Promise<GenerationData> {
   }
 
   const data: GenerationCreateResponse = await response.json();
-  
+
   return {
     generation: data.generation,
     proposals: data.proposed_flashcards,
@@ -1048,40 +1035,42 @@ async function generateFlashcards(sourceText: string): Promise<GenerationData> {
 **Cel**: Zapisywanie zaakceptowanych fiszek (batch)
 
 **Request**:
+
 ```typescript
 // Typ
 type FlashcardBatchCreateCommand = {
   flashcards: FlashcardCreateCommand[];
-}
+};
 
 // FlashcardCreateCommand:
 type FlashcardCreateCommand = {
   front: string;
   back: string;
-  source: 'ai-full' | 'ai-edited' | 'manual';
+  source: "ai-full" | "ai-edited" | "manual";
   generation_id?: number | null;
-}
+};
 
 // Przykład
 const request = {
-  "flashcards": [
+  flashcards: [
     {
-      "front": "What is TypeScript?",
-      "back": "A strongly typed programming language...",
-      "source": "ai-full",
-      "generation_id": 46
+      front: "What is TypeScript?",
+      back: "A strongly typed programming language...",
+      source: "ai-full",
+      generation_id: 46,
     },
     {
-      "front": "What are TypeScript benefits? (edited)",
-      "back": "Type safety and IDE support",
-      "source": "ai-edited",
-      "generation_id": 46
-    }
-  ]
+      front: "What are TypeScript benefits? (edited)",
+      back: "Type safety and IDE support",
+      source: "ai-edited",
+      generation_id: 46,
+    },
+  ],
 };
 ```
 
 **Response (201 Created)**:
+
 ```typescript
 // Typ
 type FlashcardListResponse = {
@@ -1120,14 +1109,13 @@ type FlashcardListResponse = {
 3. **422 Unprocessable Entity** - Walidacja (front > 200 chars, back > 500 chars)
 
 **Implementacja wywołania**:
+
 ```typescript
-async function saveFlashcards(
-  flashcards: FlashcardCreateCommand[]
-): Promise<void> {
-  const response = await fetch('/api/flashcards', {
-    method: 'POST',
+async function saveFlashcards(flashcards: FlashcardCreateCommand[]): Promise<void> {
+  const response = await fetch("/api/flashcards", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ flashcards }),
   });
@@ -1147,12 +1135,8 @@ async function saveFlashcards(
 **Plik**: `src/lib/api/generations.ts`
 
 ```typescript
-import type {
-  GenerationCreateCommand,
-  GenerationCreateResponse,
-  FlashcardBatchCreateCommand,
-} from '../../types';
-import type { GenerationData } from '../viewModels/generateView.types';
+import type { GenerationCreateCommand, GenerationCreateResponse, FlashcardBatchCreateCommand } from "../../types";
+import type { GenerationData } from "../viewModels/generateView.types";
 
 /**
  * Custom error class for API errors
@@ -1165,21 +1149,19 @@ export class ApiError extends Error {
     public details?: Record<string, unknown>
   ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
 /**
  * Generuje fiszki z tekstu źródłowego
  */
-export async function generateFlashcardsFromText(
-  sourceText: string
-): Promise<GenerationData> {
+export async function generateFlashcardsFromText(sourceText: string): Promise<GenerationData> {
   try {
-    const response = await fetch('/api/generations', {
-      method: 'POST',
+    const response = await fetch("/api/generations", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         source_text: sourceText,
@@ -1188,12 +1170,7 @@ export async function generateFlashcardsFromText(
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new ApiError(
-        response.status,
-        errorData.error.code,
-        errorData.error.message,
-        errorData.error.details
-      );
+      throw new ApiError(response.status, errorData.error.code, errorData.error.message, errorData.error.details);
     }
 
     const data: GenerationCreateResponse = await response.json();
@@ -1207,25 +1184,19 @@ export async function generateFlashcardsFromText(
       throw error;
     }
     // Network error
-    throw new ApiError(
-      0,
-      'NETWORK_ERROR',
-      'Sprawdź połączenie internetowe i spróbuj ponownie'
-    );
+    throw new ApiError(0, "NETWORK_ERROR", "Sprawdź połączenie internetowe i spróbuj ponownie");
   }
 }
 
 /**
  * Zapisuje zaakceptowane fiszki
  */
-export async function saveAcceptedFlashcards(
-  flashcards: FlashcardCreateCommand[]
-): Promise<void> {
+export async function saveAcceptedFlashcards(flashcards: FlashcardCreateCommand[]): Promise<void> {
   try {
-    const response = await fetch('/api/flashcards', {
-      method: 'POST',
+    const response = await fetch("/api/flashcards", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         flashcards,
@@ -1234,12 +1205,7 @@ export async function saveAcceptedFlashcards(
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new ApiError(
-        response.status,
-        errorData.error.code,
-        errorData.error.message,
-        errorData.error.details
-      );
+      throw new ApiError(response.status, errorData.error.code, errorData.error.message, errorData.error.details);
     }
 
     // Success
@@ -1249,11 +1215,7 @@ export async function saveAcceptedFlashcards(
       throw error;
     }
     // Network error
-    throw new ApiError(
-      0,
-      'NETWORK_ERROR',
-      'Sprawdź połączenie internetowe i spróbuj ponownie'
-    );
+    throw new ApiError(0, "NETWORK_ERROR", "Sprawdź połączenie internetowe i spróbuj ponownie");
   }
 }
 ```
@@ -1265,6 +1227,7 @@ export async function saveAcceptedFlashcards(
 **Akcja**: Użytkownik wpisuje/wkleja tekst w textarea
 
 **Przepływ**:
+
 1. Użytkownik fokusuje textarea
 2. Wkleja lub wpisuje tekst
 3. **Real-time**: `onChange` event aktualizuje stan `sourceText`
@@ -1276,6 +1239,7 @@ export async function saveAcceptedFlashcards(
 7. **Przycisk**: Enabled/disabled na podstawie `isValid`
 
 **Keyboard shortcuts**:
+
 - **Ctrl+Enter**: Submit formularza (tylko gdy `isValid`)
 
 ### 8.2. Generowanie fiszek
@@ -1283,21 +1247,22 @@ export async function saveAcceptedFlashcards(
 **Akcja**: Użytkownik klika "Generuj fiszki"
 
 **Przepływ**:
+
 1. Kliknięcie przycisku lub Ctrl+Enter
 2. Walidacja tekstu (jeśli invalid, nie submit)
 3. `onGenerate(sourceText)` wywołane
-4. **UI update**: 
+4. **UI update**:
    - `phase` → 'loading'
    - `isLoading` → true
    - Formularz disabled
    - Wyświetlany `LoadingIndicator`
 5. **API call**: `POST /api/generations`
 6. **Oczekiwanie**: 1-10 sekund (w zależności od LLM)
-7. **Success**: 
+7. **Success**:
    - `phase` → 'reviewing'
    - `generationData` ustawiona
    - Renderowana `ProposalSection`
-8. **Error**: 
+8. **Error**:
    - `phase` → 'input'
    - `error` ustawiony
    - Toast z komunikatem błędu
@@ -1307,6 +1272,7 @@ export async function saveAcceptedFlashcards(
 **Akcja**: Użytkownik przegląda wygenerowane propozycje
 
 **Przepływ**:
+
 1. Wyświetlona lista propozycji
 2. **Domyślnie**: Wszystkie propozycje zaznaczone (checkbox checked)
 3. Użytkownik może:
@@ -1320,20 +1286,22 @@ export async function saveAcceptedFlashcards(
 **Akcja**: Użytkownik edytuje tekst propozycji
 
 **Przepływ**:
+
 1. Użytkownik fokusuje Input (front) lub Textarea (back)
 2. Modyfikuje tekst
-3. **onChange**: 
+3. **onChange**:
    - Aktualizacja `editedProposals` Map
    - Zapisanie zmiany dla danego indeksu i pola
 4. **Licznik znaków**: Wyświetlany pod polem (X / 200 lub X / 500)
-5. **Walidacja**: 
+5. **Walidacja**:
    - Max length enforced przez `maxLength` attribute
    - Jeśli przekroczony, input nie pozwala na więcej znaków
-6. **Oznaczenie edycji**: 
+6. **Oznaczenie edycji**:
    - Jeśli propozycja edytowana → `source: 'ai-edited'`
    - Jeśli nieedytowana → `source: 'ai-full'`
 
 **Ograniczenia**:
+
 - Edycja możliwa tylko dla zaznaczonych propozycji (gdy `isSelected`)
 - Input/Textarea disabled gdy niezaznaczone
 
@@ -1342,6 +1310,7 @@ export async function saveAcceptedFlashcards(
 **Akcja**: Użytkownik klika "Zapisz wybrane (X)"
 
 **Przepływ**:
+
 1. Kliknięcie przycisku "Zapisz wybrane"
 2. **Walidacja**: Minimum jedna propozycja musi być zaznaczona
 3. **Przygotowanie danych**:
@@ -1378,7 +1347,7 @@ export async function saveAcceptedFlashcards(
    - **Minimum**: 1000 znaków (po trim)
    - **Maximum**: 10000 znaków (po trim)
    - **Sprawdzanie**: Real-time przy onChange
-   - **Efekt UI**: 
+   - **Efekt UI**:
      - Licznik znaków czerwony gdy invalid
      - Komunikat błędu pod textarea
      - Przycisk disabled
@@ -1392,6 +1361,7 @@ export async function saveAcceptedFlashcards(
    - **Efekt UI**: Przycisk i textarea disabled podczas ładowania
 
 **Implementacja walidacji**:
+
 ```typescript
 const validateSourceText = (text: string): ValidationResult => {
   const trimmed = text.trim();
@@ -1400,7 +1370,7 @@ const validateSourceText = (text: string): ValidationResult => {
   if (length === 0) {
     return {
       isValid: false,
-      error: 'Wprowadź tekst źródłowy',
+      error: "Wprowadź tekst źródłowy",
     };
   }
 
@@ -1467,11 +1437,12 @@ const validateSourceText = (text: string): ValidationResult => {
    - **Efekt UI**: Przycisk disabled z spinnerem
 
 **Implementacja sprawdzania przed zapisem**:
+
 ```typescript
 const validateBeforeSave = (): boolean => {
   // Sprawdź czy są zaznaczone
   if (selectedIds.size === 0) {
-    toast.error('Zaznacz przynajmniej jedną fiszkę');
+    toast.error("Zaznacz przynajmniej jedną fiszkę");
     return false;
   }
 
@@ -1499,6 +1470,7 @@ const validateBeforeSave = (): boolean => {
 **Backend**: Plik `src/pages/api/generations/index.ts` i `src/pages/api/flashcards/index.ts`
 
 Schematy Zod już istnieją:
+
 - `generationCreateSchema` - walidacja source_text (1000-10000 chars)
 - `flashcardSchema` - walidacja front (max 200), back (max 500)
 
@@ -1511,6 +1483,7 @@ Backend automatycznie zwraca odpowiednie błędy (422, 400) przy nieprawidłowyc
 **Scenariusz**: Tekst źródłowy poza zakresem 1000-10000 znaków
 
 **Odpowiedź API**:
+
 ```json
 {
   "error": {
@@ -1526,14 +1499,16 @@ Backend automatycznie zwraca odpowiednie błędy (422, 400) przy nieprawidłowyc
 ```
 
 **Obsługa w UI**:
+
 ```typescript
-if (error.code === 'UNPROCESSABLE_ENTITY') {
+if (error.code === "UNPROCESSABLE_ENTITY") {
   toast.error(error.message);
   // Opcjonalnie: Focus na textarea
 }
 ```
 
 **Komunikat dla użytkownika**:
+
 - "Tekst musi mieć minimum 1000 znaków"
 - "Tekst może mieć maksymalnie 10000 znaków"
 
@@ -1542,6 +1517,7 @@ if (error.code === 'UNPROCESSABLE_ENTITY') {
 **Scenariusz**: Użytkownik próbuje wygenerować fiszki z tego samego tekstu, który już był przetworzony
 
 **Odpowiedź API**:
+
 ```json
 {
   "error": {
@@ -1555,15 +1531,16 @@ if (error.code === 'UNPROCESSABLE_ENTITY') {
 ```
 
 **Obsługa w UI**:
+
 ```typescript
 if (error.code === 'CONFLICT') {
   const generationId = error.details?.existing_generation_id;
-  
+
   toast.error(
     <div>
       <p>Ta treść została już wygenerowana.</p>
       {generationId && (
-        <a 
+        <a
           href={`/generations/${generationId}`}
           className="underline"
         >
@@ -1577,6 +1554,7 @@ if (error.code === 'CONFLICT') {
 ```
 
 **Komunikat dla użytkownika**:
+
 - "Ta treść została już wygenerowana. Zobacz istniejącą generację [link]"
 
 ### 10.3. Błąd LLM (500 Internal Server Error)
@@ -1584,6 +1562,7 @@ if (error.code === 'CONFLICT') {
 **Scenariusz**: Model LLM zwrócił błąd lub nie udało się sparsować odpowiedzi
 
 **Odpowiedź API**:
+
 ```json
 {
   "error": {
@@ -1594,21 +1573,20 @@ if (error.code === 'CONFLICT') {
 ```
 
 **Obsługa w UI**:
+
 ```typescript
-if (error.code === 'INTERNAL_SERVER_ERROR') {
-  toast.error(
-    'Nie udało się wygenerować fiszek. Spróbuj ponownie za chwilę.',
-    {
-      action: {
-        label: 'Spróbuj ponownie',
-        onClick: () => handleRetry(),
-      },
-    }
-  );
+if (error.code === "INTERNAL_SERVER_ERROR") {
+  toast.error("Nie udało się wygenerować fiszek. Spróbuj ponownie za chwilę.", {
+    action: {
+      label: "Spróbuj ponownie",
+      onClick: () => handleRetry(),
+    },
+  });
 }
 ```
 
 **Komunikat dla użytkownika**:
+
 - "Nie udało się wygenerować fiszek. Spróbuj ponownie."
 - Przycisk "Spróbuj ponownie" w toast
 
@@ -1617,6 +1595,7 @@ if (error.code === 'INTERNAL_SERVER_ERROR') {
 **Scenariusz**: LLM API niedostępne lub timeout
 
 **Odpowiedź API**:
+
 ```json
 {
   "error": {
@@ -1627,16 +1606,15 @@ if (error.code === 'INTERNAL_SERVER_ERROR') {
 ```
 
 **Obsługa w UI**:
+
 ```typescript
-if (error.code === 'SERVICE_UNAVAILABLE') {
-  toast.error(
-    'Serwis AI jest chwilowo niedostępny. Spróbuj ponownie za kilka minut.',
-    { duration: 8000 }
-  );
+if (error.code === "SERVICE_UNAVAILABLE") {
+  toast.error("Serwis AI jest chwilowo niedostępny. Spróbuj ponownie za kilka minut.", { duration: 8000 });
 }
 ```
 
 **Komunikat dla użytkownika**:
+
 - "Serwis AI jest chwilowo niedostępny. Spróbuj ponownie za kilka minut."
 
 ### 10.5. Błąd sieciowy (Network Error)
@@ -1644,6 +1622,7 @@ if (error.code === 'SERVICE_UNAVAILABLE') {
 **Scenariusz**: Brak połączenia internetowego lub timeout
 
 **Wykrywanie**:
+
 ```typescript
 catch (error) {
   if (error.name === 'TypeError' && error.message.includes('fetch')) {
@@ -1653,19 +1632,18 @@ catch (error) {
 ```
 
 **Obsługa w UI**:
+
 ```typescript
-toast.error(
-  'Sprawdź połączenie internetowe i spróbuj ponownie.',
-  {
-    action: {
-      label: 'Spróbuj ponownie',
-      onClick: () => handleRetry(),
-    },
-  }
-);
+toast.error("Sprawdź połączenie internetowe i spróbuj ponownie.", {
+  action: {
+    label: "Spróbuj ponownie",
+    onClick: () => handleRetry(),
+  },
+});
 ```
 
 **Komunikat dla użytkownika**:
+
 - "Sprawdź połączenie internetowe i spróbuj ponownie."
 
 ### 10.6. Błąd zapisu fiszek (409 Conflict przy zapisie)
@@ -1673,6 +1651,7 @@ toast.error(
 **Scenariusz**: Jedna z zapisywanych fiszek już istnieje w bazie
 
 **Odpowiedź API**:
+
 ```json
 {
   "error": {
@@ -1683,13 +1662,13 @@ toast.error(
 ```
 
 **Obsługa w UI**:
+
 ```typescript
-toast.error(
-  'Jedna lub więcej fiszek już istnieje w Twojej kolekcji. Usuń duplikaty i spróbuj ponownie.'
-);
+toast.error("Jedna lub więcej fiszek już istnieje w Twojej kolekcji. Usuń duplikaty i spróbuj ponownie.");
 ```
 
 **Komunikat dla użytkownika**:
+
 - "Jedna lub więcej fiszek już istnieje w Twojej kolekcji."
 
 ### 10.7. Centralna funkcja obsługi błędów
@@ -1781,6 +1760,7 @@ export function handleSaveError(error: ApiError): void {
 **Cel**: Utworzenie wszystkich wymaganych plików i folderów
 
 **Akcje**:
+
 1. Utwórz `src/pages/generate.astro` - strona główna widoku
 2. Utwórz folder `src/components/generate/` dla komponentów React
 3. Utwórz `src/lib/viewModels/generateView.types.ts` - typy ViewModel
@@ -1789,6 +1769,7 @@ export function handleSaveError(error: ApiError): void {
 6. Utwórz `src/lib/hooks/useGenerateFlashcards.ts` - custom hook (opcjonalny)
 
 **Pliki do utworzenia**:
+
 ```
 src/
 ├── pages/
@@ -1818,6 +1799,7 @@ src/
 **Cel**: Zdefiniowanie wszystkich typów TypeScript wymaganych dla widoku
 
 **Akcje**:
+
 1. Otwórz `src/lib/viewModels/generateView.types.ts`
 2. Zdefiniuj wszystkie interfejsy zgodnie z sekcją "5. Typy":
    - `GenerateViewState`
@@ -1835,6 +1817,7 @@ src/
 **Cel**: Utworzenie funkcji do komunikacji z backend API
 
 **Akcje**:
+
 1. Otwórz `src/lib/api/generations.ts`
 2. Zaimplementuj:
    - Klasę `ApiError`
@@ -1876,6 +1859,7 @@ src/
 **Cel**: Formularz do wprowadzania tekstu źródłowego
 
 **Akcje**:
+
 1. Otwórz `src/components/generate/GenerateForm.tsx`
 2. Zaimplementuj:
    - Stan: `sourceText`, `charCount`, `isValid`, `validationError`
@@ -1887,6 +1871,7 @@ src/
 4. Zintegruj `CharacterCounter`
 
 **Weryfikacja**:
+
 - Licznik znaków aktualizuje się real-time
 - Walidacja działa poprawnie (1000-10000)
 - Przycisk disabled/enabled odpowiednio
@@ -1897,6 +1882,7 @@ src/
 **Cel**: Lista propozycji z kontrolkami
 
 **Akcje**:
+
 1. Otwórz `src/components/generate/ProposalList.tsx`
 2. Zaimplementuj:
    - Stan: `selectedIds` (Set), `editedProposals` (Map), `isSaving`
@@ -1912,6 +1898,7 @@ src/
 5. Dodaj przycisk "Zapisz wybrane"
 
 **Weryfikacja**:
+
 - Zaznaczanie/odznaczanie działa
 - Edycja propozycji zapisuje się w stanie
 - Licznik aktualizuje się
@@ -1922,6 +1909,7 @@ src/
 **Cel**: Wrapper dla sekcji propozycji
 
 **Akcje**:
+
 1. Otwórz `src/components/generate/ProposalSection.tsx`
 2. Zaimplementuj:
    - Prosty komponent wrapper
@@ -1935,6 +1923,7 @@ src/
 **Cel**: Orkiestracja całego widoku
 
 **Akcje**:
+
 1. Otwórz `src/components/generate/GenerateView.tsx`
 2. Zaimplementuj:
    - Stan: `viewState` (phase, generationData, isLoading, error)
@@ -1956,6 +1945,7 @@ src/
    - `ProposalSection` gdy phase === 'reviewing' lub 'saving'
 
 **Weryfikacja**:
+
 - Cały flow działa: input → loading → reviewing → saving → reset
 - Błędy wyświetlają się poprawnie
 
@@ -1964,12 +1954,14 @@ src/
 **Cel**: Strona `/generate` w Astro
 
 **Akcje**:
+
 1. Otwórz `src/pages/generate.astro`
 2. Zaimplementuj:
+
 ```astro
 ---
-import Layout from '../layouts/Layout.astro';
-import GenerateView from '../components/generate/GenerateView';
+import Layout from "../layouts/Layout.astro";
+import GenerateView from "../components/generate/GenerateView";
 
 // Placeholder: Sprawdzenie auth (middleware)
 // W przyszłości: const user = Astro.locals.user;
@@ -1987,6 +1979,7 @@ import GenerateView from '../components/generate/GenerateView';
 **Cel**: Dodanie wspólnego nagłówka dla chronionych widoków
 
 **Akcje**:
+
 1. Utwórz `src/components/layout/DashboardHeader.tsx` (jeśli nie istnieje)
 2. Zaimplementuj:
    - Logo (link do `/dashboard`)
@@ -2001,12 +1994,14 @@ import GenerateView from '../components/generate/GenerateView';
 **Cel**: Dopracowanie wyglądu i responsywności
 
 **Akcje**:
+
 1. Dodaj Tailwind classes zgodnie z design system
 2. Sprawdź kontrast kolorów (WCAG AA)
 3. Dodaj dark mode support (jeśli zaimplementowany)
 4. Opcjonalnie: Responsywność dla mobile (poza MVP)
 
 **Weryfikacja**:
+
 - Wygląd zgodny z mockupami
 - Kontrast OK
 - Animacje smooth
@@ -2016,6 +2011,7 @@ import GenerateView from '../components/generate/GenerateView';
 **Cel**: Zapewnienie dostępności widoku
 
 **Akcje**:
+
 1. Dodaj ARIA labels:
    - `aria-label` dla checkboxów
    - `aria-describedby` dla liczników znaków
@@ -2031,6 +2027,7 @@ import GenerateView from '../components/generate/GenerateView';
    - Focus trap nie potrzebny (brak modali)
 
 **Weryfikacja**:
+
 - Przejście przez widok tylko z klawiatury
 - Screen reader czyta wszystko poprawnie
 
@@ -2083,6 +2080,7 @@ import GenerateView from '../components/generate/GenerateView';
 **Cel**: Optymalizacja wydajności i czystości kodu
 
 **Akcje**:
+
 1. Dodaj `React.memo()` dla ProposalCard (jeśli lista długa)
 2. Użyj `useCallback()` dla handlerów przekazywanych do dzieci
 3. Sprawdź czy nie ma zbędnych re-renderów
@@ -2096,6 +2094,7 @@ import GenerateView from '../components/generate/GenerateView';
 **Cel**: Połączenie widoku z Dashboard i nawigacją
 
 **Akcje**:
+
 1. Dodaj link w Dashboard do `/generate`
 2. Sprawdź czy middleware chroni widok (redirect do /login)
 3. Sprawdź czy DashboardHeader logo wraca do dashboard
@@ -2108,6 +2107,7 @@ import GenerateView from '../components/generate/GenerateView';
 **Cel**: Dokumentacja kodu dla przyszłych developerów
 
 **Akcje**:
+
 1. Dodaj README.md w `src/components/generate/`:
    - Opis widoku
    - Diagram komponentów
@@ -2122,6 +2122,7 @@ import GenerateView from '../components/generate/GenerateView';
 **Cel**: Ostateczny przegląd przed merge
 
 **Akcje**:
+
 1. Przejrzyj wszystkie TODO w kodzie
 2. Usuń console.log i debug code
 3. Sprawdź linter (ESLint)
@@ -2137,6 +2138,7 @@ import GenerateView from '../components/generate/GenerateView';
 Ten plan implementacji obejmuje wszystkie aspekty widoku Generowania Fiszek, od struktury komponentów, przez zarządzanie stanem, integrację z API, po dostępność i obsługę błędów. Implementacja powinna być wykonywana krok po kroku, z weryfikacją każdego etapu przed przejściem do kolejnego.
 
 Kluczowe punkty do zapamiętania:
+
 - Desktop-first approach (mobile poza MVP)
 - Real-time walidacja i feedback dla użytkownika
 - Obsługa wszystkich scenariuszy błędów z informa­cyjnymi komunikatami
@@ -2145,4 +2147,3 @@ Kluczowe punkty do zapamiętania:
 - TypeScript strict mode
 
 Szacowany czas implementacji: **8-12 godzin** dla doświadczonego frontend developera.
-

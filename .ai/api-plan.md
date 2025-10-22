@@ -15,6 +15,7 @@ Note: Authentication and user management will be implemented later.
 ### 2.1 Flashcards
 
 #### List Flashcards
+
 - **Method**: `GET`
 - **Path**: `/api/flashcards`
 - **Description**: Returns a paginated list of flashcards, sorted by creation date (newest first)
@@ -24,6 +25,7 @@ Note: Authentication and user management will be implemented later.
   - `source` (optional): Filter by source (`ai-full`, `ai-edited`, `manual`)
   - `search` (optional): Search in front/back text
 - **Success Response** (200 OK):
+
 ```json
 {
   "data": [
@@ -45,14 +47,17 @@ Note: Authentication and user management will be implemented later.
   }
 }
 ```
+
 - **Error Responses**:
   - `400 Bad Request`: Invalid query parameters
 
 #### Get Single Flashcard
+
 - **Method**: `GET`
 - **Path**: `/api/flashcards/{id}`
 - **Description**: Returns details of a specific flashcard
 - **Success Response** (200 OK):
+
 ```json
 {
   "id": 123,
@@ -64,14 +69,17 @@ Note: Authentication and user management will be implemented later.
   "updated_at": "2025-10-06T10:00:00Z"
 }
 ```
+
 - **Error Responses**:
   - `404 Not Found`: Flashcard does not exist
 
 #### Create Flashcard(s)
+
 - **Method**: `POST`
 - **Path**: `/api/flashcards`
 - **Description**: Creates one or more flashcards (manual or from AI generation)
 - **Request Body** (single flashcard):
+
 ```json
 {
   "front": "What is React?",
@@ -79,7 +87,9 @@ Note: Authentication and user management will be implemented later.
   "source": "manual"
 }
 ```
+
 - **Request Body** (batch from generation):
+
 ```json
 {
   "flashcards": [
@@ -98,7 +108,9 @@ Note: Authentication and user management will be implemented later.
   ]
 }
 ```
+
 - **Success Response** (201 Created):
+
 ```json
 {
   "data": [
@@ -114,23 +126,28 @@ Note: Authentication and user management will be implemented later.
   ]
 }
 ```
+
 - **Error Responses**:
   - `400 Bad Request`: Invalid request body or validation error
   - `409 Conflict`: Duplicate flashcard (same front and back already exists)
   - `422 Unprocessable Entity`: Front exceeds 200 chars, back exceeds 500 chars, or invalid source value
 
 #### Update Flashcard
+
 - **Method**: `PUT`
 - **Path**: `/api/flashcards/{id}`
 - **Description**: Updates an existing flashcard
 - **Request Body**:
+
 ```json
 {
   "front": "What is TypeScript? (Updated)",
   "back": "A strongly typed programming language that builds on JavaScript"
 }
 ```
+
 - **Success Response** (200 OK):
+
 ```json
 {
   "id": 123,
@@ -142,6 +159,7 @@ Note: Authentication and user management will be implemented later.
   "updated_at": "2025-10-06T11:30:00Z"
 }
 ```
+
 - **Error Responses**:
   - `404 Not Found`: Flashcard does not exist
   - `400 Bad Request`: Invalid request body
@@ -149,6 +167,7 @@ Note: Authentication and user management will be implemented later.
   - `422 Unprocessable Entity`: Front exceeds 200 chars or back exceeds 500 chars
 
 #### Delete Flashcard
+
 - **Method**: `DELETE`
 - **Path**: `/api/flashcards/{id}`
 - **Description**: Permanently deletes a flashcard
@@ -161,16 +180,20 @@ Note: Authentication and user management will be implemented later.
 ### 2.2 Generations
 
 #### Generate Flashcards with AI
+
 - **Method**: `POST`
 - **Path**: `/api/generations`
 - **Description**: Sends source text to LLM API (OpenRouter.ai), creates a generation record, and returns proposed flashcards
 - **Request Body**:
+
 ```json
 {
   "source_text": "TypeScript is a strongly typed programming language..."
 }
 ```
+
 - **Success Response** (201 Created):
+
 ```json
 {
   "generation": {
@@ -193,6 +216,7 @@ Note: Authentication and user management will be implemented later.
   ]
 }
 ```
+
 - **Error Responses**:
   - `400 Bad Request`: Missing source_text or model
   - `422 Unprocessable Entity`: source_text length not between 1000-10000 characters
@@ -201,6 +225,7 @@ Note: Authentication and user management will be implemented later.
   - `503 Service Unavailable`: LLM API temporarily unavailable
 
 #### List Generations
+
 - **Method**: `GET`
 - **Path**: `/api/generations`
 - **Description**: Returns a paginated list of generation history with statistics
@@ -208,6 +233,7 @@ Note: Authentication and user management will be implemented later.
   - `page` (optional, default: 1): Page number
   - `limit` (optional, default: 20, max: 50): Items per page
 - **Success Response** (200 OK):
+
 ```json
 {
   "data": [
@@ -231,14 +257,17 @@ Note: Authentication and user management will be implemented later.
   }
 }
 ```
+
 - **Error Responses**:
   - `400 Bad Request`: Invalid query parameters
 
 #### Get Generation Details
+
 - **Method**: `GET`
 - **Path**: `/api/generations/{id}`
 - **Description**: Returns details of a specific generation including associated flashcards
 - **Success Response** (200 OK):
+
 ```json
 {
   "id": 46,
@@ -260,6 +289,7 @@ Note: Authentication and user management will be implemented later.
   ]
 }
 ```
+
 - **Error Responses**:
   - `404 Not Found`: Generation does not exist
 
@@ -272,12 +302,14 @@ Note: Authentication and user management will be implemented later.
 ### 3.1 Flashcards Validation
 
 #### Field Constraints
+
 - `front`: Required, max 200 characters, non-empty after trim
 - `back`: Required, max 500 characters, non-empty after trim
 - `source`: Required, must be one of: `ai-full`, `ai-edited`, `manual`
 - `generation_id`: Optional (null for manual flashcards), must reference existing generation if provided
 
 #### Business Rules
+
 1. **Uniqueness**: Cannot have duplicate flashcards (same `front` and `back` combination)
    - Returns `409 Conflict` if duplicate detected
 2. **Source Validation**:
@@ -295,10 +327,12 @@ Note: Authentication and user management will be implemented later.
 ### 3.2 Generations Validation
 
 #### Field Constraints
+
 - `source_text`: Required, min 1000 characters, max 10000 characters
 - `model`: Required, non-empty string (e.g., `anthropic/claude-3.5-sonnet`)
 
 #### Business Rules
+
 1. **Duplicate Prevention**: Same source text (by hash) cannot be generated twice
    - Returns `409 Conflict` with message suggesting to use existing generation
 2. **Hash Calculation**: `source_text_hash` is calculated server-side using SHA-256
@@ -328,28 +362,35 @@ Note: Authentication and user management will be implemented later.
 ### 3.3 General Validation Rules
 
 #### Input Sanitization
+
 - All text input is trimmed and sanitized to prevent XSS
 - HTML tags are stripped or escaped
 - SQL injection prevented by parameterized queries (Supabase handles this)
 
 #### Security Headers
+
 All API responses should include:
+
 - `X-Content-Type-Options: nosniff`
 - `X-Frame-Options: DENY`
 - `X-XSS-Protection: 1; mode=block`
 
 #### Rate Limiting
+
 - **Generation endpoint**: 10 requests per hour (expensive LLM calls)
 - **Other endpoints**: 100 requests per minute
 - Returns `429 Too Many Requests` when limit exceeded
 
 #### Pagination Limits
+
 - Default page size: varies by endpoint (20-50 items)
 - Maximum page size: varies by endpoint (50-100 items)
 - Large result sets use cursor-based pagination for performance
 
 #### Error Response Format
+
 All error responses follow consistent format:
+
 ```json
 {
   "error": {
@@ -368,12 +409,15 @@ All error responses follow consistent format:
 ### 3.4 LLM Integration Logic
 
 #### OpenRouter.ai Configuration
+
 - **Endpoint**: `https://openrouter.ai/api/v1/chat/completions`
 - **Authentication**: API key in `Authorization` header
 - **Model Selection**: User can choose from supported models (default: `anthropic/claude-3.5-sonnet`)
 
 #### Prompt Engineering
+
 System prompt for flashcard generation:
+
 ```
 You are an expert at creating educational flashcards. Given a text, extract key concepts and create clear, concise question-answer pairs. Each flashcard should:
 - Have a specific, unambiguous question on the front
@@ -384,6 +428,7 @@ You are an expert at creating educational flashcards. Given a text, extract key 
 ```
 
 #### Response Parsing
+
 - Parse JSON array from LLM response
 - Validate each flashcard proposal (length constraints)
 - Filter out invalid proposals
@@ -394,18 +439,21 @@ You are an expert at creating educational flashcards. Given a text, extract key 
 ## 4. Additional Considerations
 
 ### 4.1 Performance Optimization
+
 - Database indexes on `created_at DESC` for efficient sorting and pagination
 - Unique indexes enforce constraints without additional queries
 - Optional trigram indexes (pg_trgm) for text search on front/back fields
 - Connection pooling via Supabase for database connections
 
 ### 4.2 Monitoring and Analytics
+
 - Track generation success/failure rates
 - Monitor LLM API response times
 - Log all generation errors to `generation_error_logs`
 - Calculate acceptance rate: `(accepted_unedited_count + accepted_edited_count) / generated_count`
 
 ### 4.3 Future Enhancements (Out of Scope for MVP)
+
 - WebSocket support for real-time generation progress
 - Batch generation (multiple texts at once)
 - Export flashcards to various formats (Anki, CSV)
@@ -414,7 +462,7 @@ You are an expert at creating educational flashcards. Given a text, extract key 
 - Search with advanced filters
 
 ### 4.4 API Versioning
+
 - Current version: v1 (implicit in `/api/` prefix)
 - Future versions can use `/api/v2/` prefix
 - Maintain backward compatibility for at least 6 months after new version release
-
