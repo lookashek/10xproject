@@ -51,29 +51,21 @@ export function ChangePasswordForm() {
       setIsLoading(true);
 
       try {
-        // TODO: Implementacja wywołania API
-        // const response = await fetch('/api/auth/change-password', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({ currentPassword, newPassword }),
-        // });
+        const response = await fetch("/api/auth/change-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ currentPassword, newPassword }),
+        });
 
-        // const data = await response.json();
+        const data = await response.json();
 
-        // if (!response.ok) {
-        //   throw new Error(data.error?.message || 'Błąd zmiany hasła');
-        // }
+        if (!response.ok) {
+          throw new Error(data.error?.message || "Błąd zmiany hasła");
+        }
 
-        // toast.success('Hasło zostało zmienione!');
+        toast.success("Hasło zostało pomyślnie zmienione!");
 
-        // // Reset formularza
-        // setCurrentPassword('');
-        // setNewPassword('');
-        // setConfirmNewPassword('');
-
-        // Tymczasowo - symulacja
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        toast.success("Zmiana hasła - funkcja do zaimplementowania");
+        // Reset formularza
         setCurrentPassword("");
         setNewPassword("");
         setConfirmNewPassword("");

@@ -39,33 +39,28 @@ export function DeleteAccountSection() {
     setIsDeleting(true);
 
     try {
-      // TODO: Implementacja wywołania API
-      // const response = await fetch('/api/auth/delete-account', {
-      //   method: 'DELETE',
-      // });
+      const response = await fetch("/api/auth/delete-account", {
+        method: "DELETE",
+      });
 
-      // const data = await response.json();
+      const data = await response.json();
 
-      // if (!response.ok) {
-      //   throw new Error(data.error?.message || 'Błąd usuwania konta');
-      // }
+      if (!response.ok) {
+        throw new Error(data.error?.message || "Błąd usuwania konta");
+      }
 
-      // toast.success('Konto zostało trwale usunięte');
+      toast.success("Konto zostało trwale usunięte");
 
-      // // Wylogowanie i redirect do strony głównej
-      // window.location.href = '/';
-
-      // Tymczasowo - symulacja
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success("Usuwanie konta - funkcja do zaimplementowania");
-      setIsDialogOpen(false);
-      setConfirmationText("");
+      // Wylogowanie i redirect do strony głównej
+      // Czekamy chwilę żeby użytkownik zobaczył toast
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1500);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Wystąpił nieoczekiwany błąd";
       toast.error("Nie udało się usunąć konta", {
         description: message,
       });
-    } finally {
       setIsDeleting(false);
     }
   }, [isConfirmed, isDeleting]);
